@@ -1,0 +1,243 @@
+<div class="layout">
+<app-side-bar></app-side-bar>
+  <main class="main">
+<!-- rewards.component.html -->
+<div class="rewards-container">
+  <!-- Weekly Goals Section -->
+  <div class="goals-section">
+    <h2 class="section-title">أهداف هذا الأسبوع</h2>
+    <p class="section-subtitle">أكمل الأهداف للحصول على نقاط إضافية</p>
+
+    <div class="goals-grid">
+      <!-- Goal Card 1 -->
+      <div class="goal-card in-progress">
+        <div class="goal-header">
+          <div class="goal-icon-wrapper">
+            <span class="goal-icon">🎯</span>
+          </div>
+          <button class="points-badge">50 نقطة</button>
+        </div>
+        <h3 class="goal-title">أضف 3 منشورات تسويقية</h3>
+        <div class="progress-info">
+          <span class="progress-label">التقدم</span>
+          <span class="progress-value">3 / 2</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="'67%'"></div>
+        </div>
+      </div>
+
+      <!-- Goal Card 2 -->
+      <div class="goal-card completed">
+        <div class="goal-header">
+          <div class="goal-icon-wrapper completed-icon">
+            <span class="checkmark">✓</span>
+          </div>
+          <button class="points-badge">30 نقطة</button>
+        </div>
+        <h3 class="goal-title">حدّث ميزانيتك المالية</h3>
+        <div class="progress-info">
+          <span class="progress-label">التقدم</span>
+          <span class="progress-value">1 / 1</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill completed-fill" [style.width]="'100%'"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Achievements Section -->
+  <div class="achievements-section">
+    <div class="section-header">
+      <h2 class="section-title">الإنجازات</h2>
+      <p class="section-info">أهم إنجازاتك الجديدة واكسب نقاط</p>
+    </div>
+
+    <div class="achievements-grid">
+      <!-- Achievement 1 -->
+      <div class="achievement-card">
+        <div class="achievement-icon expert">
+          <span class="icon">⭐</span>
+        </div>
+        <h3 class="achievement-title">البداية القوية</h3>
+        <p class="achievement-desc">أكملت إعداد حسابك بالكامل</p>
+        <div class="achievement-footer">
+          <span class="achievement-time">منذ 15 يوم</span>
+          <span class="achievement-points">100 نقطة</span>
+        </div>
+      </div>
+
+      <!-- Achievement 2 -->
+      <div class="achievement-card">
+        <div class="achievement-icon growth">
+          <span class="icon">📈</span>
+        </div>
+        <h3 class="achievement-title">رائد تسويقي</h3>
+        <p class="achievement-desc">أطلقت 10 حملات تسويقية</p>
+        <div class="achievement-footer">
+          <span class="achievement-time">منذ 5 أيام</span>
+          <span class="achievement-points">200 نقطة</span>
+        </div>
+      </div>
+
+      <!-- Achievement 3 -->
+      <div class="achievement-card">
+        <div class="achievement-icon check">
+          <span class="icon">✓</span>
+        </div>
+        <h3 class="achievement-title">منظم محترف</h3>
+        <p class="achievement-desc">أكملت 50 مهمة</p>
+        <div class="achievement-footer">
+          <span class="achievement-time">منذ 3 أيام</span>
+          <span class="achievement-points">150 نقطة</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Points and Rewards Section -->
+  <div class="points-section">
+    <div class="points-header">
+      <div class="points-display">
+        <span class="trophy-icon">🏆</span>
+        <span class="points-number">1450</span>
+      </div>
+      <h3 class="points-title">نقاطك الإجمالية</h3>
+      <button class="level-badge">المستوى 3: محترف</button>
+    </div>
+
+    <div class="level-progress">
+      <div class="level-info">
+        <span class="level-label">التقدم للمستوى التالي</span>
+        <span class="level-points">1450 / 2000</span>
+      </div>
+      <div class="progress-bar level-bar">
+        <div class="progress-fill" [style.width]="'72.5%'"></div>
+      </div>
+      <p class="level-message">تحتاج 550 نقطة للوصول للمستوى 4</p>
+    </div>
+  </div>
+
+  <!-- Recent Activities -->
+  <div class="activities-section">
+    <h3 class="section-title">النشاطات الأخيرة</h3>
+    
+    <div class="activity-item">
+      <span class="activity-title">أكملت مهمة</span>
+      <div class="activity-info">
+        <span class="activity-points green">20+ نقطة</span>
+        <span class="activity-time">منذ ساعة</span>
+      </div>
+    </div>
+
+    <div class="activity-item">
+      <span class="activity-title">حصلت على إنجاز جديد</span>
+      <div class="activity-info">
+        <span class="activity-points green">200+ نقطة</span>
+        <span class="activity-time">منذ 3 ساعات</span>
+      </div>
+    </div>
+
+    <div class="activity-item">
+      <span class="activity-title">أضفت منشور تسويقي</span>
+      <div class="activity-info">
+        <span class="activity-points green">15+ نقطة</span>
+        <span class="activity-time">أمس</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Milestone Badges -->
+  <div class="milestones-section">
+    <div class="milestone-card">
+      <div class="milestone-icon">
+        <span class="icon">🎖️</span>
+      </div>
+      <h3 class="milestone-title">خبير مالي</h3>
+      <p class="milestone-desc">حافظت على ميزانية متوازنة لمدة شهر</p>
+      <div class="milestone-progress">
+        <span class="milestone-percent">75%</span>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="'75%'"></div>
+        </div>
+      </div>
+      <button class="points-badge large">300 نقطة</button>
+    </div>
+
+    <div class="milestone-card">
+      <div class="milestone-icon">
+        <span class="icon">👑</span>
+      </div>
+      <h3 class="milestone-title">مؤثر اجتماعي</h3>
+      <p class="milestone-desc">حصلت على 100 إعجاب في المجتمع</p>
+      <div class="milestone-progress">
+        <span class="milestone-percent">45%</span>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="'45%'"></div>
+        </div>
+      </div>
+      <button class="points-badge large">250 نقطة</button>
+    </div>
+  </div>
+
+  <!-- Rewards Store -->
+  <div class="store-section">
+    <div class="store-header">
+      <h2 class="section-title">
+        <span class="gift-icon">🎁</span>
+        متجر المكافآت
+      </h2>
+      <p class="section-subtitle">استبدل نقاطك بمكافآت قيّمة</p>
+    </div>
+
+    <div class="rewards-grid">
+      <!-- Reward 1 -->
+      <div class="reward-card">
+        <div class="reward-icon">
+          <span class="icon">🎁</span>
+        </div>
+        <h3 class="reward-title">استشارة مجانية مع خبير</h3>
+        <p class="reward-desc">جلسة استشارية لمدة ساعة</p>
+        <button class="points-badge reward-badge">500 نقطة</button>
+        <button class="redeem-btn">استبدال</button>
+      </div>
+
+      <!-- Reward 2 -->
+      <div class="reward-card">
+        <div class="reward-icon">
+          <span class="icon">🎁</span>
+        </div>
+        <h3 class="reward-title">قالب تصميم احترافي</h3>
+        <p class="reward-desc">10 قوالب جاهزة للسوشيال ميديا</p>
+        <button class="points-badge reward-badge">300 نقطة</button>
+        <button class="redeem-btn">استبدال</button>
+      </div>
+
+      <!-- Reward 3 -->
+      <div class="reward-card">
+        <div class="reward-icon">
+          <span class="icon">🎁</span>
+        </div>
+        <h3 class="reward-title">كوبون خصم 20%</h3>
+        <p class="reward-desc">خصم على الاشتراك الشهري</p>
+        <button class="points-badge reward-badge">400 نقطة</button>
+        <button class="redeem-btn">استبدال</button>
+      </div>
+
+      <!-- Reward 4 -->
+      <div class="reward-card disabled">
+        <div class="reward-icon">
+          <span class="icon">🎁</span>
+        </div>
+        <h3 class="reward-title">دورة تدريبية مميزة</h3>
+        <p class="reward-desc">اختر أي دورة من المكتبة</p>
+        <button class="points-badge reward-badge">800 نقطة</button>
+        <button class="redeem-btn disabled" disabled>استبدال</button>
+      </div>
+    </div>
+  </div>
+</div>
+    
+            </main>
+</div>

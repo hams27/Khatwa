@@ -1,0 +1,182 @@
+<app-side-bar></app-side-bar>
+
+<!-- Navbar -->
+ <nav class="navbar">
+  <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
+</nav>
+
+<!-- User Guide Popup -->
+<div class="guide-overlay" *ngIf="showGuide">
+  <div class="guide-modal">
+
+    <!-- Header -->
+    <div class="guide-header">
+      <h3>دليل استخدام لوحة التحكم</h3>
+      <button class="close-btn" (click)="closeGuide()">✕</button>
+    </div>
+
+    <!-- Content -->
+    <div class="guide-content">
+      <p>
+        لوحة التحكم هي مركز إدارة مشروعك، وتعرض لك ملخصًا سريعًا عن الأداء،
+        التقدم، والتنبيهات المهمة.
+      </p>
+
+      <ul>
+        <li>📊 متابعة التقدم العام للمشروع</li>
+        <li>⚠️ تنبيهات ذكية عند وجود مشاكل</li>
+        <li>💡 اقتراحات وتحسينات مدعومة بالذكاء الاصطناعي</li>
+        <li>🚀 اختصار الوقت واتخاذ قرارات أسرع</li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div class="guide-footer">
+      <button class="add-btn" (click)="closeGuide()">فهمت</button>
+    </div>
+
+  </div>
+</div>
+
+
+<main class="main">
+
+  <!-- Header Section -->
+  <section class="header">
+    <div>
+      <h2>خطتك التسويقية</h2>
+      <p>خارطة طريق نحو نمو مشروعك</p>
+    </div>
+    <button class="add-btn">+ محتوى جديد</button>
+  </section>
+
+  <!-- Progress Box -->
+  <div class="progress-box">
+    <div class="info">
+      <h3>تقدم الخطة التسويقية</h3>
+      <p>أكملت 2 من 5 خطوات رئيسية</p>
+    </div>
+    <span class="percent">{{ progress }}%</span>
+    <div class="progress-bar">
+      <div class="fill" [style.width.%]="progress"></div>
+    </div>
+  </div>
+
+  <!-- Roadmap Section -->
+  <section class="roadmap">
+    <h3>خارطة الطريق التسويقية</h3>
+    <p class="subtitle">اتبع هذه الخطوات لبناء حضور قوي لعلامتك التجارية</p>
+
+    <div class="step" *ngFor="let step of steps" [ngClass]="step.status">
+      <div class="icon">
+        <span *ngIf="step.status === 'done'">
+          <img src="check.png" alt="" width="25" height="25">
+        </span>
+        <span *ngIf="step.status === 'active'">◯</span>
+        <span *ngIf="step.status === 'next'">◯</span>
+      </div>
+
+      <div class="content">
+        <h4>{{ step.title }}</h4>
+        <p>{{ step.desc }}</p>
+      </div>
+
+      <span class="badge" *ngIf="step.status === 'done'">مكتمل</span>
+      <span class="badge blue" *ngIf="step.status === 'active'">جار العمل</span>
+      <span class="badge gray" *ngIf="step.status === 'next'">قادم</span>
+    </div>
+  </section>
+
+  <!-- Bottom Content Section -->
+  <section class="content-section">
+    <div class="content-grid">
+
+      <!-- أفكار محتوى -->
+      <div class="card">
+        <div class="card-header">
+          <span>أفكار محتوى مقترحة</span>
+          <span class="icon">💡</span>
+        </div>
+
+        <div class="idea-item">
+          <h5>نصيحة يومية لرواد الأعمال</h5>
+          <span class="social ig">📸</span>
+          <div class="tags">
+            <span class="tag green">عالي</span>
+            <span class="tag">post</span>
+          </div>
+          <p>استخدم هذه الفكرة</p>
+        </div>
+
+        <div class="idea-item">
+          <h5>قصة نجاح عميل</h5>
+          <div class="tags">
+            <span class="tag yellow">متوسط</span>
+            <span class="tag">thread</span>
+          </div>
+          <p>استخدم هذه الفكرة</p>
+          <span class="social tw">🐦</span>
+        </div>
+
+        <div class="idea-item">
+          <h5>فيديو توضيحي للمنتج</h5>
+          <div class="tags">
+            <span class="tag green">عالي جدًا</span>
+            <span class="tag">video</span>
+          </div>
+          <p>استخدم هذه الفكرة</p>
+          <span class="social fb">f</span>
+        </div>
+
+        <div class="idea-item">
+          <h5>عرض خاص لفترة محدودة</h5>
+          <div class="tags">
+            <span class="tag green">عالي</span>
+            <span class="tag">story</span>
+          </div>
+          <p>استخدم هذه الفكرة</p>
+          <span class="social ig">📸</span>
+        </div>
+      </div>
+
+      <!-- المنشورات المجدولة -->
+      <div class="card">
+        <div class="card-header">
+          <span>المنشورات المجدولة</span>
+          <span class="icon">📅</span>
+        </div>
+
+        <div class="post-item">
+          <span class="badge orange">مجدول</span>
+          <div class="post-info">
+            <h5>نصائح لزيادة الإنتاجية</h5>
+            <span class="time">⏰ اليوم، 6:00 م</span>
+          </div>
+          <span class="social ig">📸</span>
+        </div>
+
+        <div class="post-item">
+          <span class="badge orange">مجدول</span>
+          <div class="post-info">
+            <h5>عرض نهاية الأسبوع</h5>
+            <span class="time">⏰ غدًا، 10:00 ص</span>
+          </div>
+          <span class="social fb">f</span>
+        </div>
+
+        <div class="post-item">
+          <span class="badge blue">مسودة</span>
+          <div class="post-info">
+            <h5>مقابلة مع خبير</h5>
+            <span class="time">⏰ الجمعة، 3:00 م</span>
+          </div>
+          <span class="social tw">🐦</span>
+        </div>
+
+        <button class="add-btn">+ جدولة منشور جديد</button>
+      </div>
+
+    </div>
+  </section>
+
+</main>

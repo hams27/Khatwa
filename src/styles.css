@@ -1,0 +1,43 @@
+:root {
+  --orange-main: #ff6b00;
+  --orange-hover: linear-gradient(135deg, #1e4eff, #ff6b00);
+}
+
+/* ===== HT Moshreq Pro ===== */
+@font-face{
+  font-family: "HT Moshreq Pro";
+  src: url("https://cdn.prod.website-files.com/688cea29347896e7a5b52e82/688fb7e330da98598b5de996_HT%20Moshreq%20Pro%20-%20SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== HT Rakeez ===== */
+@font-face{
+  font-family: "HT Rakeez";
+  src: url("https://cdn.prod.website-files.com/688cea29347896e7a5b52e82/688fb7e3095ccc71f01c9cb2_%20HT%20Rakeez%20-%20Regular.woff2") format("woff2");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+body{
+  background: 
+    radial-gradient(circle 600px at top left, #ff444421 ,#3700ff11, transparent),
+    radial-gradient(circle 600px at center left, #ff444421,#3700ff11, transparent),
+    radial-gradient(circle 600px at center right, #3700ff11,#ff444421, transparent),
+    radial-gradient(circle 600px at top right, #3700ff11,#ff444421, transparent),
+    radial-gradient(circle 600px at bottom right, #3700ff11,#ff444421, transparent),
+    radial-gradient(circle 600px at bottom left, #ff444421,#3700ff11, transparent);
+
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  background-repeat: repeat !important;
+  /* font-family: "Ht Moshreq Pro", sans-serif; */
+  font-family: "HT Rakeez", sans-serif !important;
+
+}
+
+

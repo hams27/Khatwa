@@ -1,0 +1,99 @@
+<app-side-bar></app-side-bar>
+
+<section class="community">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
+  </nav>
+
+  <!-- User Guide Popup -->
+  <div class="guide-overlay" *ngIf="showGuide">
+    <div class="guide-modal">
+      <div class="guide-header">
+        <h3>دليل استخدام صفحة المجتمع</h3>
+        <button class="close-btn" (click)="closeGuide()">✕</button>
+      </div>
+      <div class="guide-content">
+        <p>
+          في صفحة المجتمع يمكنك متابعة النشاطات، المشاركات، والفعاليات الخاصة بالمجتمع.
+        </p>
+        <ul>
+          <li>📝 متابعة المنشورات الأخيرة والتعليقات</li>
+          <li>👥 معرفة الأعضاء النشطين والمواضيع الرائجة</li>
+          <li>🎉 الاطلاع على الفعاليات القادمة والتسجيل بها</li>
+        </ul>
+      </div>
+      <div class="guide-footer">
+        <button class="add-btn" (click)="closeGuide()">فهمت</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header">
+    <h2>المجتمع</h2>
+    <p>تواصل، ناقش، وتعلم من خبرات الآخرين</p>
+  </header>
+
+  <!-- Summary Cards -->
+  <div class="summary">
+    <div class="card" *ngFor="let c of summaryCards" [ngClass]="c.color">
+      <span class="icon">{{ c.icon }}</span>
+      <div>
+        <strong>{{ c.value }}</strong>
+        <p>{{ c.title }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Posts -->
+    <main class="posts">
+      <div class="post" *ngFor="let p of posts">
+        <div class="post-header">
+          <div class="avatar">{{ p.author[0] }}</div>
+          <div>
+            <strong>{{ p.author }}</strong>
+            <br>
+            <span>{{ p.role }}</span>
+            <br>
+            <span>{{ p.time }}</span>
+          </div>
+        </div>
+        <p class="content">{{ p.content }}</p>
+        <div class="actions">
+          <span>👍 {{ p.likes }}</span>
+          <span>💬 {{ p.comments }}</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Left Side -->
+    <aside class="left">
+
+      <!-- Top Topics -->
+      <div class="box">
+        <h3>مواضيع شائعة</h3>
+        <div class="topic" *ngFor="let t of topTopics">
+          <span>{{ t.name }}</span>
+          <small>{{ t.posts }} منشور</small>
+        </div>
+      </div>
+
+      <!-- Events -->
+      <div class="box">
+        <h3>فعاليات قادمة</h3>
+        <div class="event" *ngFor="let e of events">
+          <strong>{{ e.title }}</strong>
+          <span>{{ e.date }} <br> {{ e.time }}</span>
+          <button class="btn btn-primary">تسجيل حضور</button>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+</section>

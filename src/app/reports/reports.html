@@ -1,0 +1,253 @@
+<app-side-bar></app-side-bar>
+
+<div class="reports-container">
+  <!-- Header Section -->
+  <div class="reports-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">التقارير</h1>
+        <p class="page-subtitle">أنشئ وحلل وشارك تقارير مشروعك</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary" (click)="openDateFilter()">
+          <span class="icon">📅</span>
+          تصفية حسب التاريخ
+        </button>
+        <button class="btn-primary" (click)="createNewReport()">
+          <span class="icon">+</span>
+          تقرير جديد
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon orange-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{savedReports}}</h3>
+        <p class="stat-label">التقارير المحفوظة</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon blue-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{shares}}</h3>
+        <p class="stat-label">المشاركات</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green-bg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <h3 class="stat-value">{{downloads}}</h3>
+        <p class="stat-label">التحميلات</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Templates Section -->
+  <div class="templates-section">
+    <div class="section-header">
+      <h2 class="section-title">قوالب التقارير</h2>
+      <p class="section-subtitle">اختر قالباً جاهزاً أو أنشئ تقرير مخصص</p>
+    </div>
+
+    <div class="templates-grid">
+      <div class="template-card" *ngFor="let template of reportTemplates">
+        <div class="template-icon" [ngClass]="template.iconClass">
+          <ng-container [ngSwitch]="template.icon">
+            <!-- Performance Icon -->
+            <svg *ngSwitchCase="'performance'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <!-- Financial Icon -->
+            <svg *ngSwitchCase="'financial'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+            </svg>
+            <!-- Marketing Icon -->
+            <svg *ngSwitchCase="'marketing'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            <!-- Sales Icon -->
+            <svg *ngSwitchCase="'sales'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <!-- Team Icon -->
+            <svg *ngSwitchCase="'team'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <!-- Custom Icon -->
+            <svg *ngSwitchCase="'custom'" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </ng-container>
+        </div>
+        <div class="template-content">
+          <h3 class="template-title">{{template.title}}</h3>
+          <p class="template-desc">{{template.description}}</p>
+        </div>
+        <button class="btn-create" (click)="createReport(template)">إنشاء التقرير</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="content-layout">
+    <!-- Left Column: Saved Reports -->
+    <div class="saved-reports-section">
+      <h2 class="section-title">التقارير المحفوظة</h2>
+      
+      <div class="saved-reports-list">
+        <div class="report-item" *ngFor="let report of savedReportsList">
+          <div class="report-header">
+            <div class="report-title-section">
+              <h3 class="report-title">{{report.title}}</h3>
+              <div class="report-status-badge" [ngClass]="report.status">
+                {{getStatusText(report.status)}}
+              </div>
+            </div>
+            <div class="report-meta">
+              <span class="report-date">{{report.date}}</span>
+              <span class="report-views">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                {{report.views}}
+              </span>
+            </div>
+          </div>
+          
+          <div class="report-actions">
+            <button class="action-btn" (click)="viewReport(report)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              عرض
+            </button>
+            <button class="action-btn" (click)="downloadReport(report)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              تحميل
+            </button>
+            <button class="action-btn" (click)="shareReport(report)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+              مشاركة
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Recent Activities -->
+    <div class="activities-section">
+      <h2 class="section-title">النشاطات الأخيرة</h2>
+      
+      <div class="activities-list">
+        <div class="activity-item" *ngFor="let activity of recentActivities">
+          <div class="activity-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+          </div>
+          <div class="activity-content">
+            <p class="activity-title">{{activity.title}}</p>
+            <div class="activity-meta">
+              <span class="activity-author">{{activity.author}}</span>
+              <span class="activity-separator">•</span>
+              <span class="activity-time">{{activity.time}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Chart Section -->
+  <div class="chart-section">
+    <div class="chart-header">
+      <h2 class="section-title">إحصائيات التقارير</h2>
+      <p class="section-subtitle">عدد التقارير المنشأة شهرياً</p>
+    </div>
+    
+    <div class="chart-container">
+      <canvas #reportsChart></canvas>
+    </div>
+  </div>
+
+  <!-- Export Section -->
+  <div class="export-section">
+    <div class="export-content">
+      <div class="export-info">
+        <h3 class="export-title">تصدير البيانات</h3>
+        <p class="export-desc">احصل على نسخة كاملة من بياناتك</p>
+      </div>
+      <div class="export-buttons">
+        <button class="export-btn excel" (click)="exportToExcel()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          Excel
+        </button>
+        <button class="export-btn pdf" (click)="exportToPDF()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          PDF
+        </button>
+        <button class="export-btn all" (click)="exportAll()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          تصدير الكل
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,404 @@
+<!-- ================= HEADER / NAVBAR ================= -->
+<header class="header" [class.sticky]="isSticky">
+  <!-- Animated Background Particles -->
+  <div class="header-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <!-- Logo -->
+  <div class="logo" data-aos="fade-left" data-aos-duration="800">
+    <div class="logo-circle">
+      <span class="logo-letter">ب</span>
+    </div>
+    <span class="logo-text">خطــوة</span>
+  </div>
+
+  <!-- Navigation Links -->
+  <ul class="nav-links">
+    <li 
+      *ngFor="let link of navLinks; let i = index" 
+      [class.active]="link.active"
+      (click)="setActiveLink(link)"
+      [attr.data-aos]="'fade-down'"
+      [attr.data-aos-delay]="i * 100">
+      {{ link.name }}
+      <span class="nav-indicator"></span>
+    </li>
+  </ul>
+
+  <!-- CTA Button -->
+  <button class="btn-outline" routerLink="/register" data-aos="fade-right" data-aos-duration="800">
+    <span class="btn-text">ابدأ الآن مجاناً</span>
+    <span class="btn-icon">→</span>
+  </button>
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+<section class="hero">
+  <!-- Animated Background -->
+  <div class="hero-bg">
+    <div class="gradient-orb orb-1"></div>
+    <div class="gradient-orb orb-2"></div>
+    <div class="gradient-orb orb-3"></div>
+  </div>
+
+  <!-- Floating Elements -->
+  <div class="floating-elements">
+    <div class="float-icon float-1">💡</div>
+    <div class="float-icon float-2">🚀</div>
+    <div class="float-icon float-3">⚡</div>
+    <div class="float-icon float-4">🎯</div>
+  </div>
+
+  <!-- Badge -->
+  <div class="badge" data-aos="zoom-in" data-aos-duration="600">
+    <span class="badge-icon">⭐</span>
+    <span class="badge-text">منصة إدارة الأعمال الأولى عربياً</span>
+    <div class="badge-glow"></div>
+  </div>
+
+  <!-- Main Heading -->
+  <h1 data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
+    <span class="word-animate">خطـــــــــــــــــوة</span>
+  </h1>
+
+  <!-- Description -->
+  <p data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
+    منصة شاملة مصممة خصيصاً لأصحاب المشاريع الصغيرة ورواد الأعمال الشباب.
+    <br>
+    <span class="highlight-text">تسويق، مالية، مهام، تحليلات، تعلم، ودعم مجتمعي</span>
+    — كل ما تحتاجه في مكان واحد.
+  </p>
+
+  <!-- Hero Actions -->
+  <div class="buttons" data-aos="fade-up" data-aos-duration="800" data-aos-delay="600">
+    <button class="btn-primary" routerLink="/layout">
+      <span>ابدأ مشروعك الآن</span>
+      <div class="btn-shine"></div>
+    </button>
+    <button class="btn-secondary">
+      <span>شاهد العرض التوضيحي</span>
+      <svg class="play-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M6 4l10 6-10 6V4z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Stats with Counter Animation -->
+  <div class="stats" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="800">
+    <div *ngFor="let stat of stats; let i = index" 
+         class="stat-item"
+         [attr.data-aos]="'zoom-in'"
+         [attr.data-aos-delay]="800 + (i * 150)">
+      <div class="stat-icon">
+        <div class="stat-circle"></div>
+      </div>
+      <h3 class="stat-value" [attr.data-target]="stat.value">{{ stat.value }}</h3>
+      <span class="stat-label">{{ stat.label }}</span>
+      <div class="stat-glow"></div>
+    </div>
+  </div>
+
+  <!-- Scroll Indicator -->
+  <div class="scroll-indicator" data-aos="fade-up" data-aos-delay="1200">
+    <div class="mouse">
+      <div class="wheel"></div>
+    </div>
+    <span>اسحب للأسفل</span>
+  </div>
+</section>
+
+<!-- ================= FEATURES SECTION ================= -->
+<section class="features">
+  <!-- Section Header -->
+  <div class="section-header" data-aos="fade-up">
+    <h2>كل ما تحتاجه لنجاح مشروعك</h2>
+    <p class="subtitle">أدوات قوية، واجهة بسيطة</p>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- Features Grid -->
+  <div class="grid">
+    <div class="card" 
+         data-aos="flip-left" 
+         data-aos-duration="800"
+         data-aos-delay="100">
+      <div class="card-glow"></div>
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h3>خطة تسويقية</h3>
+      <p>خطط تسويقية مخصصة وأفكار محتوى جاهزة</p>
+      <div class="card-shine"></div>
+    </div>
+
+    <div class="card" 
+         data-aos="flip-left" 
+         data-aos-duration="800"
+         data-aos-delay="200">
+      <div class="card-glow"></div>
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+      </div>
+      <h3>إدارة مالية</h3>
+      <p>تتبع مصروفاتك وإيراداتك بسهولة</p>
+      <div class="card-shine"></div>
+    </div>
+
+    <div class="card" 
+         data-aos="flip-left" 
+         data-aos-duration="800"
+         data-aos-delay="300">
+      <div class="card-glow"></div>
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <h3>إدارة المهام والفريق</h3>
+      <p>نظم مهامك ووزعها على فريقك</p>
+      <div class="card-shine"></div>
+    </div>
+
+    <div class="card" 
+         data-aos="flip-left" 
+         data-aos-duration="800"
+         data-aos-delay="400">
+      <div class="card-glow"></div>
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M3 3v18h18"/>
+          <path d="M18 17V9M13 17V5M8 17v-3"/>
+        </svg>
+      </div>
+      <h3>تحليلات وتوقعات</h3>
+      <p>افهم أداءك وتوقع نموك المستقبلي</p>
+      <div class="card-shine"></div>
+    </div>
+
+    <div class="card" 
+         data-aos="flip-left" 
+         data-aos-duration="800"
+         data-aos-delay="500">
+      <div class="card-glow"></div>
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        </svg>
+      </div>
+      <h3>محتوى تعليمي</h3>
+      <p>دروس وندوات ومحتوى حسب احتياجك</p>
+      <div class="card-shine"></div>
+    </div>
+
+    <div class="card" 
+         data-aos="flip-left" 
+         data-aos-duration="800"
+         data-aos-delay="600">
+      <div class="card-glow"></div>
+      <div class="icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+        </svg>
+      </div>
+      <h3>مجتمع الخبراء</h3>
+      <p>تواصل مع خبراء ورواد أعمال آخرين</p>
+      <div class="card-shine"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="how">
+  <div class="section-header" data-aos="fade-up">
+    <h2>كيف تعمل المنصة؟</h2>
+    <p>ثلاث خطوات بسيطة للبدء</p>
+    <div class="header-line"></div>
+  </div>
+
+  <!-- Steps with connecting line -->
+  <div class="steps-container">
+    <div class="steps-line" data-aos="fade-right" data-aos-duration="1500"></div>
+    
+    <div class="steps">
+      <div class="step" data-aos="zoom-in" data-aos-delay="200">
+        <div class="step-number">
+          <span>1</span>
+          <div class="step-pulse"></div>
+        </div>
+        <div class="step-content">
+          <h3>أنشئ حسابك</h3>
+          <p>سجل مجاناً وادخل إلى المنصة</p>
+        </div>
+        <div class="step-icon">📝</div>
+      </div>
+
+      <div class="step" data-aos="zoom-in" data-aos-delay="400">
+        <div class="step-number">
+          <span>2</span>
+          <div class="step-pulse"></div>
+        </div>
+        <div class="step-content">
+          <h3>أخبرنا عن مشروعك</h3>
+          <p>أدخل بيانات مشروعك وأهدافك</p>
+        </div>
+        <div class="step-icon">💼</div>
+      </div>
+
+      <div class="step" data-aos="zoom-in" data-aos-delay="600">
+        <div class="step-number">
+          <span>3</span>
+          <div class="step-pulse"></div>
+        </div>
+        <div class="step-content">
+          <h3>ابدأ النجاح</h3>
+          <p>احصل على خطط وأدوات جاهزة فوراً</p>
+        </div>
+        <div class="step-icon">🚀</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS (NEW) ================= -->
+<section class="testimonials" data-aos="fade-up">
+  <div class="section-header">
+    <h2>قصص نجاح عملائنا</h2>
+    <p>آراء الناس اللي اتحولت حياتهم</p>
+    <div class="header-line"></div>
+  </div>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <p>"أفضل منصة استخدمتها لإدارة مشروعي. وفرت علي وقت ومجهود كتير!"</p>
+      <div class="author">
+        <div class="avatar">أ</div>
+        <div>
+          <h4>أحمد محمد</h4>
+          <span>مؤسس متجر إلكتروني</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <p>"المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة 150% في 3 شهور!"</p>
+      <div class="author">
+        <div class="avatar">س</div>
+        <div>
+          <h4>سارة أحمد</h4>
+          <span>صاحبة مشروع تصميم</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="300">
+      <div class="stars">⭐⭐⭐⭐⭐</div>
+      <p>"دعم فني ممتاز وأدوات قوية جداً. أنصح كل رائد أعمال يجربها"</p>
+      <div class="author">
+        <div class="avatar">خ</div>
+        <div>
+          <h4>خالد عبدالله</h4>
+          <span>مدير تسويق</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA SECTION ================= -->
+<section class="cta" data-aos="zoom-in" data-aos-duration="800">
+  <div class="cta-content">
+    <div class="cta-glow"></div>
+    <h2>جاهز لبدء رحلة النجاح؟</h2>
+    <p>ابدأ معنا اليوم وحوّل طريقة إدارتك لمشروعك إلى الأفضل</p>
+    <button class="cta-button">
+      <span>ابدأ الآن مجاناً</span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M10 3l-1.5 1.5L13 9H3v2h10l-4.5 4.5L10 17l7-7-7-7z"/>
+      </svg>
+    </button>
+    <p class="cta-note">✨ لا يتطلب بطاقة ائتمان</p>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-content">
+      <!-- Brand -->
+      <div class="footer-brand" data-aos="fade-up">
+        <div class="footer-logo">
+          <div class="logo-circle">ب</div>
+          <span>خطوة</span>
+        </div>
+        <p class="footer-tagline">
+          نحن نبتكر ونطور ونرفع أفكارك إلى مستوى جديد من الاحترافية.
+        </p>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="footer-nav" data-aos="fade-up" data-aos-delay="100">
+        <h4>روابط سريعة</h4>
+        <ul class="nav-list">
+          <li>الرئيسية</li>
+          <li>احتياجاتك</li>
+          <li>خطوات العمل</li>
+          <li>آراء العملاء</li>
+        </ul>
+      </nav>
+
+      <!-- Contact -->
+      <div class="footer-contact" data-aos="fade-up" data-aos-delay="200">
+        <h4>تواصل معنا</h4>
+        <p>📧 info@khatwa.com</p>
+        <p>📱 +966 XX XXX XXXX</p>
+      </div>
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <!-- Social Links -->
+      <div class="social-links">
+        <a href="#" class="social-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+        <a href="#" class="social-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+          </svg>
+        </a>
+        <a href="#" class="social-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+          </svg>
+        </a>
+        <a href="#" class="social-link">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Copyright -->
+      <div class="copyright">
+        <p>© 2026 خطوة - بساطة. جميع الحقوق محفوظة.</p>
+      </div>
+    </div>
+  </div>
+</footer>

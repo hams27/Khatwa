@@ -1,0 +1,448 @@
+* {
+ text-align: right;
+  box-sizing: border-box;
+}
+
+.main {
+  flex: 1;
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  margin-right: 320px; /* space for sidebar */
+  background: #f8fafc !important;
+  direction: rtl;
+  text-align: right;
+}
+
+/* ===============================
+   Navbar (Top Bar)
+================================ */
+.navbar {
+  width: 100%;
+  height: 60px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.guide-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.guide-btn:hover {
+  border: 1px solid #f97316;
+  background: #f5f5f5;
+}
+
+/* ===============================
+   User Guide Popup
+================================ */
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.guide-modal {
+  background: #fff;
+  width: 90%;
+  max-width: 700px;
+  border-radius: 20px;
+  overflow: hidden;
+  animation: scaleFade 0.3s ease;
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.guide-content {
+  padding: 20px;
+  line-height: 1.8;
+  color: #444;
+}
+
+.guide-content ul {
+  margin-top: 12px;
+  padding-right: 18px;
+}
+
+.guide-content li {
+  margin-bottom: 8px;
+}
+
+.guide-footer {
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  text-align: left;
+}
+
+
+/* ===============================
+   Page Wrapper
+================================ */
+.tasks-page {
+  margin-right: 300px;
+  background: #f9fafb;
+  padding: 24px 28px 40px;
+  color: #111827;
+  animation: fadeIn .6s ease;
+}
+
+/* ===============================
+   Page Header
+================================ */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.page-header h1 {
+  margin: 0;
+}
+
+.page-header p {
+  margin-top: 6px;
+  color: #6b7280;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ===============================
+   Buttons
+================================ */
+.btn {
+  height: 40px;
+  padding: 0 36px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.btn-primary {
+  background: #f97316;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1e4eff, #ff6b00);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+}
+
+/* ===============================
+   Team Section
+================================ */
+.team-section {
+  margin-bottom: 34px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: right;
+}
+
+.team-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.team-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  width: 270px;
+  display: flex;
+  gap: 12px;
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffedd5;
+  color: #f97316;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* ===============================
+   Tasks Board
+================================ */
+.tasks-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.board-column {
+  border-radius: 18px;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  width: 270px;
+}
+
+.counter {
+  background: #1e4eff;
+  color: #ffffff;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+/* ===============================
+   Task Cards
+================================ */
+.task-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  text-align: right;
+  width: 280px;
+  height: max-content;
+  transition: transform .3s ease, box-shadow .3s ease;
+  animation: slideUp .4s ease both;
+}
+
+.task-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.08);
+}
+
+/* Status Colors */
+.all {
+  border: 1px solid gray;
+  border-right: 4px solid gray;
+}
+
+.waiting {
+  border: 1px solid skyblue;
+  border-right: 4px solid skyblue;
+}
+
+.preview {
+  border: 1px solid #facc15;
+  border-right: 4px solid #facc15;
+}
+
+.done {
+  border: 1px solid #4ade80;
+  border-right: 4px solid #4ade80;
+}
+
+.task-card h4 {
+  margin: 0 0 6px;
+}
+
+.task-card p {
+  color: #6b7280;
+  margin: 0 0 10px;
+}
+
+/* ===============================
+   Tags
+================================ */
+.tags span {
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 8px;
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+/* ===============================
+   Task Footer
+================================ */
+.task-footer {
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+/* ===============================
+   Badges
+================================ */
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.badge.normal {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.badge.urgent {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.badge.medium {
+  background: #fef9c3;
+  color: #ca8a04;
+}
+
+/* ===============================
+   Add Task Card
+================================ */
+.add-card {
+  border: 2px dashed #e5e7eb;
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  color: #6b7280;
+  cursor: pointer;
+  width: 270px;
+  margin-right: 5px;
+  transition: all .3s ease;
+}
+
+.add-card:hover {
+  background: #f1f5f9;
+  color: #1e4eff;
+}
+
+/* ===============================
+   Stats Section
+================================ */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: right;
+  transition: transform .3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card span {
+  color: #6b7280;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 6px;
+}
+
+.stat-card .danger {
+  color: #dc2626;
+}
+
+.stat-card .success {
+  color: #16a34a;
+}
+
+/* ===============================
+   Animations
+================================ */
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   Responsive
+================================ */
+@media (max-width: 1200px) {
+  .tasks-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .tasks-page {
+    margin-right: 0;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tasks-board {
+    grid-template-columns: 1fr;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .team-card,
+  .task-card,
+  .add-card,
+  .column-header {
+    width: 100%;
+  }
+}

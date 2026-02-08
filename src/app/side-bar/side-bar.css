@@ -1,0 +1,221 @@
+/* ================= Sidebar Container ================= */
+.sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 320px;
+  background: #ffffff;
+  border-left: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* ================= Header with Logo ================= */
+.sidebar-header {
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(90deg, #6366f1 0%, #f97316 100%);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.logo-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #1e4eff, #ff6b00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ================= Scroll Indicators ================= */
+.scroll-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  background: #fafafa;
+  border: 1px solid #e8e8e8;
+  cursor: pointer;
+}
+
+.scroll-top {
+  border-bottom: none;
+}
+
+.scroll-bottom {
+  border-top: none;
+}
+
+.scroll-indicator .material-icons {
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+/* ================= Scrollable Content ================= */
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem 1rem 1.5rem;
+}
+
+.sidebar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* ================= Dashboard Button ================= */
+.dashboard-btn {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  background-color: rgba(255, 255, 255, 0);
+  gap: 0.75rem;
+  color: rgb(0, 0, 0);
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-bottom: 0.75rem;
+}
+
+.dashboard-btn:hover {
+  background: linear-gradient(90deg, #6366f1 0%, #f97316 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.dashboard-btn .material-icons {
+  font-size: 1.5rem;
+}
+
+/* ================= Navigation Menu ================= */
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nav-item {
+  display: flex;
+  font-size: 1rem;
+  font-weight: 500;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  color: black;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+  background: linear-gradient(90deg, #6366f1 0%, #f97316 100%);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+}
+
+.nav-label {
+  flex: 1;
+  text-align: right;
+}
+
+/* ================= User Profile Section ================= */
+.user-section {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #ffffff;
+  flex-direction: row-reverse;
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(90deg, #6366f1 0%, #f97316 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  text-align: right;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.15rem;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 220px;
+  }
+
+  .logo-text {
+    font-size: 1.2rem;
+  }
+
+  .dashboard-btn {
+    font-size: 0.95rem;
+    padding: 0.85rem 1rem;
+  }
+}

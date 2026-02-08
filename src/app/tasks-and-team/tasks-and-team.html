@@ -1,0 +1,200 @@
+<!-- Sidebar -->
+<app-side-bar></app-side-bar>
+
+<!-- Main Content -->
+<div class="tasks-page">
+
+  <!-- ===============================
+       Navbar (Top Bar)
+  ================================= -->
+  <nav class="navbar">
+    <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
+  </nav>
+
+  <!-- User Guide Popup -->
+  <div class="guide-overlay" *ngIf="showGuide">
+    <div class="guide-modal">
+
+      <!-- Header -->
+      <div class="guide-header">
+        <h3>دليل استخدام المهام والفريق</h3>
+        <button class="close-btn" (click)="closeGuide()">✕</button>
+      </div>
+
+      <!-- Content -->
+      <div class="guide-content">
+        <p>
+          صفحة المهام والفريق تساعدك على إدارة الفريق ومتابعة كل المهام.
+        </p>
+        <ul>
+          <li>👥 متابعة أعضاء الفريق وعدد المهام لكل عضو</li>
+          <li>📋 عرض المهام حسب الحالة: قائمة، قيد التنفيذ، المراجعة، مكتمل</li>
+          <li>🏷️ إدارة الأولويات والعلامات (Tags) لكل مهمة</li>
+          <li>➕ إضافة مهام جديدة بسهولة لكل عمود</li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <div class="guide-footer">
+        <button class="add-btn" (click)="closeGuide()">فهمت</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===============================
+       Header Section
+  ================================= -->
+  <div class="page-header">
+    <div>
+      <h1>المهام والفريق</h1>
+      <p>نظم عملك ووزع المهام على فريقك</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline">إدارة الفريق</button>
+      <button class="btn btn-primary">+ مهمة جديدة</button>
+    </div>
+  </div>
+
+  <!-- ===============================
+       Team Section
+  ================================= -->
+  <section class="team-section">
+    <h3>أعضاء الفريق</h3>
+    <div class="team-cards">
+      <div class="team-card" *ngFor="let member of teamMembers">
+        <div class="avatar">{{ member.avatar }}</div>
+        <div>
+          <div class="name">{{ member.name }}</div>
+          <div class="count">{{ member.tasks }} مهمة</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===============================
+       Tasks Board
+  ================================= -->
+  <section class="tasks-board">
+
+    <!-- قائمة المهام (To Do) -->
+    <div class="board-column neutral">
+      <div class="column-header">
+        <span>قائمة المهام</span>
+        <span class="counter">{{ todoCount }}</span>
+      </div>
+
+      <div class="task-card all" *ngFor="let t of tasks" [hidden]="t.status !== 'todo'">
+        <h4>{{ t.title }}</h4>
+        <p>{{ t.desc }}</p>
+        <div class="tags">
+          <span *ngFor="let tag of t.tags">{{ tag }}</span>
+        </div>
+        <div class="task-footer">
+          <div class="left">
+            <span>{{ t.user }}</span>
+            <span>{{ t.date }}</span>
+          </div>
+          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+      </div>
+
+      <div class="add-card">+ إضافة مهمة</div>
+    </div>
+
+    <!-- قيد التنفيذ (In Progress) -->
+    <div class="board-column info">
+      <div class="column-header">
+        <span>قيد التنفيذ</span>
+        <span class="counter">{{ inProgressCount }}</span>
+      </div>
+
+      <div class="task-card waiting" *ngFor="let t of tasks" [hidden]="t.status !== 'in-progress'">
+        <h4>{{ t.title }}</h4>
+        <p>{{ t.desc }}</p>
+        <div class="tags">
+          <span *ngFor="let tag of t.tags">{{ tag }}</span>
+        </div>
+        <div class="task-footer">
+          <div class="left">
+            <span>{{ t.user }}</span>
+            <span>{{ t.date }}</span>
+          </div>
+          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+      </div>
+
+      <div class="add-card">+ إضافة مهمة</div>
+    </div>
+
+    <!-- المراجعة (Review) -->
+    <div class="board-column warning">
+      <div class="column-header">
+        <span>المراجعة</span>
+        <span class="counter">{{ reviewCount }}</span>
+      </div>
+
+      <div class="task-card preview" *ngFor="let t of tasks" [hidden]="t.status !== 'review'">
+        <h4>{{ t.title }}</h4>
+        <p>{{ t.desc }}</p>
+        <div class="tags">
+          <span *ngFor="let tag of t.tags">{{ tag }}</span>
+        </div>
+        <div class="task-footer">
+          <div class="left">
+            <span>{{ t.user }}</span>
+            <span>{{ t.date }}</span>
+          </div>
+          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+      </div>
+
+      <div class="add-card">+ إضافة مهمة</div>
+    </div>
+
+    <!-- مكتمل (Completed) -->
+    <div class="board-column success">
+      <div class="column-header">
+        <span>مكتمل</span>
+        <span class="counter">{{ completedCount }}</span>
+      </div>
+
+      <div class="task-card done" *ngFor="let t of tasks" [hidden]="t.status !== 'completed'">
+        <h4>{{ t.title }}</h4>
+        <p>{{ t.desc }}</p>
+        <div class="tags">
+          <span *ngFor="let tag of t.tags">{{ tag }}</span>
+        </div>
+        <div class="task-footer">
+          <div class="left">
+            <span>{{ t.user }}</span>
+            <span>{{ t.date }}</span>
+          </div>
+          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+      </div>
+
+      <div class="add-card">+ إضافة مهمة</div>
+    </div>
+
+  </section>
+
+  <!-- ===============================
+       Stats Section
+  ================================= -->
+  <section class="stats">
+    <div class="stat-card">
+      <span>إجمالي المهام</span>
+      <strong>{{ tasks.length }}</strong>
+    </div>
+    <div class="stat-card">
+      <span>المهام المكتملة</span>
+      <strong class="success">{{ completedCount }}</strong>
+    </div>
+    <div class="stat-card">
+      <span>المهام المتأخرة</span>
+      <strong class="danger">{{ reviewCount }}</strong>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,66 @@
+<aside class="sidebar">
+
+  <!-- ================= Logo Section ================= -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">ب</div>
+      <span class="logo-text">بساطة</span>
+    </div>
+  </div>
+
+  <!-- ================= Scrollable Main Content ================= -->
+  <div class="sidebar-content">
+
+    <!-- Dashboard Button -->
+    <button class="dashboard-btn" [routerLink]="'/dashboard'">
+      <img src="squares.png" alt="" width="20" height="20">
+      <span>لوحة التحكم</span>
+    </button>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+
+      <!-- Dynamic Menu Items -->
+      <a
+        *ngFor="let item of menuItems"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+
+        <!-- Menu Icon (Optional) -->
+        <img
+          *ngIf="item.icon"
+          [src]="item.icon"
+          alt="{{ item.label }}"
+          class="nav-icon"
+        />
+
+        <!-- Menu Label -->
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+
+    </nav>
+
+  </div>
+
+  <!-- ================= Scroll Indicator ================= -->
+  <div class="scroll-indicator scroll-bottom">
+    <span class="material-icons">expand_more</span>
+  </div>
+
+  <!-- ================= User Profile Section ================= -->
+  <div class="user-section">
+
+    <!-- User Info -->
+    <div class="user-details">
+      <div class="user-name">{{ userInfo.name }}</div>
+      <div class="user-role">{{ userInfo.role }}</div>
+    </div>
+
+    <!-- User Avatar -->
+    <div class="user-avatar">{{ userInfo.avatar }}</div>
+
+  </div>
+
+</aside>

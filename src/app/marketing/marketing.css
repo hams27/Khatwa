@@ -1,0 +1,379 @@
+/* ======================= Global ======================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  background: #f8fafc;
+  margin-right: 320px; /* sidebar space */
+}
+
+.guide-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.guide-modal {
+  background: #fff;
+  width: 90%;
+  max-width: 700px;
+  border-radius: 20px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease;
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.guide-content {
+  padding: 20px;
+  line-height: 1.8;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ======================= Navbar ======================= */
+.navbar {
+  width: 100%;
+  height: 60px;
+  background: #fff;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.guide-btn {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.guide-btn:hover {
+  border-color: #f97316;
+  background: #f5f5f5;
+}
+
+/* ======================= Header Section ======================= */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.header p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.add-btn {
+  background: #f97316;
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(135deg, #3b5bfd, #ff7a18);
+}
+
+/* ======================= Progress Box ======================= */
+.progress-box {
+  position: relative;
+  background: #fff3e8;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 30px;
+  text-align: right;
+}
+
+.progress-box .info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.progress-box .info p {
+  font-size: 14px;
+  color: #555;
+}
+
+.percent {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #f97316;
+}
+
+.progress-bar {
+  background: #fbd5c0;
+  height: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.fill {
+  height: 100%;
+  background: #f97316;
+  border-radius: 10px;
+  width: 0%;
+  animation: fillProgress 1s forwards ease-in-out;
+}
+
+/* Progress Animation */
+@keyframes fillProgress {
+  0% { width: 0; }
+  100% { width: var(--progress-width, 50%); }
+}
+
+/* ======================= Roadmap ======================= */
+.roadmap {
+  background: #fff;
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  text-align: right;
+  margin-bottom: 30px;
+}
+
+.roadmap h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.roadmap p.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 15px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 15px;
+  margin-top: 15px;
+  gap: 15px;
+  transition: all 0.3s ease;
+}
+
+.step .icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.step.done .icon {
+  background: #10b981;
+  color: #fff;
+}
+
+.step.active .icon {
+  background: #f97316;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.step.next .icon {
+  border: 2px solid #ccc;
+}
+
+.badge {
+  margin-right: auto;
+  background: #f97316;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.badge.blue { background: #3b82f6; }
+.badge.gray { background: #e5e7eb; color: #555; }
+
+/* ======================= Content Section ======================= */
+.content-section {
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Card Styles */
+.card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid #eee;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  border-color: #f97316;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.post-item, .idea-item {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.post-item:hover, .idea-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-color: #f97316;
+}
+
+.post-info h5, .idea-item h5 {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.time {
+  font-size: 12px;
+  color: #777;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #fff;
+}
+
+.badge.orange { background: #ff7a00; }
+.badge.blue { background: #3b82f6; }
+
+.social {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  font-size: 18px;
+}
+
+.ig { color: #e1306c; }
+.fb { color: #1877f2; }
+.tw { color: #1da1f2; }
+
+.tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f1f1f1;
+}
+
+.tag.green { background: #dcfce7; color: #166534; }
+.tag.yellow { background: #fef3c7; color: #92400e; }
+
+p {
+  color: #666;
+}
+
+/* ======================= Responsive ======================= */
+@media (max-width: 1024px) {
+  .main, .header, .progress-box, .roadmap, .content-section {
+    margin-right: 260px;
+  }
+
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .main, .header, .progress-box, .roadmap, .content-section {
+    margin-right: 0;
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .add-btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,89 @@
+<!-- Sidebar -->
+<app-side-bar></app-side-bar>
+
+<!-- Main Analytics Section -->
+<section class="analytics">
+
+  <!-- Navbar with User Guide -->
+  <nav class="navbar">
+    <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
+  </nav>
+
+  <!-- User Guide Popup -->
+  <div class="guide-overlay" *ngIf="showGuide">
+    <div class="guide-modal">
+      <div class="guide-header">
+        <h3>دليل استخدام التحليلات والتوقعات</h3>
+        <button class="close-btn" (click)="closeGuide()">✕</button>
+      </div>
+      <div class="guide-content">
+        <p>
+          هذه الصفحة تعرض التحليلات الذكية للمشروع، تساعدك على اتخاذ قرارات أفضل.
+        </p>
+        <ul>
+          <li>📊 متابعة أداء المشروع بشكل تفصيلي</li>
+          <li>💡 رؤى وتوقعات ذكية مدعومة بالبيانات</li>
+          <li>📈 مقارنة أداء القنوات التسويقية</li>
+          <li>⚡ اختصار الوقت في اتخاذ القرارات بناء على البيانات</li>
+        </ul>
+      </div>
+      <div class="guide-footer">
+        <button class="add-btn" (click)="closeGuide()">فهمت</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <header>
+    <h2>التحليلات والتوقعات</h2>
+    <p>رؤى ذكية لمساعدتك على اتخاذ قرارات أفضل</p>
+  </header>
+
+  <!-- Stats Cards -->
+  <div class="stats-cards">
+    <div class="card" *ngFor="let card of statsCards" [ngClass]="card.color">
+      <span class="badge">{{ card.change }}</span>
+      <div class="icon">{{ card.icon }}</div>
+      <div class="details">
+        <span class="title">{{ card.title }}</span>
+        <span class="value">{{ card.value }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Chart -->
+  <div class="chart-box">
+    <h3>أداء المشروع</h3>
+    <p>الزوار والمبيعات خلال الأشهر الماضية</p>
+    <div class="chart-placeholder">LINE CHART</div>
+  </div>
+
+  <!-- Insights Section -->
+  <div class="insights">
+    <h3>
+      <img src="stars.svg" alt="" width="30px">
+      توقعات ذكية
+    </h3>
+    <span>رؤى مدعومة بالبيانات لمساعدتك على النمو</span>
+
+    <div class="insight" *ngFor="let insight of insights" [ngClass]="insight.type">
+      <h4>{{ insight.title }}</h4>
+      <p>{{ insight.description }}</p>
+
+      <div class="confidence">
+        <span>مستوى الثقة : {{ insight.confidence }}%</span>
+        <div class="progress">
+          <div class="bar" [style.width.%]="insight.confidence"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marketing Channels Chart -->
+  <div class="chart-box">
+    <h3>أداء القنوات التسويقية</h3>
+    <p>مقارنة بين مصادر الزوار</p>
+    <div class="chart-placeholder">LINE CHART</div>
+  </div>
+
+</section>
