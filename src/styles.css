@@ -20,7 +20,9 @@
   font-style: normal;
   font-display: swap;
 }
-
+*{
+  font-family: "HT Rakeez", sans-serif !important;
+}
 
 body{
   background: 
