@@ -14,20 +14,22 @@ interface Card {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SideBar,CommonModule,RouterLink],
+  imports: [SideBar, CommonModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
 })
 export class Dashboard {
   showGuide = false;
+  
   openGuide() {
-  this.showGuide = true;
-}
+    this.showGuide = true;
+  }
 
-closeGuide() {
-  this.showGuide = false;
-}
- cards: Card[] = [
+  closeGuide() {
+    this.showGuide = false;
+  }
+  
+  cards: Card[] = [
     {
       icon: '/graph-up-arrow.svg',
       title: 'أكمل خطتك التسويقية',

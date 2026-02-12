@@ -1,6 +1,6 @@
 :root {
-  --orange-main: #ff6b00;
-  --orange-hover: linear-gradient(135deg, #1e4eff, #ff6b00);
+  --orange-main: #FF9705;
+  --orange-hover: linear-gradient(135deg, #1e4eff, #FF9705);
 }
 
 /* ===== HT Moshreq Pro ===== */
@@ -14,8 +14,8 @@
 
 /* ===== HT Rakeez ===== */
 @font-face{
-  font-family: "HT Rakeez";
   src: url("https://cdn.prod.website-files.com/688cea29347896e7a5b52e82/688fb7e3095ccc71f01c9cb2_%20HT%20Rakeez%20-%20Regular.woff2") format("woff2");
+  font-family: "HT Rakeez";
   font-weight: 200;
   font-style: normal;
   font-display: swap;
@@ -24,12 +24,12 @@
 
 body{
   background: 
-    radial-gradient(circle 600px at top left, #ff444421 ,#3700ff11, transparent),
-    radial-gradient(circle 600px at center left, #ff444421,#3700ff11, transparent),
-    radial-gradient(circle 600px at center right, #3700ff11,#ff444421, transparent),
-    radial-gradient(circle 600px at top right, #3700ff11,#ff444421, transparent),
-    radial-gradient(circle 600px at bottom right, #3700ff11,#ff444421, transparent),
-    radial-gradient(circle 600px at bottom left, #ff444421,#3700ff11, transparent);
+    radial-gradient(circle 600px at top left, #FF970521 ,#2563EB11, transparent),
+    radial-gradient(circle 600px at center left, #FF970521,#2563EB11, transparent),
+    radial-gradient(circle 600px at center right, #2563EB11,#FF970521, transparent),
+    radial-gradient(circle 600px at top right, #2563EB11,#FF970521, transparent),
+    radial-gradient(circle 600px at bottom right, #2563EB11,#FF970521, transparent),
+    radial-gradient(circle 600px at bottom left, #FF970521,#2563EB11, transparent);
 
   text-align: center;
   padding: 0;

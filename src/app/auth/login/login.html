@@ -1,1 +1,179 @@
-<p>login works!</p>
+<!-- ================= MAIN CONTAINER ================= -->
+<div class="login-container">
+
+  <!-- ================= CENTER FORM ================= -->
+  <div class="form-wrapper">
+    
+    <div class="form-container">
+
+
+      <!-- Welcome Header -->
+      <div class="form-header" data-aos="fade-up" data-aos-delay="200">
+        <h2 class="form-title">
+          <span class="title-gradient">مرحباً بعودتك!</span>
+        </h2>
+        <p class="form-subtitle">قم بتسجيل الدخول للوصول إلى حسابك</p>
+      </div>
+
+      <!-- Success Message -->
+      <div class="success-message" *ngIf="loginSuccess" data-aos="zoom-in">
+        <div class="success-icon">✓</div>
+        <p>تم تسجيل الدخول بنجاح! جاري التحويل...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" *ngIf="loginError" data-aos="shake">
+        <div class="error-icon">⚠</div>
+        <p>{{ errorMessage }}</p>
+      </div>
+
+      <!-- Login Form -->
+      <form class="login-form" (ngSubmit)="onSubmit()" *ngIf="!loginSuccess">
+        
+        <!-- Email Field -->
+        <div class="form-group" 
+             data-aos="fade-up" 
+             data-aos-delay="300"
+             [class.has-error]="emailTouched && emailError"
+             [class.has-value]="email">
+          <label class="form-label">
+            <i class="fas fa-envelope"></i>
+            البريد الإلكتروني
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="email" 
+              class="form-input"
+              [(ngModel)]="email"
+              name="email"
+              (blur)="validateEmail()"
+              (input)="emailTouched && validateEmail()"
+              placeholder="example@domain.com"
+              [disabled]="isLoading">
+            <div class="input-border"></div>
+            <div class="input-glow"></div>
+          </div>
+          <span class="error-text" *ngIf="emailTouched && emailError">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ emailError }}
+          </span>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group" 
+             data-aos="fade-up" 
+             data-aos-delay="400"
+             [class.has-error]="passwordTouched && passwordError"
+             [class.has-value]="password">
+          <label class="form-label">
+            <i class="fas fa-lock"></i>
+            كلمة المرور
+          </label>
+          <div class="input-wrapper">
+            <input 
+              [type]="showPassword ? 'text' : 'password'" 
+              class="form-input"
+              [(ngModel)]="password"
+              name="password"
+              (blur)="validatePassword()"
+              (input)="passwordTouched && validatePassword()"
+              placeholder="••••••••"
+              [disabled]="isLoading">
+            <button 
+              type="button" 
+              class="toggle-password"
+              (click)="togglePassword()"
+              [disabled]="isLoading">
+            </button>
+            <div class="input-border"></div>
+            <div class="input-glow"></div>
+          </div>
+          <span class="error-text" *ngIf="passwordTouched && passwordError">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ passwordError }}
+          </span>
+        </div>
+
+        <!-- Remember Me & Forget Password -->
+        <div class="form-options" data-aos="fade-up" data-aos-delay="500">
+          <label class="checkbox-container">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="rememberMe"
+              name="rememberMe"
+              [disabled]="isLoading">
+            <span class="checkmark"></span>
+            <span class="checkbox-label">تذكرني</span>
+          </label>
+          <a routerLink="/forget-password" class="forget-link">
+            نسيت كلمة المرور؟
+          </a>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="submit-btn"
+          data-aos="zoom-in" 
+          data-aos-delay="600"
+          [disabled]="isLoading">
+          <span class="btn-content" *ngIf="!isLoading">
+            <span class="btn-text">تسجيل الدخول</span>
+            <i class="fas fa-arrow-left btn-icon"></i>
+          </span>
+          <span class="btn-loader" *ngIf="isLoading">
+            <div class="spinner"></div>
+            <span>جاري التحميل...</span>
+          </span>
+          <div class="btn-shine"></div>
+        </button>
+
+        <!-- Divider -->
+        <div class="divider" data-aos="fade-up" data-aos-delay="700">
+          <span class="divider-text">أو سجل الدخول باستخدام</span>
+        </div>
+
+        <!-- Social Login -->
+        <div class="social-login" data-aos="fade-up" data-aos-delay="800">
+          <button 
+            type="button" 
+            class="social-btn google"
+            (click)="loginWithGoogle()"
+            [disabled]="isLoading">
+            <i class="fab fa-google"></i>
+            <span>Google</span>
+          </button>
+          <button 
+            type="button" 
+            class="social-btn facebook"
+            (click)="loginWithFacebook()"
+            [disabled]="isLoading">
+            <i class="fab fa-facebook-f"></i>
+            <span>Facebook</span>
+          </button>
+          <button 
+            type="button" 
+            class="social-btn apple"
+            (click)="loginWithApple()"
+            [disabled]="isLoading">
+            <i class="fab fa-apple"></i>
+            <span>Apple</span>
+          </button>
+        </div>
+
+        <!-- Register Link -->
+        <div class="register-link" data-aos="fade-up" data-aos-delay="900">
+          <p>
+            ليس لديك حساب؟ 
+            <a routerLink="/register" class="link-highlight">
+              سجل الآن مجاناً
+              <i class="fas fa-arrow-left"></i>
+            </a>
+          </p>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>

@@ -2,9 +2,7 @@ import { Component, HostListener, OnInit, AfterViewInit, ElementRef } from '@ang
 import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-// تأكد من تثبيت AOS أولاً
-// npm install aos
-// npm install --save-dev @types/aos
+
 
 declare const AOS: any;
 
@@ -19,39 +17,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
   
   isSticky = false;
   activeLink = 'الرئيسية';
+  isAutoClimbComplete = false;
   
  navLinks = [
     { name: 'الرئيسية', active: true },
-    { name: 'الخدمات', active: false },
-    { name: 'المميزات', active: false },
-    { name: 'كيفية العمل', active: false },
+    { name: 'احتياجاتك', active: false },
+    { name: 'خطوات العمل', active: false },
     { name: 'آراء العملاء', active: false },
-    { name: 'تواصل', active: false }
+    { name: ' الأسئلة الشائعة ', active: false },
+    // { name: 'تواصل', active: false }
   ];
 
-  stats = [
-    { 
-      value: '+10,000', 
-      label: 'رائد أعمال', 
-      current: 0,
-      target: 10000,
-      suffix: '+'
-    },
-    { 
-      value: '95%', 
-      label: 'نسبة الرضا', 
-      current: 0,
-      target: 95,
-      suffix: '%'
-    },
-    { 
-      value: '50%', 
-      label: 'زيادة في الإنتاجية', 
-      current: 0,
-      target: 50,
-      suffix: '%'
-    }
-  ];
+stats = [
+  { label: 'رائد أعمال', targetNumber: 10000, suffix: '+', displayValue: '0' },
+  { label: 'نسبة الرضا', targetNumber: 95, suffix: '%', displayValue: '0' },
+  { label: 'زيادة في الإنتاجية', targetNumber: 50, suffix: '%', displayValue: '0' },
+];
+
 
   constructor(private elementRef: ElementRef) {}
 
@@ -76,8 +58,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Add parallax effect
     this.initParallax();
     
-    // Add custom cursor effect
-    this.initCustomCursor();
+ 
   }
 
   ngAfterViewInit() {
@@ -93,6 +74,32 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     // Add magnetic effect to buttons
     this.addMagneticEffect();
+
+    // ========== بدء أنيميشن التسلق التلقائي ==========
+    this.startAutoClimbing();
+  }
+
+  // ========== أنيميشن التسلق التلقائي ==========
+  startAutoClimbing() {
+    const character = document.querySelector('.character');
+    if (character) {
+      // الظهور من الشمال
+      setTimeout(() => {
+        character.classList.add('appear');
+      }, 500);
+
+      // بدء التسلق التلقائي
+      setTimeout(() => {
+        character.classList.add('auto-climbing', 'climbing');
+      }, 1700);
+
+      // إنهاء التسلق التلقائي والتحويل للتحكم اليدوي
+      setTimeout(() => {
+        character.classList.remove('auto-climbing', 'climbing');
+        character.classList.add('manual-control');
+        this.isAutoClimbComplete = true;
+      }, 5200); // 500 + 1700 + 3000 (مدة التسلق)
+    }
   }
 
   // تحميل AOS من CDN
@@ -133,18 +140,57 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
     
-    // Parallax effect for hero elements
-    const heroElements = document.querySelectorAll('.hero .badge, .hero h1, .hero p');
-    heroElements.forEach((element: any, index) => {
-      const speed = (index + 1) * 0.1;
-      const yPos = -(scrollTop * speed);
-      element.style.transform = `translateY(${yPos}px)`;
-    });
+    // ========== CHARACTER MANUAL CONTROL بعد انتهاء التسلق التلقائي ==========
+    if (this.isAutoClimbComplete) {
+      const character = document.querySelector('.character') as HTMLElement;
+      if (character) {
+        const heroSection = document.querySelector('.hero-modern') as HTMLElement;
+        if (heroSection) {
+          const sectionTop = heroSection.offsetTop;
+          const sectionHeight = heroSection.offsetHeight;
+          const scrollProgress = (scrollTop - sectionTop) / sectionHeight;
+          
+          // تحريك الشخصية بناءً على الـ scroll فقط بعد انتهاء التسلق التلقائي
+          if (scrollProgress >= 0 && scrollProgress <= 1) {
+            const climbProgress = scrollProgress * 100;
+            
+            // حساب المواقع (من نقطة نهاية التسلق التلقائي)
+            const bottomStart = 300; // نقطة انتهاء التسلق التلقائي
+            const bottomEnd = 360;   // نقطة أعلى
+            const leftStart = 330;   // نقطة انتهاء التسلق التلقائي
+            const leftEnd = 390;     // نقطة أبعد
+            
+            const currentBottom = bottomStart + (bottomEnd - bottomStart) * (climbProgress / 100);
+            const currentLeft = leftStart + (leftEnd - leftStart) * (climbProgress / 100);
+            
+            // حساب الحجم (يستمر في التصغير)
+            const scaleStart = 0.6;
+            const scaleEnd = 0.3;
+            const currentScale = scaleStart - (scaleStart - scaleEnd) * (climbProgress / 100);
+            
+            character.style.bottom = `${currentBottom}px`;
+            character.style.left = `${currentLeft}px`;
+            character.style.transform = `scale(${currentScale})`;
+            
+            // إضافة animation class
+            if (climbProgress > 5) {
+              character.classList.add('climbing');
+            } else {
+              character.classList.remove('climbing');
+            }
+          }
+        }
+      }
+    }
     
     // Hide/show scroll indicator
     const scrollIndicator = document.querySelector('.scroll-indicator') as HTMLElement;
     if (scrollIndicator) {
-      scrollIndicator.style.opacity = scrollTop > 200 ? '0' : '1';
+      if (scrollTop > 300) {
+        scrollIndicator.classList.add('hidden');
+      } else {
+        scrollIndicator.classList.remove('hidden');
+      }
     }
   }
 
@@ -177,8 +223,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     link.active = true;
     this.activeLink = link.name;
     
-    // Add click animation
-    this.addClickRipple(event);
+   
   }
 
   // ========== COUNTER ANIMATIONS ==========
@@ -190,47 +235,46 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  animateCounter(stat: any) {
-    const duration = 2000;
-    const frameRate = 1000 / 60;
-    const totalFrames = Math.round(duration / frameRate);
-    const increment = stat.target / totalFrames;
-    
-    let currentFrame = 0;
-    
-    const timer = setInterval(() => {
-      currentFrame++;
-      stat.current += increment;
-      
-      if (currentFrame === totalFrames) {
-        stat.current = stat.target;
-        clearInterval(timer);
-      }
-      
-      // Update value with suffix
-      stat.value = Math.round(stat.current) + stat.suffix;
-    }, frameRate);
-  }
+animateCounter(stat: any) {
+  let start = 0;
+  const end = stat.targetNumber;
+  const suffix = stat.suffix || '';
+  const duration = 7000; // 2 ثواني
+  const startTime = performance.now();
+
+  const step = (currentTime: number) => {
+    const progress = Math.min((currentTime - startTime) / duration, 1);
+    stat.displayValue = Math.floor(progress * end).toLocaleString() + suffix;
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    } else {
+      stat.displayValue = end.toLocaleString() + suffix;
+    }
+  };
+
+  requestAnimationFrame(step);
+}
+
 
   // ========== INTERSECTION OBSERVER FOR STATS ==========
-  observeStats() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          // Restart counter animation when stats come into view
-          if (entry.target.classList.contains('stat-item')) {
-            this.startCounterAnimations();
-          }
-        }
-      });
-    }, {
-      threshold: 0.5
+ observeStats() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const index = Number(entry.target.getAttribute('data-index'));
+        this.animateCounter(this.stats[index]);
+        observer.unobserve(entry.target);
+      }
     });
+  }, { threshold: 0.5 });
 
-    const statElements = document.querySelectorAll('.stat-item');
-    statElements.forEach(el => observer.observe(el));
-  }
+  const statElements = document.querySelectorAll('.stat-item');
+  statElements.forEach((el, i) => {
+    el.setAttribute('data-index', i.toString());
+    observer.observe(el);
+  });
+}
+
 
   // ========== PARALLAX EFFECT ==========
   initParallax() {
@@ -246,64 +290,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   // ========== CUSTOM CURSOR EFFECT ==========
-  initCustomCursor() {
-    const cursor = document.createElement('div');
-    cursor.className = 'custom-cursor';
-    cursor.style.cssText = `
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #3b5bfd;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transition: all 0.15s ease;
-      transform: translate(-50%, -50%);
-      mix-blend-mode: difference;
-    `;
-    document.body.appendChild(cursor);
 
-    const cursorDot = document.createElement('div');
-    cursorDot.className = 'custom-cursor-dot';
-    cursorDot.style.cssText = `
-      position: fixed;
-      width: 8px;
-      height: 8px;
-      background: #ff7a18;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transition: all 0.1s ease;
-      transform: translate(-50%, -50%);
-    `;
-    document.body.appendChild(cursorDot);
-
-    document.addEventListener('mousemove', (e) => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-      
-      setTimeout(() => {
-        cursorDot.style.left = e.clientX + 'px';
-        cursorDot.style.top = e.clientY + 'px';
-      }, 50);
-    });
-
-    // Grow cursor on hover
-    const hoverElements = document.querySelectorAll('a, button, .card, .nav-links li');
-    hoverElements.forEach(element => {
-      element.addEventListener('mouseenter', () => {
-        cursor.style.width = '40px';
-        cursor.style.height = '40px';
-        cursor.style.borderColor = '#ff7a18';
-      });
-      
-      element.addEventListener('mouseleave', () => {
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        cursor.style.borderColor = '#3b5bfd';
-      });
-    });
-  }
 
   // ========== MAGNETIC EFFECT FOR BUTTONS ==========
   addMagneticEffect() {
@@ -324,34 +311,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // ========== CLICK RIPPLE EFFECT ==========
-  addClickRipple(event: any) {
-    const target = event.currentTarget;
-    const ripple = document.createElement('span');
-    
-    const rect = target.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-    
-    ripple.style.cssText = `
-      position: absolute;
-      width: ${size}px;
-      height: ${size}px;
-      left: ${x}px;
-      top: ${y}px;
-      background: rgba(59, 91, 253, 0.4);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: ripple-animation 0.6s ease-out;
-    `;
-    
-    target.appendChild(ripple);
-    
-    setTimeout(() => {
-      ripple.remove();
-    }, 600);
-  }
+
 
   // ========== SMOOTH SCROLL TO SECTION ==========
   scrollToSection(sectionId: string) {

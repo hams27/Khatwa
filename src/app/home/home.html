@@ -1,18 +1,9 @@
 <!-- ================= HEADER / NAVBAR ================= -->
 <header class="header" [class.sticky]="isSticky">
-  <!-- Animated Background Particles -->
-  <div class="header-particles">
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-  </div>
 
   <!-- Logo -->
   <div class="logo" data-aos="fade-left" data-aos-duration="800">
-    <div class="logo-circle">
-      <span class="logo-letter">ب</span>
-    </div>
-    <span class="logo-text">خطــوة</span>
+    <span class="logo-text"><img src="logo.svg" alt=""></span>
   </div>
 
   <!-- Navigation Links -->
@@ -31,74 +22,105 @@
   <!-- CTA Button -->
   <button class="btn-outline" routerLink="/register" data-aos="fade-right" data-aos-duration="800">
     <span class="btn-text">ابدأ الآن مجاناً</span>
-    <span class="btn-icon">→</span>
   </button>
 </header>
 
 <!-- ================= HERO SECTION ================= -->
-<section class="hero">
-  <!-- Animated Background -->
-  <div class="hero-bg">
-    <div class="gradient-orb orb-1"></div>
-    <div class="gradient-orb orb-2"></div>
-    <div class="gradient-orb orb-3"></div>
+<section class="hero-modern">
+
+  <!-- Floating Background Shapes -->
+  <div class="floating-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
   </div>
 
-  <!-- Floating Elements -->
-  <div class="floating-elements">
-    <div class="float-icon float-1">💡</div>
-    <div class="float-icon float-2">🚀</div>
-    <div class="float-icon float-3">⚡</div>
-    <div class="float-icon float-4">🎯</div>
+  <!-- Floating Steps Icons -->
+  <div class="floating-steps">
+    <div class="floating-step">📊</div>
+    <div class="floating-step">💰</div>
+    <div class="floating-step">📈</div>
+    <div class="floating-step">🎯</div>
   </div>
 
-  <!-- Badge -->
-  <div class="badge" data-aos="zoom-in" data-aos-duration="600">
-    <span class="badge-icon">⭐</span>
-    <span class="badge-text">منصة إدارة الأعمال الأولى عربياً</span>
-    <div class="badge-glow"></div>
-  </div>
+  <!-- Grid Pattern Background -->
+  <div class="grid-pattern"></div>
 
-  <!-- Main Heading -->
-  <h1 data-aos="fade-up" data-aos-duration="800" data-aos-delay="200">
-    <span class="word-animate">خطـــــــــــــــــوة</span>
-  </h1>
-
-  <!-- Description -->
-  <p data-aos="fade-up" data-aos-duration="800" data-aos-delay="400">
-    منصة شاملة مصممة خصيصاً لأصحاب المشاريع الصغيرة ورواد الأعمال الشباب.
-    <br>
-    <span class="highlight-text">تسويق، مالية، مهام، تحليلات، تعلم، ودعم مجتمعي</span>
-    — كل ما تحتاجه في مكان واحد.
-  </p>
-
-  <!-- Hero Actions -->
-  <div class="buttons" data-aos="fade-up" data-aos-duration="800" data-aos-delay="600">
-    <button class="btn-primary" routerLink="/layout">
-      <span>ابدأ مشروعك الآن</span>
-      <div class="btn-shine"></div>
-    </button>
-    <button class="btn-secondary">
-      <span>شاهد العرض التوضيحي</span>
-      <svg class="play-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M6 4l10 6-10 6V4z"/>
-      </svg>
-    </button>
-  </div>
-
-  <!-- Stats with Counter Animation -->
-  <div class="stats" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="800">
-    <div *ngFor="let stat of stats; let i = index" 
-         class="stat-item"
-         [attr.data-aos]="'zoom-in'"
-         [attr.data-aos-delay]="800 + (i * 150)">
-      <div class="stat-icon">
-        <div class="stat-circle"></div>
-      </div>
-      <h3 class="stat-value" [attr.data-target]="stat.value">{{ stat.value }}</h3>
-      <span class="stat-label">{{ stat.label }}</span>
-      <div class="stat-glow"></div>
+  <!-- Top Badge -->
+  <div class="top-badge-section">
+    <div class="hero-badge-centered">
+      <span class="badge-icon"><img src="Icon.svg" alt="" width="24px" height="24px"></span>
+      <span class="badge-text">منصة إدارة الأعمال الأولى عربياً</span>
     </div>
+  </div>
+
+  <div class="hero-container">
+    
+    <!-- Hero Content -->
+    <div class="hero-content">
+
+      <h1 class="hero-title">
+        أدِر مشروعك بالكامل من
+        <span class="title-highlight">مكان واحد</span>
+      </h1>
+
+      <p class="hero-description">
+        منصة شاملة مصممة خصيصاً لأصحاب المشاريع الصغيرة ورواد الأعمال الشباب.
+        تسويق، مالية، مهام، تحليلات، تعلّم، ودعم مجتمعي - كل ما تحتاجه في مكان واحد.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn-primary-hero" routerLink="/layout">
+          <span class="btn-text">ابدأ مشروعك الآن</span>
+        </button>
+
+        <button class="btn-secondary-hero">
+          <span class="btn-text">شاهد العرض التوضيحي</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Hero Illustration -->
+    <div class="hero-illustration">
+      <div class="illustration-wrapper">
+
+        <div class="mountain-illustration">
+
+          <!-- Character -->
+          <div class="character">
+            <div class="character-head"></div>
+            <div class="character-body"></div>
+          </div>
+
+          <!-- Mountain Path -->
+          <div class="mountain-path">
+            <div class="path-segment segment-1"></div>
+            <div class="path-segment segment-2"></div>
+            <div class="path-segment segment-3"></div>
+            <div class="path-segment segment-4"></div>
+            <div class="path-segment segment-5"></div>
+          </div>
+
+          <!-- Success Flag -->
+          <div class="success-flag">
+            <div class="flag-cloth">🏆</div>
+          </div>
+
+          <!-- Coins -->
+          <div class="coin coin-1">💰</div>
+          <div class="coin coin-2">💰</div>
+          <div class="coin coin-3">💎</div>
+        </div>
+
+        <!-- Illustration Glow -->
+        <div class="illustration-glow"></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Scroll Indicator -->
@@ -108,7 +130,23 @@
     </div>
     <span>اسحب للأسفل</span>
   </div>
+
 </section>
+
+<!-- Stats Bar -->
+<div class="stats-bar" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="1000">
+  <div class="stats-container">
+    <div class="stat-item" *ngFor="let stat of stats; let i = index"
+         [attr.data-aos]="'zoom-in'" 
+         [attr.data-aos-delay]="1000 + (i * 150)">
+      <div class="stat-content">
+        <h3 class="stat-value" [attr.data-target]="stat.targetNumber">{{ stat.displayValue }}</h3>
+        <span class="stat-label">{{ stat.label }}</span>
+      </div>
+      <div class="stat-shine"></div>
+    </div>
+  </div>
+</div>
 
 <!-- ================= FEATURES SECTION ================= -->
 <section class="features">
@@ -272,7 +310,7 @@
   </div>
 </section>
 
-<!-- ================= TESTIMONIALS (NEW) ================= -->
+<!-- ================= TESTIMONIALS ================= -->
 <section class="testimonials" data-aos="fade-up">
   <div class="section-header">
     <h2>قصص نجاح عملائنا</h2>
@@ -321,8 +359,8 @@
 
 <!-- ================= CTA SECTION ================= -->
 <section class="cta" data-aos="zoom-in" data-aos-duration="800">
+  <div class="cta-glow"></div>
   <div class="cta-content">
-    <div class="cta-glow"></div>
     <h2>جاهز لبدء رحلة النجاح؟</h2>
     <p>ابدأ معنا اليوم وحوّل طريقة إدارتك لمشروعك إلى الأفضل</p>
     <button class="cta-button">
