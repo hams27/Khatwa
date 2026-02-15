@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "HT Rakeez", sans-serif;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
   padding: 40px 0;
 }
 
@@ -104,7 +104,7 @@
 }
 
 .form-title {
-  font-size: 40px;
+  font-size: 32px;
   font-weight: 800;
   margin-bottom: 10px;
   font-family: "HT Moshreq Pro", sans-serif;
@@ -124,7 +124,7 @@
 }
 
 .form-subtitle {
-  font-size: 32px;
+  font-size: 16px;
   color: #6c757d;
   font-weight: 400;
 }
@@ -270,7 +270,7 @@
   border-radius: 12px;
   color: #212529;
   font-size: 20px;
-  font-family: "HT Rakeez", sans-serif;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
@@ -506,7 +506,7 @@
   border-radius: 32px;
   font-weight: 400;
   font-size: 24px;
-  font-family: "HT Rakeez", sans-serif;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -626,7 +626,7 @@
   color: #495057;
   font-size: 16px;
   font-weight: 600;
-  font-family: "HT Rakeez", sans-serif;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -6,22 +6,48 @@
 /* ===== HT Moshreq Pro ===== */
 @font-face{
   font-family: "HT Moshreq Pro";
-  src: url("https://cdn.prod.website-files.com/688cea29347896e7a5b52e82/688fb7e330da98598b5de996_HT%20Moshreq%20Pro%20-%20SemiBold.woff2") format("woff2");
-  font-weight: 600;
+  src: url("/fonts/Ht Moshreq Pro woff2/688fb7e330da98598b5de996_HT Moshreq Pro - SemiBold.woff2") format("woff2");
+  font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
-/* ===== HT Rakeez ===== */
+/* ===== HT Rakeez - Multiple Weights ===== */
 @font-face{
-  src: url("https://cdn.prod.website-files.com/688cea29347896e7a5b52e82/688fb7e3095ccc71f01c9cb2_%20HT%20Rakeez%20-%20Regular.woff2") format("woff2");
   font-family: "HT Rakeez";
-  font-weight: 200;
+  src: url("/fonts/Ht Moshreq Pro woff2/688fb7e3095ccc71f01c9cb2_ HT Rakeez - Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face{
+  font-family: "HT Rakeez";
+  src: url("/fonts/Ht Moshreq Pro woff2/688fb7e3095ccc71f01c9cb2_ HT Rakeez - Regular.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face{
+  font-family: "HT Rakeez";
+  src: url("/fonts/Ht Moshreq Pro woff2/688fb7e3095ccc71f01c9cb2_ HT Rakeez - Regular.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face{
+  font-family: "HT Rakeez";
+  src: url("/fonts/Ht Moshreq Pro woff2/688fb7e3095ccc71f01c9cb2_ HT Rakeez - Regular.woff2") format("woff2");
+  font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 *{
-  font-family: "HT Rakeez", sans-serif !important;
+  /* font-family: "HT Rakeez", sans-serif !important; */
+  /* font-family: "Ht Moshreq Pro", sans-serif !important; */
+
 }
 
 body{
@@ -37,9 +63,7 @@ body{
   padding: 0;
   margin: 0;
   background-repeat: repeat !important;
-  /* font-family: "Ht Moshreq Pro", sans-serif; */
-  font-family: "HT Rakeez", sans-serif !important;
+  /* font-family: "Ht Moshreq Pro", sans-serif !important; */
+  /* font-family: "HT Rakeez", sans-serif !important; */
 
 }
-
-

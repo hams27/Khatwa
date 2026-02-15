@@ -3,7 +3,6 @@ import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 
-
 declare const AOS: any;
 
 @Component({
