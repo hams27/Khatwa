@@ -17,6 +17,8 @@ imports: [CommonModule, RouterModule],
   styleUrl: './side-bar.css',
 })
 export class SideBar {
+  isCollapsed = false;
+
   menuItems: MenuItem[] = [
     { label: 'الخطة التسويقية', icon: '/highlighter.svg', route: '/marketing' },
     { label: 'الحسابات المالية', icon: '/clipboard-data.svg', route: '/financial-overview' },
@@ -32,14 +34,20 @@ export class SideBar {
     role: 'صاحب مشروع',
     avatar: 'م'
   };
+
   constructor(
-  private authService: AuthService,
-  private router: Router
-) {}
-logout() {
-  if (confirm('هل تريد تسجيل الخروج؟')) {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
   }
-}
+
+  logout() {
+    if (confirm('هل تريد تسجيل الخروج؟')) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
+  }
 }

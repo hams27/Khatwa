@@ -566,9 +566,39 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
     }, 2000);
   }
 
-  createContent(idea: ContentIdea) {
-    console.log('Creating content:', idea);
-    alert(`سيتم إنشاء محتوى: ${idea.title}`);
+  createContent(idea?: ContentIdea) {
+    if (idea) {
+      console.log('Creating content:', idea);
+      alert(`سيتم إنشاء محتوى: ${idea.title}`);
+    } else {
+      console.log('Creating new content');
+      alert('سيتم فتح نافذة إنشاء محتوى جديد');
+    }
+  }
+
+  useIdea(idea: ContentIdea) {
+    console.log('Using idea:', idea);
+    alert(`سيتم استخدام الفكرة: ${idea.title}`);
+  }
+
+  generateAIContent() {
+    this.isGeneratingAI = true;
+    
+    // Simulate AI generation
+    setTimeout(() => {
+      this.isGeneratingAI = false;
+      alert('تم توليد أفكار محتوى جديدة بواسطة الذكاء الاصطناعي');
+      
+      // Add some AI-generated ideas
+      this.contentIdeas.unshift({
+        id: String(this.contentIdeas.length + 1),
+        title: 'محتوى مقترح من AI',
+        description: 'فكرة محتوى تم توليدها بالذكاء الاصطناعي',
+        platform: 'instagram',
+        type: 'post',
+        priority: 'high'
+      });
+    }, 2000);
   }
 
   editPlan() {
@@ -586,6 +616,11 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
     alert('سيتم إضافة صفحة الحملات قريباً');
   }
 
+  viewSchedule() {
+    console.log('Viewing schedule');
+    alert('سيتم إضافة صفحة جدولة المنشورات قريباً');
+  }
+
   // ==================== UTILITY FUNCTIONS ====================
 
   getPlatformIcon(platform: string): string {
@@ -597,6 +632,36 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
       tiktok: '🎵'
     };
     return icons[platform] || '📱';
+  }
+
+  getPlatformLabel(platform: string): string {
+    const labels: { [key: string]: string } = {
+      instagram: 'إنستجرام',
+      facebook: 'فيسبوك',
+      twitter: 'تويتر',
+      linkedin: 'لينكد إن',
+      tiktok: 'تيك توك'
+    };
+    return labels[platform] || platform;
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: { [key: string]: string } = {
+      scheduled: 'مجدول',
+      draft: 'مسودة',
+      published: 'منشور',
+      pending: 'قيد الانتظار'
+    };
+    return labels[status] || status;
+  }
+
+  getPriorityLabel(priority: string): string {
+    const labels: { [key: string]: string } = {
+      high: 'عالية',
+      medium: 'متوسطة',
+      low: 'منخفضة'
+    };
+    return labels[priority] || priority;
   }
 
   getPriorityClass(priority: string): string {
