@@ -174,7 +174,7 @@
   position: relative;
   cursor: pointer;
   font-weight: 400;
-  font-size: 26px;
+  font-size: 18px;
   transition: all 0.3s cubic-bezier(.4,0,.2,1);
   opacity: 0;
   animation: fadeInStagger 0.6s cubic-bezier(.4,0,.2,1) forwards;
@@ -257,7 +257,7 @@
   width: 181px;
   border-radius: 32px;
   font-weight: 600px;
-  font-size: 26px;
+  font-size: 18px;
   cursor: pointer;
   background: #FF9705;
   color: rgb(0, 0, 0);
@@ -416,7 +416,7 @@
 }
 
 .badge-text {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 600;
   color: #2563EB;
 }
@@ -492,13 +492,14 @@
 }
 
 .hero-description {
-  font-size: 28px;
+  font-size: 26px;
   text-align: right;
   color: #6c757d;
   margin: 0;
   max-width: 580px;
   opacity: 0;
   animation: descriptionFadeIn 0.8s ease-out 0.7s forwards;
+  padding-bottom: 60px;
 }
 
 @keyframes descriptionFadeIn {
@@ -538,7 +539,7 @@
   border: none;
   border-radius: 32px;
    font-weight: 600px;
-  font-size: 26px;
+  font-size: 18px;
   font-family: "HT Rakeez", sans-serif;
   cursor: pointer;
   display: flex;
@@ -590,7 +591,7 @@
   color: #495057;
   border-radius: 32px;
    font-weight: 600px;
-  font-size: 26px;
+  font-size: 18px;
   font-family: "HT Rakeez", sans-serif;
   cursor: pointer;
   display: flex;
@@ -1057,7 +1058,7 @@
 }
 
 .stat-label {
-  font-size: 16px;
+  font-size: 22px;
   color: rgba(255, 255, 255, 0.8);
   font-weight: 500;
 }
@@ -1089,7 +1090,7 @@
 }
 
 .section-header h2 {
-  font-size: 42px;
+  font-size: 40px;
   font-weight: 700;
   color: #111;
   margin-bottom: 10px;
@@ -1097,7 +1098,7 @@
 
 .subtitle {
   color: #6b7a99;
-  font-size: 18px;
+  font-size: 24px;
   margin-bottom: 20px;
 }
 
@@ -1168,7 +1169,7 @@
 .icon {
   width: 48px;
   height: 48px;
-  background: #ff590039;
+  /* background: #ff590039; */
   color: #FF9705;
   border-radius: 12px;
   display: flex;
@@ -1176,6 +1177,7 @@
   justify-content: center;
   margin-bottom: 20px;
   transition: all 0.3s;
+  font-size: 50px !important;
 }
 
 .card:hover .icon {
@@ -1512,7 +1514,7 @@
 .logo-circle {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #2563EB, #FF9705);
+  background:  #FF9705 ;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1523,7 +1525,7 @@
 
 .footer-tagline {
   color: #6c757d;
-  font-size: 0.875rem;
+  font-size: 22px;
   text-align: right;
   max-width: 400px;
   line-height: 1.6;
@@ -1551,7 +1553,7 @@
   color: #6c757d;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .nav-list li:hover {
@@ -1561,7 +1563,7 @@
 
 .footer-contact p {
   color: #6c757d;
-  font-size: 15px;
+  font-size: 18px;
   margin-bottom: 10px;
 }
 
@@ -1591,8 +1593,8 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2563EB, #FF9705);
-  color: #ffffff;
+  /* background:  #FF9705 ; */
+  color: #FF9705;
   transition: all 0.3s ease;
   text-decoration: none;
 }
@@ -1600,6 +1602,8 @@
 .social-link:hover {
   transform: translateY(-3px) scale(1.1);
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  background-color: #FF9705;
+  color: white;
 }
 
 /* ================= RESPONSIVE DESIGN ================= */

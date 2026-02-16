@@ -11,6 +11,8 @@
   flex-direction: column;
   z-index: 1000;
   animation: slideInRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    font-family: "Ht Moshreq Pro", sans-serif !important;
+
 }
 
 @keyframes slideInRight {
@@ -198,13 +200,15 @@
   background-color: rgba(255, 255, 255, 0);
   gap: 0.75rem;
   color: rgb(0, 0, 0);
-  font-size: 1.05rem;
+  font-size: 18px;
   font-weight: 600;
   transition: all 0.3s ease;
   margin-bottom: 0.75rem;
   position: relative;
   overflow: hidden;
   animation: fadeInUp 0.6s ease-out 0.3s both;
+      font-family: "Ht Moshreq Pro", sans-serif !important;
+
 }
 
 @keyframes fadeInUp {
@@ -235,7 +239,7 @@
 
 .dashboard-btn:hover {
   background: linear-gradient(90deg, #6366f1 0%, #f97316 100%);
-  color: #ffffff;
+  color: #ffffff ;
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
 }
@@ -266,7 +270,7 @@
 
 .nav-item {
   display: flex;
-  font-size: 1rem;
+  font-size: 18px;
   font-weight: 500;
   justify-content: flex-start;
   gap: 0.75rem;
@@ -278,6 +282,8 @@
   position: relative;
   overflow: hidden;
   animation: fadeInRight 0.5s ease-out both;
+      font-family: "Ht Moshreq Pro", sans-serif !important;
+
 }
 
 @keyframes fadeInRight {
@@ -504,4 +510,20 @@
 .sidebar * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }

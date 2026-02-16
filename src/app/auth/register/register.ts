@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs/operators';
-
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -47,34 +47,34 @@ export class Register implements OnInit, OnDestroy {
   passwordStrength = '';
   passwordStrengthText = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.loadAOSScript().then(() => {
-    // Init once
-    (window as any).AOS.init({
-      duration: 1000,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 50,
+      (window as any).AOS.init({
+        duration: 1000,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 50,
+      });
     });
-  });
 
-  // Re-init AOS on every navigation
-  this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      if ((window as any).AOS) {
-        (window as any).AOS.refresh(); // important
-      }
-    });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if ((window as any).AOS) {
+          (window as any).AOS.refresh();
+        }
+      });
   }
 
   ngOnDestroy() {
     // Cleanup if needed
   }
 
-  // ========== AOS LOADING ==========
   private loadAOSScript(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (typeof (window as any).AOS !== 'undefined') {
@@ -111,7 +111,6 @@ export class Register implements OnInit, OnDestroy {
     });
   }
 
-  // ========== FORM VALIDATION ==========
   validateName() {
     this.nameTouched = true;
     
@@ -167,8 +166,8 @@ export class Register implements OnInit, OnDestroy {
       this.passwordStrength = '';
       this.passwordStrengthText = '';
       return false;
-    } else if (this.password.length < 8) {
-      this.passwordError = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+    } else if (this.password.length < 6) {
+      this.passwordError = 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
       this.calculatePasswordStrength();
       return false;
     } else {
@@ -215,7 +214,6 @@ export class Register implements OnInit, OnDestroy {
     }
   }
 
-  // ========== TOGGLE PASSWORD ==========
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
@@ -224,11 +222,9 @@ export class Register implements OnInit, OnDestroy {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  // ========== REGISTER SUBMIT ==========
   async onSubmit() {
     this.formSubmitted = true;
 
-    // Validate all fields
     const nameValid = this.validateName();
     const emailValid = this.validateEmail();
     const phoneValid = this.validatePhone();
@@ -245,30 +241,51 @@ export class Register implements OnInit, OnDestroy {
       return;
     }
 
-    // Show loading
     this.isLoading = true;
     this.registerError = false;
 
-    // Simulate API call (هنا هنربط بالـ Backend لاحقاً)
-    setTimeout(() => {
-      // Simulate success
-      this.registerSuccess = true;
-      this.isLoading = false;
-      
-      // Success animation then redirect
-      setTimeout(() => {
-        this.router.navigate(['/login']);
-      }, 2000);
-    }, 2000);
+    // الاتصال الفعلي بالباك إند
+    this.authService.register({
+      name: this.fullName,
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: (response: any) => {
+        this.registerSuccess = true;
+        this.isLoading = false;
+        
+        console.log('تم التسجيل بنجاح:', response);
+        
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (error: any) => {
+        this.registerError = true;
+        this.isLoading = false;
+        
+        if (error.error && error.error.message) {
+          this.errorMessage = error.error.message;
+        } else if (error.status === 400) {
+          this.errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
+        } else if (error.status === 0) {
+          this.errorMessage = 'فشل الاتصال بالسيرفر';
+        } else {
+          this.errorMessage = 'حدث خطأ. حاول مرة أخرى';
+        }
+        
+        console.error('خطأ في التسجيل:', error);
+        this.shakeForm();
+      }
+    });
   }
+
   ngAfterViewInit() {
-  if ((window as any).AOS) {
-    (window as any).AOS.refresh();
+    if ((window as any).AOS) {
+      (window as any).AOS.refresh();
+    }
   }
-}
 
-
-  // ========== SHAKE ANIMATION ==========
   shakeForm() {
     const form = document.querySelector('.register-form');
     if (form) {
@@ -279,7 +296,6 @@ export class Register implements OnInit, OnDestroy {
     }
   }
 
-  // ========== SOCIAL REGISTER ==========
   registerWithGoogle() {
     console.log('Register with Google');
     alert('Google Register - سيتم ربطه بالـ Backend قريباً');

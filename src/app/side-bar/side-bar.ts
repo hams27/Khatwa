@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 interface MenuItem {
   label: string;
   icon: string;
@@ -31,4 +32,14 @@ export class SideBar {
     role: 'صاحب مشروع',
     avatar: 'م'
   };
+  constructor(
+  private authService: AuthService,
+  private router: Router
+) {}
+logout() {
+  if (confirm('هل تريد تسجيل الخروج؟')) {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+}
 }

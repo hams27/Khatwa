@@ -12,6 +12,7 @@
 
     <!-- Dashboard Button -->
     <button class="dashboard-btn" [routerLink]="'/dashboard'">
+      <!-- svg icon ........................................................... -->
       <img src="squares.png" alt="" width="20" height="20">
       <span>لوحة التحكم</span>
     </button>
@@ -52,6 +53,8 @@
   <div class="user-section">
 
     <!-- User Info -->
+
+    <!-- move right top -->
     <div class="user-details">
       <div class="user-name">{{ userInfo.name }}</div>
       <div class="user-role">{{ userInfo.role }}</div>
@@ -59,7 +62,9 @@
 
     <!-- User Avatar -->
     <div class="user-avatar">{{ userInfo.avatar }}</div>
-
+<button (click)="logout()" class="logout-btn">
+  تسجيل الخروج
+</button>
   </div>
 
 </aside>

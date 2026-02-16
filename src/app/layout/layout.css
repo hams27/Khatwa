@@ -113,6 +113,7 @@
   overflow: hidden;
   animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 1;
+  text-align: right !important;
 }
 
 @keyframes cardEntrance {
@@ -347,7 +348,7 @@
     transform: translateX(100%) translateY(100%) rotate(45deg);
   }
 }
-
+card
 .option:hover .icon {
   transform: scale(1.15) ;
   box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
