@@ -1,10 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SideBar } from '../side-bar/side-bar';
 import { MarketingService, MarketingPlan } from '../services/marketing';
 import { ProjectService } from '../services/project';
 import { Subject, takeUntil, timeout, catchError, of } from 'rxjs';
+import { Chart, registerables } from 'chart.js';
+
+// Register Chart.js components
+Chart.register(...registerables);
 
 interface MarketingStep {
   title: string;
@@ -36,13 +40,24 @@ interface ScheduledPost {
   styleUrls: ['./marketing.css'],
   standalone: true
 })
-export class Marketing implements OnInit, OnDestroy {
+export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
+
+  // Chart References
+  @ViewChild('contentChart') contentChart?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('channelsChart') channelsChart?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('engagementChart') engagementChart?: ElementRef<HTMLCanvasElement>;
+  
+  // Chart Instances
+  private contentChartInstance?: Chart;
+  private channelsChartInstance?: Chart;
+  private engagementChartInstance?: Chart;
 
   // UI State
   showGuide = false;
   isLoading = false;
   isGeneratingAI = false;
+  chartsLoading = true;
 
   // Marketing Data
   currentPlan: MarketingPlan | null = null;
@@ -62,7 +77,7 @@ export class Marketing implements OnInit, OnDestroy {
   completedSteps = 0;
   totalSteps = 5;
 
-  // Marketing Steps (like Dashboard progress steps)
+  // Marketing Steps
   marketingSteps: MarketingStep[] = [
     {
       title: 'تحديد الجمهور المستهدف',
@@ -92,57 +107,24 @@ export class Marketing implements OnInit, OnDestroy {
   ];
 
   // Content Ideas
-  contentIdeas: ContentIdea[] = [
-    {
-      id: '1',
-      title: 'نصيحة يومية لرواد الأعمال',
-      description: 'محتوى ملهم يساعد على النجاح',
-      platform: 'instagram',
-      type: 'post',
-      priority: 'high'
-    },
-    {
-      id: '2',
-      title: 'قصة نجاح عميل',
-      description: 'بناء الثقة مع جمهورك',
-      platform: 'facebook',
-      type: 'story',
-      priority: 'medium'
-    },
-    {
-      id: '3',
-      title: 'فيديو توضيحي',
-      description: 'اشرح منتجك بطريقة جذابة',
-      platform: 'twitter',
-      type: 'video',
-      priority: 'high'
-    }
-  ];
-
-  // Scheduled Posts (like Dashboard upcoming tasks)
-  scheduledPosts: ScheduledPost[] = [
-    {
-      id: '1',
-      title: 'نصائح لزيادة الإنتاجية',
-      scheduledTime: 'اليوم، 6:00 م',
-      platform: 'instagram',
-      status: 'scheduled'
-    },
-    {
-      id: '2',
-      title: 'عرض نهاية الأسبوع',
-      scheduledTime: 'غداً، 10:00 ص',
-      platform: 'facebook',
-      status: 'scheduled'
-    },
-    {
-      id: '3',
-      title: 'مقابلة مع خبير',
-      scheduledTime: 'الجمعة، 3:00 م',
-      platform: 'twitter',
-      status: 'draft'
-    }
-  ];
+  contentIdeas: ContentIdea[] = [];
+  
+  // Scheduled Posts
+  scheduledPosts: ScheduledPost[] = [];
+  
+  // Chart Data
+  monthlyContentData = {
+    months: ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو'],
+    posts: [12, 19, 15, 22, 18, 24],
+    engagement: [3.2, 5.1, 4.3, 6.8, 5.5, 7.9]
+  };
+  
+  channelsPerformance = {
+    labels: ['Instagram', 'Facebook', 'Twitter', 'LinkedIn', 'TikTok'],
+    data: [85, 72, 60, 78, 90]
+  };
+  
+  dailyEngagement: number[] = [];
 
   constructor(
     private router: Router,
@@ -152,17 +134,22 @@ export class Marketing implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadMarketingData();
+    this.generateDailyEngagement();
+  }
+  
+  ngAfterViewInit() {
+    // Charts will be created after data is loaded
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.destroyCharts();
   }
 
   loadMarketingData() {
-    this.isLoading = false; // Fast loading like dashboard
+    this.isLoading = false;
 
-    // Get current project
     this.projectService.getProjects()
       .pipe(
         timeout(5000),
@@ -223,7 +210,7 @@ export class Marketing implements OnInit, OnDestroy {
   }
 
   processMarketingPlan(plan: MarketingPlan) {
-    // Process plan data
+    // Process real plan data
     this.publishedContent = 24;
     this.scheduledContent = 8;
     this.totalEngagement = '12.5K';
@@ -232,12 +219,16 @@ export class Marketing implements OnInit, OnDestroy {
     this.contentGrowth = 12;
     this.engagementProgress = 75;
 
-    // Update progress
     this.completedSteps = 2;
     this.planProgress = Math.round((this.completedSteps / this.totalSteps) * 100);
 
-    // Update steps
     this.updateStepsStatus();
+    
+    // Load charts after data
+    this.chartsLoading = false;
+    setTimeout(() => {
+      this.createAllCharts();
+    }, 100);
   }
 
   initializeMockData() {
@@ -248,27 +239,315 @@ export class Marketing implements OnInit, OnDestroy {
     this.daysRemaining = 15;
     this.contentGrowth = 12;
     this.engagementProgress = 75;
-
-    this.completedSteps = 2;
+    
+    this.completedSteps = 1;
     this.planProgress = Math.round((this.completedSteps / this.totalSteps) * 100);
-
+    
     this.updateStepsStatus();
+    this.loadMockContentIdeas();
+    
+    // Load charts
+    this.chartsLoading = false;
+    setTimeout(() => {
+      this.createAllCharts();
+    }, 100);
+  }
+  
+  updateStepsStatus() {
+    if (this.completedSteps >= 1) {
+      this.marketingSteps[0].status = 'completed';
+    }
+    if (this.completedSteps >= 2) {
+      this.marketingSteps[1].status = 'completed';
+    }
+    if (this.completedSteps >= 3) {
+      this.marketingSteps[2].status = 'completed';
+    }
+    if (this.completedSteps >= 4) {
+      this.marketingSteps[3].status = 'completed';
+    }
+    if (this.completedSteps >= 5) {
+      this.marketingSteps[4].status = 'completed';
+    }
+    
+    if (this.completedSteps < this.totalSteps) {
+      this.marketingSteps[this.completedSteps].status = 'active';
+    }
+  }
+  
+  loadMockContentIdeas() {
+    this.contentIdeas = [
+      {
+        id: '1',
+        title: 'نصيحة يومية لرواد الأعمال',
+        description: 'محتوى ملهم يساعد على النجاح',
+        platform: 'instagram',
+        type: 'carousel',
+        priority: 'high'
+      },
+      {
+        id: '2',
+        title: 'قصة نجاح عميل',
+        description: 'مشاركة تجربة إيجابية',
+        platform: 'facebook',
+        type: 'video',
+        priority: 'medium'
+      },
+      {
+        id: '3',
+        title: 'إنفوجرافيك عن السوق',
+        description: 'بيانات مفيدة بشكل بصري',
+        platform: 'linkedin',
+        type: 'image',
+        priority: 'high'
+      }
+    ];
+  }
+  
+  generateDailyEngagement() {
+    // Generate 30 days of engagement data
+    this.dailyEngagement = Array.from({length: 30}, () => 
+      Math.floor(Math.random() * 500 + 200)
+    );
   }
 
-  updateStepsStatus() {
-    // Update based on completed steps
-    for (let i = 0; i < this.marketingSteps.length; i++) {
-      if (i < this.completedSteps) {
-        this.marketingSteps[i].status = 'completed';
-      } else if (i === this.completedSteps) {
-        this.marketingSteps[i].status = 'active';
-      } else {
-        this.marketingSteps[i].status = 'pending';
+  // ==================== CHARTS ====================
+  
+  createAllCharts() {
+    this.createContentPerformanceChart();
+    this.createChannelsComparisonChart();
+    this.createEngagementTimelineChart();
+  }
+  
+  createContentPerformanceChart() {
+    if (!this.contentChart) return;
+    
+    const ctx = this.contentChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    this.contentChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: this.monthlyContentData.months,
+        datasets: [
+          {
+            type: 'bar',
+            label: 'المنشورات',
+            data: this.monthlyContentData.posts,
+            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+            borderColor: 'rgb(59, 130, 246)',
+            borderWidth: 2,
+            borderRadius: 6,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: 'التفاعل (K)',
+            data: this.monthlyContentData.engagement,
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: { family: 'Cairo', size: 12 },
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'right',
+            title: {
+              display: true,
+              text: 'عدد المنشورات',
+              font: { family: 'Cairo' }
+            },
+            ticks: {
+              font: { family: 'Cairo' }
+            }
+          },
+          y1: {
+            type: 'linear',
+            position: 'left',
+            title: {
+              display: true,
+              text: 'التفاعل (بالآلاف)',
+              font: { family: 'Cairo' }
+            },
+            ticks: {
+              font: { family: 'Cairo' }
+            },
+            grid: {
+              drawOnChartArea: false
+            }
+          },
+          x: {
+            ticks: {
+              font: { family: 'Cairo' }
+            }
+          }
+        }
       }
+    });
+  }
+  
+  createChannelsComparisonChart() {
+    if (!this.channelsChart) return;
+    
+    const ctx = this.channelsChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    this.channelsChartInstance = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: this.channelsPerformance.labels,
+        datasets: [{
+          label: 'الأداء',
+          data: this.channelsPerformance.data,
+          backgroundColor: 'rgba(59, 130, 246, 0.2)',
+          borderColor: 'rgb(59, 130, 246)',
+          borderWidth: 2,
+          pointBackgroundColor: 'rgb(59, 130, 246)',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgb(59, 130, 246)',
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              stepSize: 20,
+              font: { family: 'Cairo' }
+            },
+            pointLabels: {
+              font: { family: 'Cairo', size: 12 }
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+  }
+  
+  createEngagementTimelineChart() {
+    if (!this.engagementChart) return;
+    
+    const ctx = this.engagementChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    const days = Array.from({length: 30}, (_, i) => `${i+1}`);
+    
+    this.engagementChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: days,
+        datasets: [{
+          label: 'التفاعل اليومي',
+          data: this.dailyEngagement,
+          borderColor: 'rgb(16, 185, 129)',
+          backgroundColor: (context) => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
+            gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+            return gradient;
+          },
+          tension: 0.4,
+          fill: true,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: 'rgb(16, 185, 129)',
+          pointHoverBorderColor: '#fff',
+          pointHoverBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => {
+                const value = context.parsed.y || 0;
+                return `${value.toLocaleString()} تفاعل`;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              font: { family: 'Cairo' },
+              callback: (value) => {
+                return value.toLocaleString();
+              }
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            ticks: {
+              font: { family: 'Cairo', size: 10 },
+              maxRotation: 0
+            },
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  destroyCharts() {
+    if (this.contentChartInstance) {
+      this.contentChartInstance.destroy();
+    }
+    if (this.channelsChartInstance) {
+      this.channelsChartInstance.destroy();
+    }
+    if (this.engagementChartInstance) {
+      this.engagementChartInstance.destroy();
     }
   }
 
-  // UI Actions
+  // ==================== UI ACTIONS ====================
+
   openGuide() {
     this.showGuide = true;
   }
@@ -277,94 +556,59 @@ export class Marketing implements OnInit, OnDestroy {
     this.showGuide = false;
   }
 
-  createContent() {
-    console.log('Create content');
-    // TODO: Navigate to content creation
-  }
-
-  generateAIContent() {
+  generateAIPlan() {
     this.isGeneratingAI = true;
-
-    // Simulate AI generation (like Dashboard)
+    
+    // Simulate AI generation
     setTimeout(() => {
-      const newIdeas: ContentIdea[] = [
-        {
-          id: Date.now().toString(),
-          title: 'Behind the Scenes',
-          description: 'اعرض الجانب الإنساني لعلامتك',
-          platform: 'instagram',
-          type: 'reel',
-          priority: 'high'
-        },
-        {
-          id: (Date.now() + 1).toString(),
-          title: 'نصائح سريعة',
-          description: 'نصائح مفيدة في دقيقة واحدة',
-          platform: 'twitter',
-          type: 'tips',
-          priority: 'medium'
-        }
-      ];
-
-      this.contentIdeas = [...newIdeas, ...this.contentIdeas].slice(0, 5);
       this.isGeneratingAI = false;
+      alert('سيتم إضافة هذه الميزة قريباً عند اكتمال تطوير الذكاء الاصطناعي');
     }, 2000);
   }
 
-  useIdea(idea: ContentIdea) {
-    console.log('Using idea:', idea);
-    // TODO: Navigate to content creation with idea
+  createContent(idea: ContentIdea) {
+    console.log('Creating content:', idea);
+    alert(`سيتم إنشاء محتوى: ${idea.title}`);
+  }
+
+  editPlan() {
+    if (this.currentPlan) {
+      this.router.navigate(['/marketing/edit', this.currentPlan.id]);
+    }
   }
 
   viewAnalytics() {
     this.router.navigate(['/analytics']);
   }
 
-  viewSchedule() {
-    console.log('View schedule');
-    // TODO: Navigate to schedule page
-  }
-
   viewCampaigns() {
-    console.log('View campaigns');
-    // TODO: Navigate to campaigns
+    console.log('Viewing campaigns');
+    alert('سيتم إضافة صفحة الحملات قريباً');
   }
 
-  // Utility Functions
-  getStatusLabel(status: string): string {
-    const labels: { [key: string]: string } = {
-      scheduled: 'مجدول',
-      draft: 'مسودة'
-    };
-    return labels[status] || status;
-  }
-
-  getPlatformLabel(platform: string): string {
-    const labels: { [key: string]: string } = {
-      instagram: 'Instagram',
-      facebook: 'Facebook',
-      twitter: 'Twitter',
-      linkedin: 'LinkedIn'
-    };
-    return labels[platform] || platform;
-  }
+  // ==================== UTILITY FUNCTIONS ====================
 
   getPlatformIcon(platform: string): string {
     const icons: { [key: string]: string } = {
-      instagram: '📸',
-      facebook: '👥',
+      instagram: '📷',
+      facebook: '👍',
       twitter: '🐦',
-      linkedin: '💼'
+      linkedin: '💼',
+      tiktok: '🎵'
     };
     return icons[platform] || '📱';
   }
 
-  getPriorityLabel(priority: string): string {
-    const labels: { [key: string]: string } = {
-      high: 'أولوية عالية',
-      medium: 'أولوية متوسطة',
-      low: 'أولوية منخفضة'
+  getPriorityClass(priority: string): string {
+    return `priority-${priority}`;
+  }
+
+  getStatusIcon(status: string): string {
+    const icons: { [key: string]: string } = {
+      completed: '✅',
+      active: '🔄',
+      pending: '⏳'
     };
-    return labels[priority] || priority;
+    return icons[status] || '❓';
   }
 }

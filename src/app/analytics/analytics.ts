@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SideBar } from '../side-bar/side-bar';
 import { ProjectService, Project } from '../services/project';
@@ -8,6 +8,10 @@ import { TaskService } from '../services/task';
 import { MarketingService } from '../services/marketing';
 import { interval, Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Chart, registerables } from 'chart.js';
+
+// Register Chart.js components
+Chart.register(...registerables);
 
 // Interfaces
 interface StatCard {
@@ -40,13 +44,27 @@ interface ChannelData {
   styleUrls: ['./analytics.css'],
   standalone: true
 })
-export class Analytics implements OnInit, OnDestroy {
-  // حالة التحميل والأخطاء
+export class Analytics implements OnInit, OnDestroy, AfterViewInit {
+  
+  // Chart References
+  @ViewChild('performanceChart') performanceChart?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('revenueProjectionChart') revenueProjectionChart?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('taskCompletionChart') taskCompletionChart?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('growthTrendChart') growthTrendChart?: ElementRef<HTMLCanvasElement>;
+  
+  // Chart Instances
+  private performanceChartInstance?: Chart;
+  private revenueProjectionChartInstance?: Chart;
+  private taskCompletionChartInstance?: Chart;
+  private growthTrendChartInstance?: Chart;
+  
+  // Loading & Error States
   isLoading = false;
   errorMessage = '';
   showGuide = false;
+  chartsLoading = true;
   
-  // معلومات المشروع الحالي
+  // Project Info
   currentProject: Project | null = null;
   currentProjectId: number = 0;
   
@@ -54,7 +72,7 @@ export class Analytics implements OnInit, OnDestroy {
   private refreshSubscription?: Subscription;
   autoRefreshEnabled = false;
   
-  // Stats Cards - ديناميكية من الـ Backend
+  // Stats Cards
   statsCards: StatCard[] = [
     {
       title: 'إجمالي الإيرادات',
@@ -81,56 +99,67 @@ export class Analytics implements OnInit, OnDestroy {
       loading: true
     },
     {
-      title: 'صافي الربح',
-      value: '0 ر.س',
+      title: 'معدل النمو',
+      value: '0%',
       change: '+0%',
       icon: '📈',
       color: 'orange',
       loading: true
-    },
+    }
   ];
-
-  // Insights - ديناميكية بناءً على البيانات
+  
+  // Insights
   insights: Insight[] = [];
-
-  // Channels data - للرسم البياني
-  channels: ChannelData[] = [];
   
-  // بيانات إضافية
-  totalProjects = 0;
-  activeProjects = 0;
-  completionRate = 0;
-  profitMargin = 0;
+  // Chart Data
+  performanceData = {
+    months: ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو'],
+    revenue: [15000, 22000, 18000, 28000, 25000, 32000],
+    tasks: [65, 72, 68, 78, 75, 82],
+    satisfaction: [70, 75, 73, 80, 78, 85]
+  };
   
-  // فترة التحليل
-  analysisStartDate: Date;
-  analysisEndDate: Date;
+  revenueProjectionData = {
+    historical: [15000, 22000, 18000, 28000, 25000, 32000],
+    projected: [35000, 38000, 42000, 45000, 48000, 52000]
+  };
+  
+  taskCompletionData = {
+    weeks: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
+    planned: [20, 25, 22, 28],
+    completed: [18, 23, 20, 25]
+  };
+  
+  growthMetrics = {
+    quarters: ['Q1', 'Q2', 'Q3', 'Q4'],
+    revenue: [45000, 68000, 82000, 105000],
+    customers: [120, 185, 245, 320],
+    marketShare: [12, 15, 18, 22]
+  };
 
   constructor(
     private projectService: ProjectService,
     private financeService: FinanceService,
     private taskService: TaskService,
     private marketingService: MarketingService
-  ) {
-    // آخر 30 يوم
-    this.analysisEndDate = new Date();
-    this.analysisStartDate = new Date();
-    this.analysisStartDate.setDate(this.analysisStartDate.getDate() - 30);
-  }
+  ) {}
 
   ngOnInit() {
     console.log('📊 Analytics Component Initialized');
     this.loadCurrentProject();
   }
   
+  ngAfterViewInit() {
+    // Charts will be created after data loads
+  }
+
   ngOnDestroy() {
-    // إيقاف الـ auto-refresh
     if (this.refreshSubscription) {
       this.refreshSubscription.unsubscribe();
     }
+    this.destroyCharts();
   }
 
-  // تحميل المشروع الحالي
   loadCurrentProject() {
     this.isLoading = true;
     
@@ -141,369 +170,473 @@ export class Analytics implements OnInit, OnDestroy {
         if (response && response.data && response.data.length > 0) {
           this.currentProject = response.data[0];
           this.currentProjectId = this.currentProject!.id!;
-          this.totalProjects = response.data.length;
-          this.activeProjects = response.data.filter(
-            (p: Project) => p.stage === 'execution' || p.stage === 'planning'
-          ).length;
           
-          // تحميل كل البيانات
-          this.loadAllAnalytics();
+          this.loadAnalyticsData();
         } else {
-          this.handleNoProjects();
+          this.errorMessage = 'لا توجد مشاريع. قم بإنشاء مشروعك الأول!';
+          this.isLoading = false;
+          this.chartsLoading = false;
         }
       },
       error: (error: HttpErrorResponse) => {
         console.error('❌ Error loading projects:', error);
         this.errorMessage = 'حدث خطأ في تحميل المشاريع';
         this.isLoading = false;
+        this.chartsLoading = false;
       }
     });
   }
 
-  // تحميل كل البيانات التحليلية
-  loadAllAnalytics() {
-    console.log('🔄 Loading all analytics...');
+  loadAnalyticsData() {
+    console.log('📊 Loading analytics data...');
     
-    // تحميل البيانات بالتوازي
-    Promise.all([
-      this.loadFinancialAnalytics(),
-      this.loadTasksAnalytics(),
-      this.loadMarketingAnalytics()
-    ]).then(() => {
-      console.log('✅ All analytics loaded');
-      this.generateInsights();
-      this.isLoading = false;
-    }).catch((error: any) => {
-      console.error('❌ Error loading analytics:', error);
-      this.isLoading = false;
-    });
-  }
-
-  // تحميل البيانات المالية
-  loadFinancialAnalytics(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.financeService.getSummary(this.currentProjectId).subscribe({
-        next: (response: any) => {
-          console.log('💰 Finance data:', response);
-          
-          if (response && response.data) {
-            const data = response.data;
-            
-            // تحديث الكروت المالية
-            this.statsCards[0].value = this.formatCurrency(data.totalRevenue || 0);
-            this.statsCards[0].loading = false;
-            
-            this.statsCards[2].value = this.formatCurrency(data.totalExpenses || 0);
-            this.statsCards[2].loading = false;
-            
-            this.statsCards[3].value = this.formatCurrency(data.profit || 0);
-            this.statsCards[3].loading = false;
-            
-            // حساب نسب التغيير
-            if (data.previousRevenue && data.previousRevenue > 0) {
-              const revenueChange = ((data.totalRevenue - data.previousRevenue) / data.previousRevenue * 100);
-              this.statsCards[0].change = this.formatChange(revenueChange);
-            }
-            
-            if (data.previousExpenses && data.previousExpenses > 0) {
-              const expensesChange = ((data.totalExpenses - data.previousExpenses) / data.previousExpenses * 100);
-              this.statsCards[2].change = this.formatChange(expensesChange);
-            }
-            
-            if (data.previousProfit !== undefined) {
-              const profitChange = data.previousProfit !== 0 
-                ? ((data.profit - data.previousProfit) / Math.abs(data.previousProfit) * 100)
-                : (data.profit > 0 ? 100 : 0);
-              this.statsCards[3].change = this.formatChange(profitChange);
-            }
-            
-            // حفظ هامش الربح
-            this.profitMargin = data.profitMargin || 0;
-            
-            // بيانات القنوات (إذا كانت متوفرة)
-            if (data.channelsData) {
-              this.channels = data.channelsData;
-            }
-          }
-          
-          resolve();
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('❌ Error loading finance analytics:', error);
-          this.statsCards[0].loading = false;
-          this.statsCards[2].loading = false;
-          this.statsCards[3].loading = false;
-          reject(error);
+    // Load Financial Data
+    this.financeService.getSummary(this.currentProjectId).subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.updateFinancialStats(response.data);
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error loading finance:', error);
+      }
     });
-  }
-
-  // تحميل بيانات المهام
-  loadTasksAnalytics(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.taskService.getTasks(this.currentProjectId).subscribe({
-        next: (response: any) => {
-          console.log('📋 Tasks data:', response);
-          
-          if (response && response.data) {
-            const tasks = response.data;
-            const totalTasks = tasks.length;
-            const completedTasks = tasks.filter((t: any) => t.status === 'done').length;
-            
-            if (totalTasks > 0) {
-              this.completionRate = Math.round((completedTasks / totalTasks) * 100);
-              this.statsCards[1].value = `${this.completionRate}%`;
-              this.statsCards[1].loading = false;
-              
-              // حساب التغيير (مقارنة بالأسبوع الماضي - إذا كانت البيانات متوفرة)
-              const lastWeekTasks = tasks.filter((t: any) => {
-                const taskDate = new Date(t.createdAt);
-                const weekAgo = new Date();
-                weekAgo.setDate(weekAgo.getDate() - 7);
-                return taskDate >= weekAgo;
-              });
-              
-              if (lastWeekTasks.length > 0) {
-                const lastWeekCompleted = lastWeekTasks.filter((t: any) => t.status === 'done').length;
-                const lastWeekRate = Math.round((lastWeekCompleted / lastWeekTasks.length) * 100);
-                const change = this.completionRate - lastWeekRate;
-                this.statsCards[1].change = this.formatChange(change);
-              }
-            } else {
-              this.statsCards[1].value = '0%';
-              this.statsCards[1].loading = false;
-            }
-          }
-          
-          resolve();
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('❌ Error loading tasks analytics:', error);
-          this.statsCards[1].loading = false;
-          reject(error);
+    
+    // Load Tasks Data
+    this.taskService.getTasks(this.currentProjectId).subscribe({
+      next: (response: any) => {
+        if (response && response.data) {
+          this.updateTaskStats(response.data);
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error loading tasks:', error);
+      }
     });
+    
+    // Generate insights
+    this.generateInsights();
+    
+    this.isLoading = false;
+    this.chartsLoading = false;
+    
+    // Create charts
+    setTimeout(() => {
+      this.createAllCharts();
+    }, 100);
   }
 
-  // تحميل بيانات التسويق
-  loadMarketingAnalytics(): Promise<void> {
-    return new Promise((resolve) => {
-      this.marketingService.getPlans(this.currentProjectId).subscribe({
-        next: (response: any) => {
-          console.log('📢 Marketing data:', response);
-          
-          // يمكن إضافة تحليلات تسويقية هنا لاحقاً
-          // مثل: عدد الحملات، معدل التحويل، إلخ
-          
-          resolve();
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('❌ Error loading marketing analytics:', error);
-          resolve(); // نكمل حتى لو فشل التسويق
-        }
-      });
-    });
+  updateFinancialStats(data: any) {
+    const revenue = data.totalRevenue || 0;
+    const expenses = data.totalExpenses || 0;
+    
+    this.statsCards[0].value = `${revenue.toLocaleString('ar-SA')} ر.س`;
+    this.statsCards[0].change = '+15%'; // Mock data
+    this.statsCards[0].loading = false;
+    
+    this.statsCards[2].value = `${expenses.toLocaleString('ar-SA')} ر.س`;
+    this.statsCards[2].change = '+8%'; // Mock data
+    this.statsCards[2].loading = false;
+    
+    // Growth rate
+    const growth = revenue > 0 ? ((revenue - expenses) / revenue * 100) : 0;
+    this.statsCards[3].value = `${growth.toFixed(1)}%`;
+    this.statsCards[3].change = '+12%';
+    this.statsCards[3].loading = false;
   }
 
-  // توليد Insights ذكية بناءً على البيانات
+  updateTaskStats(tasks: any[]) {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.status === 'done').length;
+    const rate = total > 0 ? (completed / total * 100) : 0;
+    
+    this.statsCards[1].value = `${rate.toFixed(1)}%`;
+    this.statsCards[1].change = '+5%'; // Mock data
+    this.statsCards[1].loading = false;
+  }
+
   generateInsights() {
-    this.insights = [];
-    
-    const revenueValue = this.parseValue(this.statsCards[0].value);
-    const expensesValue = this.parseValue(this.statsCards[2].value);
-    const profitValue = this.parseValue(this.statsCards[3].value);
-    
-    // Insight 1: التوقع المالي
-    if (profitValue > 0) {
-      const monthlyProjection = profitValue * 3;
-      const formattedProjection = this.formatCurrency(monthlyProjection);
-      
-      this.insights.push({
-        title: 'توقع إيجابي للنمو',
-        description: `بناءً على الأداء الحالي، من المتوقع تحقيق ${formattedProjection} خلال 3 أشهر القادمة`,
-        confidence: 75,
+    this.insights = [
+      {
+        title: 'اتجاه إيجابي للإيرادات',
+        description: 'الإيرادات في نمو مستمر مع زيادة 15% مقارنة بالشهر الماضي',
+        confidence: 85,
         type: 'success'
-      });
-    } else if (profitValue < 0) {
-      this.insights.push({
-        title: 'تحذير: خسائر حالية',
-        description: `المشروع يحقق خسائر بقيمة ${this.formatCurrency(Math.abs(profitValue))}. يُنصح بمراجعة الاستراتيجية المالية`,
-        confidence: 90,
-        type: 'danger'
-      });
-    }
-    
-    // Insight 2: تحليل المصروفات
-    if (revenueValue > 0) {
-      const expenseRatio = (expensesValue / revenueValue * 100);
-      
-      if (expenseRatio > 80) {
-        this.insights.push({
-          title: 'تنبيه: مصروفات مرتفعة جداً',
-          description: `المصروفات تمثل ${expenseRatio.toFixed(1)}% من الإيرادات. يجب تقليل النفقات بشكل عاجل`,
-          confidence: 85,
-          type: 'danger'
-        });
-      } else if (expenseRatio > 70) {
-        this.insights.push({
-          title: 'انتبه: نسبة مصروفات مرتفعة',
-          description: `المصروفات تمثل ${expenseRatio.toFixed(1)}% من الإيرادات. يُنصح بمراجعة النفقات غير الضرورية`,
-          confidence: 80,
-          type: 'warning'
-        });
-      } else if (expenseRatio < 50) {
-        this.insights.push({
-          title: 'إدارة مالية ممتازة',
-          description: `المصروفات تحت السيطرة بنسبة ${expenseRatio.toFixed(1)}%. استمر على هذا النهج الجيد`,
-          confidence: 85,
-          type: 'success'
-        });
-      } else {
-        this.insights.push({
-          title: 'إدارة مالية جيدة',
-          description: `المصروفات متوازنة (${expenseRatio.toFixed(1)}% من الإيرادات). الوضع مستقر`,
-          confidence: 75,
-          type: 'info'
-        });
-      }
-    }
-    
-    // Insight 3: معدل إنجاز المهام
-    if (this.completionRate > 80) {
-      this.insights.push({
-        title: 'أداء ممتاز في المهام',
-        description: `معدل إنجاز مرتفع (${this.completionRate}%). الفريق يعمل بكفاءة عالية`,
+      },
+      {
+        title: 'معدل إنجاز المهام جيد',
+        description: 'الفريق يحافظ على أداء ثابت مع معدل إنجاز 78%',
+        confidence: 75,
+        type: 'info'
+      },
+      {
+        title: 'فرصة لتحسين الكفاءة',
+        description: 'يمكن تقليل المصروفات التشغيلية بنسبة 10% من خلال الأتمتة',
+        confidence: 70,
+        type: 'warning'
+      },
+      {
+        title: 'توقعات نمو واعدة',
+        description: 'بناءً على الاتجاه الحالي، متوقع نمو 25% في الربع القادم',
         confidence: 80,
         type: 'success'
-      });
-    } else if (this.completionRate < 30) {
-      this.insights.push({
-        title: 'تحذير: تراكم المهام',
-        description: `معدل إنجاز منخفض (${this.completionRate}%). يُنصح بمراجعة توزيع المهام وتحديد الأولويات`,
-        confidence: 85,
-        type: 'warning'
-      });
-    }
-    
-    // Insight 4: فرصة للنمو
-    if (profitValue > 0 && this.profitMargin > 20) {
-      this.insights.push({
-        title: 'فرصة للتوسع',
-        description: `هامش ربح ممتاز (${this.profitMargin.toFixed(1)}%). يمكن استثمار جزء من الأرباح في التسويق أو تطوير المنتج`,
-        confidence: 70,
-        type: 'info'
-      });
-    }
-    
-    // Insight 5: تحذير عدم وجود إيرادات
-    if (revenueValue === 0) {
-      this.insights.push({
-        title: 'تنبيه: لا توجد إيرادات مسجلة',
-        description: 'لم يتم تسجيل أي إيرادات حتى الآن. ابدأ بإضافة سجلات الإيرادات لمتابعة الأداء المالي',
-        confidence: 95,
-        type: 'warning'
-      });
-    }
-    
-    // ترتيب الـ Insights حسب الأهمية (confidence)
-    this.insights.sort((a, b) => b.confidence - a.confidence);
-    
-    console.log('💡 Generated insights:', this.insights);
-  }
-
-  // تحديث البيانات
-  refreshAnalytics() {
-    console.log('🔄 Refreshing analytics...');
-    this.isLoading = true;
-    this.errorMessage = '';
-    
-    // إعادة تعيين حالة التحميل
-    this.statsCards.forEach(card => card.loading = true);
-    
-    this.loadAllAnalytics();
-  }
-
-  // تفعيل/إيقاف التحديث التلقائي
-  toggleAutoRefresh() {
-    this.autoRefreshEnabled = !this.autoRefreshEnabled;
-    
-    if (this.autoRefreshEnabled) {
-      // تحديث كل 5 دقائق
-      this.refreshSubscription = interval(5 * 60 * 1000).subscribe(() => {
-        console.log('🔄 Auto-refresh triggered');
-        this.refreshAnalytics();
-      });
-      console.log('✅ Auto-refresh enabled (every 5 minutes)');
-    } else {
-      if (this.refreshSubscription) {
-        this.refreshSubscription.unsubscribe();
-        console.log('❌ Auto-refresh disabled');
       }
-    }
+    ];
   }
 
-  // معالجة عدم وجود مشاريع
-  handleNoProjects() {
-    this.isLoading = false;
-    this.errorMessage = 'لا توجد مشاريع. قم بإنشاء مشروعك الأول!';
+  // ==================== CHARTS ====================
+  
+  createAllCharts() {
+    this.createPerformanceChart();
+    this.createRevenueProjectionChart();
+    this.createTaskCompletionChart();
+    this.createGrowthTrendChart();
+  }
+  
+  createPerformanceChart() {
+    if (!this.performanceChart) return;
     
-    // إضافة insight تحفيزي
-    this.insights.push({
-      title: 'ابدأ رحلتك الآن',
-      description: 'أنشئ مشروعك الأول وابدأ في تتبع الأداء والتحليلات الذكية',
-      confidence: 100,
-      type: 'info'
+    const ctx = this.performanceChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    this.performanceChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: this.performanceData.months,
+        datasets: [
+          {
+            label: 'الإيرادات (ر.س)',
+            data: this.performanceData.revenue,
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y'
+          },
+          {
+            label: 'إنجاز المهام (%)',
+            data: this.performanceData.tasks,
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y1'
+          },
+          {
+            label: 'رضا العملاء (%)',
+            data: this.performanceData.satisfaction,
+            borderColor: 'rgb(245, 158, 11)',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: { family: 'Cairo', size: 12 },
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'left',
+            title: {
+              display: true,
+              text: 'الإيرادات (ر.س)',
+              font: { family: 'Cairo' }
+            },
+            ticks: {
+              font: { family: 'Cairo' },
+              callback: (value) => value.toLocaleString()
+            }
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            title: {
+              display: true,
+              text: 'النسبة المئوية (%)',
+              font: { family: 'Cairo' }
+            },
+            ticks: {
+              font: { family: 'Cairo' }
+            },
+            grid: {
+              drawOnChartArea: false
+            },
+            max: 100
+          },
+          x: {
+            ticks: {
+              font: { family: 'Cairo' }
+            }
+          }
+        }
+      }
     });
   }
-
-  // Utility Functions
   
-  formatCurrency(amount: number): string {
-    if (amount === 0) return '0 ر.س';
+  createRevenueProjectionChart() {
+    if (!this.revenueProjectionChart) return;
     
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount) + ' ر.س';
-  }
-  
-  formatChange(change: number): string {
-    if (change === 0) return '0%';
+    const ctx = this.revenueProjectionChart.nativeElement.getContext('2d');
+    if (!ctx) return;
     
-    const sign = change > 0 ? '+' : '';
-    return `${sign}${change.toFixed(1)}%`;
+    const months = ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو', 
+                    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+    
+    this.revenueProjectionChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          {
+            label: 'الفعلي',
+            data: [...this.revenueProjectionData.historical, ...Array(6).fill(null)],
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 2
+          },
+          {
+            label: 'المتوقع',
+            data: [...Array(6).fill(null), ...this.revenueProjectionData.projected],
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+            borderDash: [5, 5],
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: { family: 'Cairo', size: 12 },
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              font: { family: 'Cairo' },
+              callback: (value) => `${value.toLocaleString()} ر.س`
+            }
+          },
+          x: {
+            ticks: {
+              font: { family: 'Cairo', size: 11 }
+            }
+          }
+        }
+      }
+    });
   }
   
-  parseValue(valueString: string): number {
-    // استخراج الرقم من النص (مثل "1,500 ر.س" -> 1500)
-    const numericString = valueString.replace(/[^\d.-]/g, '');
-    return parseFloat(numericString) || 0;
+  createTaskCompletionChart() {
+    if (!this.taskCompletionChart) return;
+    
+    const ctx = this.taskCompletionChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    this.taskCompletionChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: this.taskCompletionData.weeks,
+        datasets: [
+          {
+            label: 'المخطط',
+            data: this.taskCompletionData.planned,
+            backgroundColor: 'rgba(156, 163, 175, 0.5)',
+            borderColor: 'rgb(156, 163, 175)',
+            borderWidth: 2,
+            borderRadius: 6
+          },
+          {
+            label: 'المكتمل',
+            data: this.taskCompletionData.completed,
+            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+            borderColor: 'rgb(16, 185, 129)',
+            borderWidth: 2,
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: { family: 'Cairo', size: 12 },
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 5,
+              font: { family: 'Cairo' }
+            }
+          },
+          x: {
+            ticks: {
+              font: { family: 'Cairo' }
+            }
+          }
+        }
+      }
+    });
   }
   
-  getInsightClass(type: string): string {
-    const classes: { [key: string]: string } = {
-      'success': 'insight-success',
-      'info': 'insight-info',
-      'warning': 'insight-warning',
-      'danger': 'insight-danger'
-    };
-    return classes[type] || 'insight-info';
+  createGrowthTrendChart() {
+    if (!this.growthTrendChart) return;
+    
+    const ctx = this.growthTrendChart.nativeElement.getContext('2d');
+    if (!ctx) return;
+    
+    this.growthTrendChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: this.growthMetrics.quarters,
+        datasets: [
+          {
+            label: 'الإيرادات (ر.س)',
+            data: this.growthMetrics.revenue,
+            borderColor: 'rgb(59, 130, 246)',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y'
+          },
+          {
+            label: 'العملاء',
+            data: this.growthMetrics.customers,
+            borderColor: 'rgb(16, 185, 129)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y1'
+          },
+          {
+            label: 'حصة السوق (%)',
+            data: this.growthMetrics.marketShare,
+            borderColor: 'rgb(245, 158, 11)',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            tension: 0.4,
+            fill: true,
+            yAxisID: 'y2'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              font: { family: 'Cairo', size: 12 },
+              usePointStyle: true,
+              padding: 15
+            }
+          }
+        },
+        scales: {
+          y: {
+            type: 'linear',
+            position: 'left',
+            title: {
+              display: true,
+              text: 'الإيرادات',
+              font: { family: 'Cairo' }
+            },
+            ticks: {
+              font: { family: 'Cairo' }
+            }
+          },
+          y1: {
+            type: 'linear',
+            position: 'right',
+            title: {
+              display: true,
+              text: 'العملاء',
+              font: { family: 'Cairo' }
+            },
+            ticks: {
+              font: { family: 'Cairo' }
+            },
+            grid: {
+              drawOnChartArea: false
+            }
+          },
+          y2: {
+            type: 'linear',
+            display: false,
+            max: 100
+          },
+          x: {
+            ticks: {
+              font: { family: 'Cairo' }
+            }
+          }
+        }
+      }
+    });
   }
   
-  getInsightIcon(type: string): string {
-    const icons: { [key: string]: string } = {
-      'success': '✅',
-      'info': '💡',
-      'warning': '⚠️',
-      'danger': '🚨'
-    };
-    return icons[type] || '💡';
+  destroyCharts() {
+    if (this.performanceChartInstance) {
+      this.performanceChartInstance.destroy();
+    }
+    if (this.revenueProjectionChartInstance) {
+      this.revenueProjectionChartInstance.destroy();
+    }
+    if (this.taskCompletionChartInstance) {
+      this.taskCompletionChartInstance.destroy();
+    }
+    if (this.growthTrendChartInstance) {
+      this.growthTrendChartInstance.destroy();
+    }
   }
 
-  // Guide functions
+  // ==================== UI ACTIONS ====================
+
   openGuide() {
     this.showGuide = true;
   }
@@ -511,20 +644,63 @@ export class Analytics implements OnInit, OnDestroy {
   closeGuide() {
     this.showGuide = false;
   }
-  
-  // Export data (للمستقبل)
-  exportAnalytics() {
-    console.log('📊 Exporting analytics...');
-    alert('ميزة التصدير ستكون متاحة قريباً');
+
+  toggleGuide() {
+    this.showGuide = !this.showGuide;
   }
-  
-  // Change analysis period
-  changeAnalysisPeriod(days: number) {
-    this.analysisEndDate = new Date();
-    this.analysisStartDate = new Date();
-    this.analysisStartDate.setDate(this.analysisStartDate.getDate() - days);
+
+  refreshData() {
+    this.loadAnalyticsData();
+  }
+
+  refreshAnalytics() {
+    this.refreshData();
+  }
+
+  toggleAutoRefresh() {
+    this.autoRefreshEnabled = !this.autoRefreshEnabled;
     
-    console.log(`📅 Changed analysis period to last ${days} days`);
-    this.refreshAnalytics();
+    if (this.autoRefreshEnabled) {
+      this.refreshSubscription = interval(30000).subscribe(() => {
+        this.refreshData();
+      });
+    } else {
+      if (this.refreshSubscription) {
+        this.refreshSubscription.unsubscribe();
+      }
+    }
+  }
+
+  exportData(format: 'pdf' | 'excel') {
+    console.log(`Exporting data as ${format}`);
+    alert(`سيتم إضافة ميزة التصدير لـ ${format} قريباً`);
+  }
+
+  // ==================== UTILITY FUNCTIONS ====================
+
+  getInsightIcon(type: string): string {
+    const icons: { [key: string]: string } = {
+      success: '✅',
+      info: 'ℹ️',
+      warning: '⚠️',
+      danger: '❌'
+    };
+    return icons[type] || 'ℹ️';
+  }
+
+  getInsightClass(type: string): string {
+    return `insight-${type}`;
+  }
+
+  formatPercentage(value: number): string {
+    return `${value.toFixed(1)}%`;
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('ar-SA', {
+      style: 'currency',
+      currency: 'SAR',
+      minimumFractionDigits: 0
+    }).format(amount);
   }
 }

@@ -188,6 +188,85 @@
     </div>
   </section>
 
+<!-- Charts Section -->
+<section class="charts-section">
+  
+  <!-- Tasks Progress Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h3>📊 تقدم المهام</h3>
+      <span class="chart-subtitle">{{ totalTasks }} مهمة إجمالي</span>
+    </div>
+    
+    <div *ngIf="chartsLoading" class="chart-skeleton">
+      <div class="skeleton-circle"></div>
+    </div>
+    
+    <div *ngIf="!chartsLoading" class="chart-container" style="height: 300px;">
+      <canvas #tasksProgressChart></canvas>
+    </div>
+    
+    <div class="chart-footer">
+      <div class="chart-stat">
+        <span class="stat-label">نسبة الإنجاز</span>
+        <span class="stat-value success">{{ tasksProgress }}%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini Finance Chart -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <h3>💰 الملخص المالي</h3>
+      <span class="chart-subtitle">هذا الشهر</span>
+    </div>
+    
+    <div *ngIf="chartsLoading" class="chart-skeleton">
+      <div class="skeleton-bars"></div>
+    </div>
+    
+    <div *ngIf="!chartsLoading" class="chart-container" style="height: 300px;">
+      <canvas #miniFinanceChart></canvas>
+    </div>
+    
+    <div class="chart-footer">
+      <div class="chart-stat">
+        <span class="stat-label">هامش الربح</span>
+        <span class="stat-value" [class.success]="profitMargin > 0" [class.danger]="profitMargin < 0">
+          {{ profitMargin }}%
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly Activity Chart -->
+  <div class="chart-card full-width">
+    <div class="chart-header">
+      <h3>📈 نشاط الأسبوع</h3>
+      <span class="chart-subtitle">المهام المكتملة خلال 7 أيام</span>
+    </div>
+    
+    <div *ngIf="chartsLoading" class="chart-skeleton">
+      <div class="skeleton-line"></div>
+    </div>
+    
+    <div *ngIf="!chartsLoading" class="chart-container" style="height: 250px;">
+      <canvas #activityChart></canvas>
+    </div>
+    
+    <div class="chart-footer">
+      <div class="chart-stat">
+        <span class="stat-label">إجمالي هذا الأسبوع</span>
+        <span class="stat-value success">{{ completedTasks }} مهمة</span>
+      </div>
+      <div class="chart-stat">
+        <span class="stat-label">متوسط يومي</span>
+        <span class="stat-value info">{{ (completedTasks / 7).toFixed(1) }} مهمة</span>
+      </div>
+    </div>
+  </div>
+
+</section>
   <!-- Main Content Grid -->
   <div class="content-grid">
     
