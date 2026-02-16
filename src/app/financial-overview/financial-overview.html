@@ -1,151 +1,139 @@
-<!-- Sidebar -->
 <app-side-bar></app-side-bar>
 
-<!-- Main Content -->
-<main class="main">
+<div class="financial-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل البيانات المالية...</p>
+  </div>
 
-  <!-- ===============================
-       Navbar (Top Bar)
-  ================================= -->
- <nav class="navbar">
-  <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
-</nav>
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="error-banner">
+    ❌ {{ errorMessage }}
+  </div>
 
-<!-- User Guide Popup -->
-<div class="guide-overlay" *ngIf="showGuide">
-  <div class="guide-modal">
+  <!-- Header -->
+  <div class="page-header">
+    <h1>💰 النظرة المالية</h1>
+    <div class="header-actions">
+      <!-- Period Selector -->
+      <div class="period-selector">
+        <button (click)="changePeriod('week')" 
+                [class.active]="selectedPeriod === 'week'"
+                class="period-btn">
+          أسبوع
+        </button>
+        <button (click)="changePeriod('month')" 
+                [class.active]="selectedPeriod === 'month'"
+                class="period-btn">
+          شهر
+        </button>
+        <button (click)="changePeriod('quarter')" 
+                [class.active]="selectedPeriod === 'quarter'"
+                class="period-btn">
+          ربع سنة
+        </button>
+        <button (click)="changePeriod('year')" 
+                [class.active]="selectedPeriod === 'year'"
+                class="period-btn">
+          سنة
+        </button>
+      </div>
+      
+      <button (click)="refreshFinancialData()" class="btn-refresh">
+        🔄 تحديث
+      </button>
+    </div>
+  </div>
 
-    <!-- Header -->
-    <div class="guide-header">
-      <h3>دليل استخدام لوحة التحكم</h3>
-      <button class="close-btn" (click)="closeGuide()">✕</button>
+  <!-- Financial Cards -->
+  <div class="cards-grid">
+    <div *ngFor="let card of cards" class="financial-card">
+      <h3>{{ card.title }}</h3>
+      
+      <div *ngIf="!card.loading">
+        <p class="card-value">{{ card.value }}</p>
+        <span class="card-change" 
+              [class.positive]="card.up"
+              [class.negative]="!card.up">
+          {{ card.up ? '↗' : '↘' }} {{ card.percent }}
+        </span>
+      </div>
+      
+      <div *ngIf="card.loading" class="skeleton-loader"></div>
+    </div>
+  </div>
+
+  <!-- Charts Section -->
+  <div class="charts-section">
+    
+    <!-- Revenue vs Expense Chart -->
+    <div class="chart-card">
+      <h2>📊 الإيرادات مقابل المصروفات</h2>
+      <div class="chart-container">
+        <canvas #revenueExpenseChart></canvas>
+      </div>
     </div>
 
-    <!-- Content -->
-    <div class="guide-content">
-      <p>
-        لوحة التحكم هي مركز إدارة مشروعك، وتعرض لك ملخصًا سريعًا عن الأداء،
-        التقدم، والتنبيهات المهمة.
-      </p>
-
-      <ul>
-        <li>📊 متابعة التقدم العام للمشروع</li>
-        <li>⚠️ تنبيهات ذكية عند وجود مشاكل</li>
-        <li>💡 اقتراحات وتحسينات مدعومة بالذكاء الاصطناعي</li>
-        <li>🚀 اختصار الوقت واتخاذ قرارات أسرع</li>
-      </ul>
+    <!-- Expense Distribution Chart -->
+    <div class="chart-card">
+      <h2>🍩 توزيع المصروفات</h2>
+      <div class="chart-container">
+        <canvas #expenseDistributionChart></canvas>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <div class="guide-footer">
-      <button class="add-btn" (click)="closeGuide()">فهمت</button>
+    <!-- Monthly Trend Chart -->
+    <div class="chart-card full-width">
+      <h2>📈 الاتجاه الشهري</h2>
+      <div class="chart-container">
+        <canvas #monthlyTrendChart></canvas>
+      </div>
     </div>
 
+    <!-- Profit Margin Chart -->
+    <div class="chart-card full-width">
+      <h2>📉 هامش الربح</h2>
+      <div class="chart-container">
+        <canvas #profitMarginChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="transactions-section">
+    <h2>📝 آخر المعاملات</h2>
+    
+    <div class="transactions-list">
+      <div *ngFor="let transaction of transactions" 
+           class="transaction-item"
+           [class.revenue]="transaction.type === 'revenue'"
+           [class.expense]="transaction.type === 'expense'">
+        
+        <div class="transaction-icon">
+          <span *ngIf="transaction.type === 'revenue'">💰</span>
+          <span *ngIf="transaction.type === 'expense'">💸</span>
+          <span *ngIf="transaction.type === 'pending'">⏳</span>
+        </div>
+        
+        <div class="transaction-info">
+          <h4>{{ transaction.title }}</h4>
+          <span class="transaction-date">{{ transaction.date }}</span>
+          <span *ngIf="transaction.category" class="transaction-category">
+            {{ transaction.category }}
+          </span>
+        </div>
+        
+        <div class="transaction-amount"
+             [class.positive]="transaction.amount > 0"
+             [class.negative]="transaction.amount < 0">
+          {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount.toLocaleString('ar-SA') }} ر.س
+        </div>
+      </div>
+      
+      <div *ngIf="transactions.length === 0 && !isLoading" class="no-transactions">
+        <p>📭 لا توجد معاملات مالية حتى الآن</p>
+      </div>
+    </div>
   </div>
 </div>
-
-
-  <!-- ===============================
-       Header Section
-  ================================= -->
-  <section class="header">
-    <div class="header-info">
-      <h1>الحسابات المالية</h1>
-      <p>نظرة شاملة على الوضع المالي للمشروع</p>
-    </div>
-    <div class="header-actions">
-      <div class="date-btn">هذا الشهر</div>
-      <button class="add-btn">+ إضافة معاملة</button>
-    </div>
-  </section>
-
-  <!-- ===============================
-       Alerts Section
-  ================================= -->
-  <section class="alerts">
-    <!-- Warning Alert -->
-    <div class="alert warning">
-      <span>⚠️ ميزانية التسويق تجاوزت 80% من الحد المخطط</span>
-      <h4 routerLink="/financial-overview" class="page-link">
-        مراجعة الميزانية
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-             class="bi bi-arrow-left-short" viewBox="0 0 16 16">
-          <path fill-rule="evenodd"
-                d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
-        </svg>
-      </h4>
-    </div>
-
-    <!-- Info Alert -->
-    <div class="alert info">
-      <span>🔔 3 فواتير مستحقة خلال الأسبوع القادم</span>
-      <h4 routerLink="/financial-overview" class="page-link">
-        عرض الفواتير
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-             class="bi bi-arrow-left-short" viewBox="0 0 16 16">
-          <path fill-rule="evenodd"
-                d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
-        </svg>
-      </h4>
-    </div>
-  </section>
-
-  <!-- ===============================
-       Cards Section (Summary)
-  ================================= -->
-  <section class="cards">
-    <div class="card" *ngFor="let c of cards">
-      <div class="card-top">
-        <span class="percent" [class.up]="c.up" [class.down]="!c.up">{{ c.percent }}</span>
-      </div>
-      <div class="card-body">
-        <p>{{ c.title }}</p>
-        <h2>{{ c.value }}</h2>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===============================
-       Charts Section
-  ================================= -->
-  <section class="charts">
-    <!-- Line Chart Placeholder -->
-    <div class="chart-card">
-      <h3>الإيرادات والمصروفات</h3>
-      <p class="sub">آخر 6 أشهر</p>
-      <div class="line-placeholder"></div>
-    </div>
-
-    <!-- Pie Chart Placeholder -->
-    <div class="chart-card">
-      <h3>توزيع المصروفات</h3>
-      <p class="sub">حسب الفئة</p>
-      <div class="pie-placeholder"></div>
-    </div>
-  </section>
-
-  <!-- ===============================
-       Transactions Section
-  ================================= -->
-  <section class="transactions">
-    <h3>المعاملات الأخيرة</h3>
-
-    <div class="transaction" *ngFor="let t of transactions">
-      <div class="left">
-        <span class="title">{{ t.title }}</span>
-        <span class="date">{{ t.date }}</span>
-      </div>
-      <div class="right">
-        <span class="amount"
-              [class.in]="t.type === 'in'"
-              [class.out]="t.type === 'out'"
-              [class.pending]="t.type === 'pending'">
-          {{ t.amount > 0 ? '+' : '' }}{{ t.amount }} ر.س
-        </span>
-        <span class="status" *ngIf="t.type === 'pending'">قيد الانتظار</span>
-        <span class="status done" *ngIf="t.type !== 'pending'">مكتمل</span>
-      </div>
-    </div>
-  </section>
-
-</main>

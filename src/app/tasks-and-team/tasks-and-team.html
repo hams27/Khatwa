@@ -1,200 +1,348 @@
-<!-- Sidebar -->
 <app-side-bar></app-side-bar>
 
-<!-- Main Content -->
-<div class="tasks-page">
-
-  <!-- ===============================
-       Navbar (Top Bar)
-  ================================= -->
-  <nav class="navbar">
-    <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
-  </nav>
-
-  <!-- User Guide Popup -->
-  <div class="guide-overlay" *ngIf="showGuide">
-    <div class="guide-modal">
-
-      <!-- Header -->
-      <div class="guide-header">
-        <h3>دليل استخدام المهام والفريق</h3>
-        <button class="close-btn" (click)="closeGuide()">✕</button>
-      </div>
-
-      <!-- Content -->
-      <div class="guide-content">
-        <p>
-          صفحة المهام والفريق تساعدك على إدارة الفريق ومتابعة كل المهام.
-        </p>
-        <ul>
-          <li>👥 متابعة أعضاء الفريق وعدد المهام لكل عضو</li>
-          <li>📋 عرض المهام حسب الحالة: قائمة، قيد التنفيذ، المراجعة، مكتمل</li>
-          <li>🏷️ إدارة الأولويات والعلامات (Tags) لكل مهمة</li>
-          <li>➕ إضافة مهام جديدة بسهولة لكل عمود</li>
-        </ul>
-      </div>
-
-      <!-- Footer -->
-      <div class="guide-footer">
-        <button class="add-btn" (click)="closeGuide()">فهمت</button>
-      </div>
-
-    </div>
+<div class="tasks-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل المهام...</p>
   </div>
 
-  <!-- ===============================
-       Header Section
-  ================================= -->
+  <!-- Success/Error Messages -->
+  <div *ngIf="successMessage" class="success-banner">
+    ✅ {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="error-banner">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <!-- Header -->
   <div class="page-header">
     <div>
-      <h1>المهام والفريق</h1>
-      <p>نظم عملك ووزع المهام على فريقك</p>
+      <h1>📋 المهام والفريق</h1>
+      <p class="subtitle">اسحب وأفلت المهام بين الأعمدة لتحديث حالتها</p>
     </div>
     <div class="header-actions">
-      <button class="btn btn-outline">إدارة الفريق</button>
-      <button class="btn btn-primary">+ مهمة جديدة</button>
+      <button (click)="openNewTaskModal()" class="btn-primary">
+        ➕ مهمة جديدة
+      </button>
+      <button (click)="refreshTasks()" class="btn-refresh">
+        🔄 تحديث
+      </button>
     </div>
   </div>
 
-  <!-- ===============================
-       Team Section
-  ================================= -->
-  <section class="team-section">
-    <h3>أعضاء الفريق</h3>
-    <div class="team-cards">
-      <div class="team-card" *ngFor="let member of teamMembers">
-        <div class="avatar">{{ member.avatar }}</div>
-        <div>
-          <div class="name">{{ member.name }}</div>
-          <div class="count">{{ member.tasks }} مهمة</div>
+  <!-- Team Members Section -->
+  <div class="team-section">
+    <h2>👥 الفريق</h2>
+    <div class="team-grid">
+      <div *ngFor="let member of teamMembers" class="team-member-card">
+        <div class="member-avatar">{{ member.avatar }}</div>
+        <div class="member-info">
+          <h3>{{ member.name }}</h3>
+          <span class="member-tasks">{{ member.tasks }} مهمة</span>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- ===============================
-       Tasks Board
-  ================================= -->
-  <section class="tasks-board">
-
-    <!-- قائمة المهام (To Do) -->
-    <div class="board-column neutral">
-      <div class="column-header">
-        <span>قائمة المهام</span>
-        <span class="counter">{{ todoCount }}</span>
+  <!-- Kanban Board with Drag & Drop -->
+  <div class="kanban-board">
+    
+    <!-- Column 1: To Do -->
+    <div class="kanban-column">
+      <div class="column-header todo-header">
+        <h3>📝 قائمة المهام</h3>
+        <span class="task-count">{{ todoCount }}</span>
       </div>
-
-      <div class="task-card all" *ngFor="let t of tasks" [hidden]="t.status !== 'todo'">
-        <h4>{{ t.title }}</h4>
-        <p>{{ t.desc }}</p>
-        <div class="tags">
-          <span *ngFor="let tag of t.tags">{{ tag }}</span>
-        </div>
-        <div class="task-footer">
-          <div class="left">
-            <span>{{ t.user }}</span>
-            <span>{{ t.date }}</span>
+      
+      <div 
+        class="tasks-list"
+        cdkDropList
+        #todoList="cdkDropList"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="[inProgressList, reviewList, completedList]"
+        (cdkDropListDropped)="drop($event, 'todo')">
+        
+        <div 
+          *ngFor="let task of todoTasks"
+          class="task-card"
+          cdkDrag
+          [cdkDragData]="task"
+          [style.border-left-color]="getPriorityColor(task.priority)">
+          
+          <!-- Drag Handle -->
+          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
+          
+          <!-- Task Content -->
+          <div class="task-content">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            
+            <!-- Tags -->
+            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
+              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
+            </div>
+            
+            <!-- Footer -->
+            <div class="task-footer">
+              <div class="task-meta">
+                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
+                  {{ getPriorityLabel(task.priority) }}
+                </span>
+                <span class="task-date">{{ task.date }}</span>
+              </div>
+              
+              <div class="task-actions">
+                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
+                  🗑️
+                </button>
+              </div>
+            </div>
           </div>
-          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+        
+        <div *ngIf="todoTasks.length === 0" class="empty-column">
+          لا توجد مهام
         </div>
       </div>
-
-      <div class="add-card">+ إضافة مهمة</div>
     </div>
 
-    <!-- قيد التنفيذ (In Progress) -->
-    <div class="board-column info">
-      <div class="column-header">
-        <span>قيد التنفيذ</span>
-        <span class="counter">{{ inProgressCount }}</span>
+    <!-- Column 2: In Progress -->
+    <div class="kanban-column">
+      <div class="column-header in-progress-header">
+        <h3>🔄 قيد التنفيذ</h3>
+        <span class="task-count">{{ inProgressCount }}</span>
       </div>
-
-      <div class="task-card waiting" *ngFor="let t of tasks" [hidden]="t.status !== 'in-progress'">
-        <h4>{{ t.title }}</h4>
-        <p>{{ t.desc }}</p>
-        <div class="tags">
-          <span *ngFor="let tag of t.tags">{{ tag }}</span>
-        </div>
-        <div class="task-footer">
-          <div class="left">
-            <span>{{ t.user }}</span>
-            <span>{{ t.date }}</span>
+      
+      <div 
+        class="tasks-list"
+        cdkDropList
+        #inProgressList="cdkDropList"
+        [cdkDropListData]="inProgressTasks"
+        [cdkDropListConnectedTo]="[todoList, reviewList, completedList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')">
+        
+        <div 
+          *ngFor="let task of inProgressTasks"
+          class="task-card"
+          cdkDrag
+          [cdkDragData]="task"
+          [style.border-left-color]="getPriorityColor(task.priority)">
+          
+          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
+          
+          <div class="task-content">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            
+            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
+              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
+            </div>
+            
+            <div class="task-footer">
+              <div class="task-meta">
+                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
+                  {{ getPriorityLabel(task.priority) }}
+                </span>
+                <span class="task-date">{{ task.date }}</span>
+              </div>
+              
+              <div class="task-actions">
+                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
+                  🗑️
+                </button>
+              </div>
+            </div>
           </div>
-          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+        
+        <div *ngIf="inProgressTasks.length === 0" class="empty-column">
+          لا توجد مهام
         </div>
       </div>
-
-      <div class="add-card">+ إضافة مهمة</div>
     </div>
 
-    <!-- المراجعة (Review) -->
-    <div class="board-column warning">
-      <div class="column-header">
-        <span>المراجعة</span>
-        <span class="counter">{{ reviewCount }}</span>
+    <!-- Column 3: Review -->
+    <div class="kanban-column">
+      <div class="column-header review-header">
+        <h3>👁️ المراجعة</h3>
+        <span class="task-count">{{ reviewCount }}</span>
       </div>
-
-      <div class="task-card preview" *ngFor="let t of tasks" [hidden]="t.status !== 'review'">
-        <h4>{{ t.title }}</h4>
-        <p>{{ t.desc }}</p>
-        <div class="tags">
-          <span *ngFor="let tag of t.tags">{{ tag }}</span>
-        </div>
-        <div class="task-footer">
-          <div class="left">
-            <span>{{ t.user }}</span>
-            <span>{{ t.date }}</span>
+      
+      <div 
+        class="tasks-list"
+        cdkDropList
+        #reviewList="cdkDropList"
+        [cdkDropListData]="reviewTasks"
+        [cdkDropListConnectedTo]="[todoList, inProgressList, completedList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')">
+        
+        <div 
+          *ngFor="let task of reviewTasks"
+          class="task-card"
+          cdkDrag
+          [cdkDragData]="task"
+          [style.border-left-color]="getPriorityColor(task.priority)">
+          
+          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
+          
+          <div class="task-content">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            
+            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
+              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
+            </div>
+            
+            <div class="task-footer">
+              <div class="task-meta">
+                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
+                  {{ getPriorityLabel(task.priority) }}
+                </span>
+                <span class="task-date">{{ task.date }}</span>
+              </div>
+              
+              <div class="task-actions">
+                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
+                  🗑️
+                </button>
+              </div>
+            </div>
           </div>
-          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+        
+        <div *ngIf="reviewTasks.length === 0" class="empty-column">
+          لا توجد مهام
         </div>
       </div>
-
-      <div class="add-card">+ إضافة مهمة</div>
     </div>
 
-    <!-- مكتمل (Completed) -->
-    <div class="board-column success">
-      <div class="column-header">
-        <span>مكتمل</span>
-        <span class="counter">{{ completedCount }}</span>
+    <!-- Column 4: Completed -->
+    <div class="kanban-column">
+      <div class="column-header completed-header">
+        <h3>✅ المكتملة</h3>
+        <span class="task-count">{{ completedCount }}</span>
       </div>
-
-      <div class="task-card done" *ngFor="let t of tasks" [hidden]="t.status !== 'completed'">
-        <h4>{{ t.title }}</h4>
-        <p>{{ t.desc }}</p>
-        <div class="tags">
-          <span *ngFor="let tag of t.tags">{{ tag }}</span>
-        </div>
-        <div class="task-footer">
-          <div class="left">
-            <span>{{ t.user }}</span>
-            <span>{{ t.date }}</span>
+      
+      <div 
+        class="tasks-list"
+        cdkDropList
+        #completedList="cdkDropList"
+        [cdkDropListData]="completedTasks"
+        [cdkDropListConnectedTo]="[todoList, inProgressList, reviewList]"
+        (cdkDropListDropped)="drop($event, 'done')">
+        
+        <div 
+          *ngFor="let task of completedTasks"
+          class="task-card completed"
+          cdkDrag
+          [cdkDragData]="task"
+          [style.border-left-color]="getPriorityColor(task.priority)">
+          
+          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
+          
+          <div class="task-content">
+            <h4>{{ task.title }}</h4>
+            <p *ngIf="task.description">{{ task.description }}</p>
+            
+            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
+              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
+            </div>
+            
+            <div class="task-footer">
+              <div class="task-meta">
+                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
+                  {{ getPriorityLabel(task.priority) }}
+                </span>
+                <span class="task-date">{{ task.date }}</span>
+              </div>
+              
+              <div class="task-actions">
+                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
+                  🗑️
+                </button>
+              </div>
+            </div>
           </div>
-          <span class="badge" [ngClass]="t.priority">{{ t.priority }}</span>
+        </div>
+        
+        <div *ngIf="completedTasks.length === 0" class="empty-column">
+          لا توجد مهام
         </div>
       </div>
-
-      <div class="add-card">+ إضافة مهمة</div>
     </div>
+  </div>
+</div>
 
-  </section>
-
-  <!-- ===============================
-       Stats Section
-  ================================= -->
-  <section class="stats">
-    <div class="stat-card">
-      <span>إجمالي المهام</span>
-      <strong>{{ tasks.length }}</strong>
+<!-- New Task Modal -->
+<div *ngIf="showNewTaskModal" class="modal-overlay" (click)="closeNewTaskModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>➕ مهمة جديدة</h2>
+    
+    <div class="form-group">
+      <label>عنوان المهمة *</label>
+      <input type="text"
+             [(ngModel)]="newTask.title"
+             placeholder="مثال: إنشاء تصميم للحملة الإعلانية"
+             class="form-control">
     </div>
-    <div class="stat-card">
-      <span>المهام المكتملة</span>
-      <strong class="success">{{ completedCount }}</strong>
+    
+    <div class="form-group">
+      <label>الوصف</label>
+      <textarea [(ngModel)]="newTask.description"
+                placeholder="تفاصيل إضافية عن المهمة..."
+                rows="4"
+                class="form-control"></textarea>
     </div>
-    <div class="stat-card">
-      <span>المهام المتأخرة</span>
-      <strong class="danger">{{ reviewCount }}</strong>
+    
+    <div class="form-row">
+      <div class="form-group">
+        <label>الحالة</label>
+        <select [(ngModel)]="newTask.status" class="form-control">
+          <option value="todo">قائمة المهام</option>
+          <option value="in-progress">قيد التنفيذ</option>
+          <option value="done">مكتملة</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>الأولوية</label>
+        <select [(ngModel)]="newTask.priority" class="form-control">
+          <option *ngFor="let p of priorityOptions" [value]="p.value">
+            {{ p.label }}
+          </option>
+        </select>
+      </div>
     </div>
-  </section>
-
+    
+    <div class="form-group">
+      <label>تاريخ الاستحقاق</label>
+      <input type="date"
+             [(ngModel)]="newTask.dueDate"
+             class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label>الوسوم</label>
+      <div class="tags-selector">
+        <button *ngFor="let tag of availableTags"
+                type="button"
+                (click)="toggleTag(tag)"
+                [class.selected]="newTask.tags?.includes(tag)"
+                class="tag-btn">
+          {{ tag }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button (click)="closeNewTaskModal()" class="btn-cancel">
+        إلغاء
+      </button>
+      <button (click)="createTask()" class="btn-primary">
+        إنشاء المهمة
+      </button>
+    </div>
+  </div>
 </div>

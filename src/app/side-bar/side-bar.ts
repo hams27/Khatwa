@@ -11,8 +11,8 @@ interface MenuItem {
 
 @Component({
   selector: 'app-side-bar',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
+standalone: true,
+imports: [CommonModule, RouterModule],
   templateUrl: './side-bar.html',
   styleUrl: './side-bar.css',
 })

@@ -8,82 +8,67 @@
   <nav class="navbar">
     <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
   </nav>
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-spinner">
+  <div class="spinner"></div>
+  <p>جاري تحميل التحليلات...</p>
+</div>
 
-  <!-- User Guide Popup -->
-  <div class="guide-overlay" *ngIf="showGuide">
-    <div class="guide-modal">
-      <div class="guide-header">
-        <h3>دليل استخدام التحليلات والتوقعات</h3>
-        <button class="close-btn" (click)="closeGuide()">✕</button>
-      </div>
-      <div class="guide-content">
-        <p>
-          هذه الصفحة تعرض التحليلات الذكية للمشروع، تساعدك على اتخاذ قرارات أفضل.
-        </p>
-        <ul>
-          <li>📊 متابعة أداء المشروع بشكل تفصيلي</li>
-          <li>💡 رؤى وتوقعات ذكية مدعومة بالبيانات</li>
-          <li>📈 مقارنة أداء القنوات التسويقية</li>
-          <li>⚡ اختصار الوقت في اتخاذ القرارات بناء على البيانات</li>
-        </ul>
-      </div>
-      <div class="guide-footer">
-        <button class="add-btn" (click)="closeGuide()">فهمت</button>
-      </div>
+<!-- Error Message -->
+<div *ngIf="errorMessage" class="error-banner">
+  {{ errorMessage }}
+</div>
+
+<!-- Refresh Button -->
+<button (click)="refreshAnalytics()" class="btn-refresh" [disabled]="isLoading">
+  🔄 تحديث البيانات
+</button>
+
+<!-- Auto-Refresh Toggle -->
+<label class="toggle-switch">
+  <input type="checkbox" 
+         [(ngModel)]="autoRefreshEnabled" 
+         (change)="toggleAutoRefresh()">
+  <span>تحديث تلقائي (كل 5 دقائق)</span>
+</label>
+
+<!-- Stats Cards with Loading -->
+<div class="stats-grid">
+  <div *ngFor="let card of statsCards" class="stat-card" [class]="card.color">
+    <div class="card-icon">{{ card.icon }}</div>
+    <h3>{{ card.title }}</h3>
+    
+    <div *ngIf="!card.loading">
+      <p class="value">{{ card.value }}</p>
+      <span class="change" [class.positive]="card.change.includes('+')">
+        {{ card.change }}
+      </span>
     </div>
+    
+    <div *ngIf="card.loading" class="skeleton-loader"></div>
   </div>
+</div>
 
-  <!-- Page Header -->
-  <header>
-    <h2>التحليلات والتوقعات</h2>
-    <p>رؤى ذكية لمساعدتك على اتخاذ قرارات أفضل</p>
-  </header>
-
-  <!-- Stats Cards -->
-  <div class="stats-cards">
-    <div class="card" *ngFor="let card of statsCards" [ngClass]="card.color">
-      <span class="badge">{{ card.change }}</span>
-      <div class="icon">{{ card.icon }}</div>
-      <div class="details">
-        <span class="title">{{ card.title }}</span>
-        <span class="value">{{ card.value }}</span>
-      </div>
+<!-- Insights with Icons -->
+<div class="insights-section">
+  <h2>💡 التوقعات والتحليلات</h2>
+  
+  <div *ngFor="let insight of insights" 
+       class="insight-card" 
+       [ngClass]="getInsightClass(insight.type)">
+    
+    <div class="insight-header">
+      <span class="insight-icon">{{ getInsightIcon(insight.type) }}</span>
+      <h3>{{ insight.title }}</h3>
+      <span class="confidence">{{ insight.confidence }}% موثوقية</span>
     </div>
+    
+    <p>{{ insight.description }}</p>
   </div>
-
-  <!-- Main Chart -->
-  <div class="chart-box">
-    <h3>أداء المشروع</h3>
-    <p>الزوار والمبيعات خلال الأشهر الماضية</p>
-    <div class="chart-placeholder">LINE CHART</div>
+  
+  <div *ngIf="insights.length === 0 && !isLoading" class="no-insights">
+    لا توجد تحليلات كافية حتى الآن. أضف المزيد من البيانات للحصول على رؤى ذكية!
   </div>
-
-  <!-- Insights Section -->
-  <div class="insights">
-    <h3>
-      <img src="stars.svg" alt="" width="30px">
-      توقعات ذكية
-    </h3>
-    <span>رؤى مدعومة بالبيانات لمساعدتك على النمو</span>
-
-    <div class="insight" *ngFor="let insight of insights" [ngClass]="insight.type">
-      <h4>{{ insight.title }}</h4>
-      <p>{{ insight.description }}</p>
-
-      <div class="confidence">
-        <span>مستوى الثقة : {{ insight.confidence }}%</span>
-        <div class="progress">
-          <div class="bar" [style.width.%]="insight.confidence"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Marketing Channels Chart -->
-  <div class="chart-box">
-    <h3>أداء القنوات التسويقية</h3>
-    <p>مقارنة بين مصادر الزوار</p>
-    <div class="chart-placeholder">LINE CHART</div>
-  </div>
+</div>
 
 </section>

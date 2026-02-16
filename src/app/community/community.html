@@ -1,99 +1,229 @@
 <app-side-bar></app-side-bar>
 
-<section class="community">
+<div class="community-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>جاري تحميل المجتمع...</p>
+  </div>
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
-  </nav>
+  <!-- Success/Error Messages -->
+  <div *ngIf="successMessage" class="success-banner">
+    ✅ {{ successMessage }}
+  </div>
 
-  <!-- User Guide Popup -->
-  <div class="guide-overlay" *ngIf="showGuide">
-    <div class="guide-modal">
-      <div class="guide-header">
-        <h3>دليل استخدام صفحة المجتمع</h3>
-        <button class="close-btn" (click)="closeGuide()">✕</button>
-      </div>
-      <div class="guide-content">
-        <p>
-          في صفحة المجتمع يمكنك متابعة النشاطات، المشاركات، والفعاليات الخاصة بالمجتمع.
-        </p>
-        <ul>
-          <li>📝 متابعة المنشورات الأخيرة والتعليقات</li>
-          <li>👥 معرفة الأعضاء النشطين والمواضيع الرائجة</li>
-          <li>🎉 الاطلاع على الفعاليات القادمة والتسجيل بها</li>
-        </ul>
-      </div>
-      <div class="guide-footer">
-        <button class="add-btn" (click)="closeGuide()">فهمت</button>
-      </div>
-    </div>
+  <div *ngIf="errorMessage" class="error-banner">
+    ❌ {{ errorMessage }}
   </div>
 
   <!-- Header -->
-  <header class="header">
-    <h2>المجتمع</h2>
-    <p>تواصل، ناقش، وتعلم من خبرات الآخرين</p>
-  </header>
+  <div class="community-header">
+    <h1>💬 المجتمع</h1>
+    <div class="header-actions">
+      <button (click)="openNewPostModal()" class="btn-primary">
+        ➕ منشور جديد
+      </button>
+      <button (click)="refreshCommunity()" class="btn-refresh">
+        🔄 تحديث
+      </button>
+    </div>
+  </div>
 
   <!-- Summary Cards -->
-  <div class="summary">
-    <div class="card" *ngFor="let c of summaryCards" [ngClass]="c.color">
-      <span class="icon">{{ c.icon }}</span>
-      <div>
-        <strong>{{ c.value }}</strong>
-        <p>{{ c.title }}</p>
+  <div class="summary-grid">
+    <div *ngFor="let card of summaryCards" 
+         class="summary-card" 
+         [ngClass]="card.color">
+      <div class="card-icon">{{ card.icon }}</div>
+      <div class="card-content">
+        <h3>{{ card.title }}</h3>
+        <p *ngIf="!card.loading" class="card-value">{{ card.value }}</p>
+        <div *ngIf="card.loading" class="skeleton-loader"></div>
       </div>
     </div>
   </div>
 
-  <div class="layout">
-
-    <!-- Posts -->
-    <main class="posts">
-      <div class="post" *ngFor="let p of posts">
-        <div class="post-header">
-          <div class="avatar">{{ p.author[0] }}</div>
-          <div>
-            <strong>{{ p.author }}</strong>
-            <br>
-            <span>{{ p.role }}</span>
-            <br>
-            <span>{{ p.time }}</span>
-          </div>
-        </div>
-        <p class="content">{{ p.content }}</p>
-        <div class="actions">
-          <span>👍 {{ p.likes }}</span>
-          <span>💬 {{ p.comments }}</span>
-        </div>
-      </div>
-    </main>
-
-    <!-- Left Side -->
-    <aside class="left">
-
-      <!-- Top Topics -->
-      <div class="box">
-        <h3>مواضيع شائعة</h3>
-        <div class="topic" *ngFor="let t of topTopics">
-          <span>{{ t.name }}</span>
-          <small>{{ t.posts }} منشور</small>
-        </div>
-      </div>
-
-      <!-- Events -->
-      <div class="box">
-        <h3>فعاليات قادمة</h3>
-        <div class="event" *ngFor="let e of events">
-          <strong>{{ e.title }}</strong>
-          <span>{{ e.date }} <br> {{ e.time }}</span>
-          <button class="btn btn-primary">تسجيل حضور</button>
-        </div>
-      </div>
-
-    </aside>
-
+  <!-- Filters & Search -->
+  <div class="filters-section">
+    <div class="filter-buttons">
+      <button *ngFor="let filter of availableFilters"
+              (click)="changeFilter(filter.value)"
+              [class.active]="selectedFilter === filter.value"
+              class="filter-btn">
+        {{ filter.icon }} {{ filter.label }}
+      </button>
+    </div>
+    
+    <div class="search-box">
+      <input type="text"
+             [(ngModel)]="searchQuery"
+             (input)="searchPosts()"
+             placeholder="🔍 ابحث في المنشورات..."
+             class="search-input">
+    </div>
   </div>
 
-</section>
+  <!-- Posts List -->
+  <div class="posts-section">
+    <div *ngFor="let post of posts" class="post-card">
+      
+      <!-- Post Header -->
+      <div class="post-header">
+        <div class="author-info">
+          <div class="author-avatar">{{ post.author?.charAt(0) || 'م' }}</div>
+          <div class="author-details">
+            <h3>{{ post.author }}</h3>
+            <span class="post-time">{{ post.timeAgo }}</span>
+          </div>
+        </div>
+        
+        <button *ngIf="isMyPost(post)" 
+                (click)="deletePost(post)"
+                class="btn-delete">
+          🗑️
+        </button>
+      </div>
+
+      <!-- Post Content -->
+      <div class="post-content">
+        <h2 *ngIf="post.title">{{ post.title }}</h2>
+        <p>{{ post.content }}</p>
+        
+        <!-- Tags -->
+        <div *ngIf="post.tags && post.tags.length > 0" class="post-tags">
+          <span *ngFor="let tag of post.tags" 
+                (click)="filterByTag(tag)"
+                class="tag">
+            #{{ tag }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Post Actions -->
+      <div class="post-actions">
+        <button (click)="toggleLike(post)" 
+                class="action-btn"
+                [class.liked]="post.isLiked">
+          {{ post.isLiked ? '❤️' : '🤍' }} 
+          {{ post.likesCount || 0 }}
+        </button>
+        
+        <button (click)="toggleComments(post)" class="action-btn">
+          💬 {{ post.commentsCount || 0 }}
+        </button>
+      </div>
+
+      <!-- Comments Section -->
+      <div *ngIf="post.showComments" class="comments-section">
+        
+        <!-- Loading Comments -->
+        <div *ngIf="post.loadingComments" class="loading-comments">
+          جاري تحميل التعليقات...
+        </div>
+
+        <!-- Comments List -->
+        <div *ngIf="!post.loadingComments" class="comments-list">
+          <div *ngFor="let comment of post.comments" class="comment-item">
+            <div class="comment-avatar">{{ comment.User?.name?.charAt(0) || 'م' }}</div>
+            <div class="comment-content">
+              <h4>{{ comment.User?.name || 'مستخدم' }}</h4>
+              <p>{{ comment.content }}</p>
+            </div>
+          </div>
+          
+          <div *ngIf="post.comments?.length === 0" class="no-comments">
+            لا توجد تعليقات حتى الآن. كن أول من يعلق!
+          </div>
+        </div>
+
+        <!-- Add Comment Form -->
+        <div class="add-comment-form">
+          <input type="text"
+                 [(ngModel)]="newCommentContent[post.id!]"
+                 (keyup.enter)="addComment(post)"
+                 placeholder="أضف تعليقاً..."
+                 class="comment-input">
+          <button (click)="addComment(post)" class="btn-send">
+            ↗️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="posts.length === 0 && !isLoading" class="empty-state">
+      <p>📝 لا توجد منشورات حالياً. كن أول من ينشر!</p>
+      <button (click)="openNewPostModal()" class="btn-primary">
+        إنشاء منشور
+      </button>
+    </div>
+  </div>
+
+  <!-- Top Topics Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-card">
+      <h3>🏷️ المواضيع الشائعة</h3>
+      <div class="topics-list">
+        <div *ngFor="let topic of topTopics" 
+             (click)="filterByTag(topic.name)"
+             class="topic-item">
+          <span class="topic-name">#{{ topic.name }}</span>
+          <span class="topic-count">{{ topic.posts }}</span>
+        </div>
+      </div>
+      
+      <div *ngIf="topTopics.length === 0" class="no-topics">
+        لا توجد مواضيع شائعة حتى الآن
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- New Post Modal -->
+<div *ngIf="showNewPostModal" class="modal-overlay" (click)="closeNewPostModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>✍️ منشور جديد</h2>
+    
+    <div class="form-group">
+      <label>عنوان المنشور</label>
+      <input type="text"
+             [(ngModel)]="newPost.title"
+             placeholder="اكتب عنواناً جذاباً..."
+             class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label>المحتوى</label>
+      <textarea [(ngModel)]="newPost.content"
+                placeholder="شارك أفكارك، خبراتك، أو أسئلتك..."
+                rows="6"
+                class="form-control"></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>الوسوم (اختر واحد أو أكثر)</label>
+      <div class="tags-selector">
+        <button *ngFor="let tag of availableTags"
+                (click)="toggleTag(tag)"
+                [class.selected]="newPost.tags.includes(tag)"
+                class="tag-btn">
+          #{{ tag }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button (click)="closeNewPostModal()" 
+              class="btn-cancel"
+              [disabled]="isCreatingPost">
+        إلغاء
+      </button>
+      <button (click)="createPost()" 
+              class="btn-primary"
+              [disabled]="isCreatingPost">
+        <span *ngIf="!isCreatingPost">نشر</span>
+        <span *ngIf="isCreatingPost">جاري النشر...</span>
+      </button>
+    </div>
+  </div>
+</div>

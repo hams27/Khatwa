@@ -1,227 +1,370 @@
 <app-side-bar></app-side-bar>
-
-<!-- Navbar -->
-<nav class="navbar">
-  <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
+<section class="page">
+<!-- Top Navigation Bar -->
+<nav class="top-nav">
+  <div class="nav-content">
+    <button class="guide-btn" (click)="openGuide()">
+      <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+        <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+      </svg>
+      <span>دليل الاستخدام</span>
+    </button>
+  </div>
 </nav>
 
-<!-- User Guide Popup -->
-<div class="guide-overlay" *ngIf="showGuide">
-  <div class="guide-modal">
-    <div class="guide-header">
-      <h3>دليل استخدام الخطة التسويقية</h3>
-      <button class="close-btn" (click)="closeGuide()">✕</button>
+<!-- User Guide Modal -->
+<div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
+  <div class="modal-container guide-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📣 دليل استخدام الخطة التسويقية</h3>
+      <button class="close-btn" (click)="closeGuide()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+        </svg>
+      </button>
     </div>
-
-    <div class="guide-content">
-      <p>
-        الخطة التسويقية تساعدك على بناء حضور قوي لعلامتك التجارية وزيادة التفاعل مع عملائك.
-      </p>
-
-      <ul>
-        <li>📊 متابعة تقدم خطتك التسويقية بشكل مرئي</li>
-        <li>⚠️ تنبيهات ذكية للمحتوى المجدول</li>
-        <li>💡 أفكار محتوى مقترحة بالذكاء الاصطناعي</li>
-        <li>🚀 جدولة ونشر المحتوى على جميع المنصات</li>
-      </ul>
+    
+    <div class="modal-body">
+      <p class="guide-intro">الخطة التسويقية تساعدك على بناء حضور قوي لعلامتك التجارية وزيادة التفاعل مع عملائك.</p>
+      
+      <div class="guide-features">
+        <div class="guide-item">
+          <span class="guide-icon">📊</span>
+          <div>
+            <h4>متابعة التقدم</h4>
+            <p>تابع تقدم خطتك التسويقية بشكل مرئي وواضح</p>
+          </div>
+        </div>
+        
+        <div class="guide-item">
+          <span class="guide-icon">💡</span>
+          <div>
+            <h4>أفكار محتوى ذكية</h4>
+            <p>اقتراحات محتوى مخصصة بالذكاء الاصطناعي</p>
+          </div>
+        </div>
+        
+        <div class="guide-item">
+          <span class="guide-icon">📅</span>
+          <div>
+            <h4>جدولة المحتوى</h4>
+            <p>نظم ونشر المحتوى على جميع المنصات</p>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="guide-footer">
-      <button class="add-btn" (click)="closeGuide()">فهمت</button>
+    
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeGuide()">فهمت، شكراً</button>
     </div>
   </div>
 </div>
 
-<main class="main">
+<!-- Main Marketing Content -->
+<main class="marketing-main">
 
-  <!-- Hero Header Section -->
-  <section class="header">
-    <div>
-      <h2>خطتك التسويقية 🚀</h2>
-      <p>خارطة طريق نحو نمو مشروعك وبناء حضور قوي لعلامتك التجارية</p>
-      <button class="add-btn">+ إنشاء محتوى جديد</button>
+  <!-- Welcome Header -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1 class="welcome-title">
+          خطتك التسويقية <span class="title-emoji">🚀</span>
+        </h1>
+        <p class="welcome-subtitle">خارطة طريق نحو نمو مشروعك وبناء حضور قوي</p>
+      </div>
+      
+      <div class="welcome-actions">
+        <button class="btn btn-create" (click)="createContent()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+          </svg>
+          إنشاء محتوى جديد
+        </button>
+      </div>
     </div>
   </section>
 
-  <!-- Stats Bar -->
-  <div class="stats-bar">
-    <div class="stat-item">
-      <span class="number">24</span>
-      <span class="label">محتوى منشور</span>
-    </div>
-    <div class="stat-item">
-      <span class="number">8</span>
-      <span class="label">محتوى مجدول</span>
-    </div>
-    <div class="stat-item">
-      <span class="number">12.5K</span>
-      <span class="label">إجمالي التفاعل</span>
-    </div>
-    <div class="stat-item">
-      <span class="number">4.2%</span>
-      <span class="label">معدل التحويل</span>
-    </div>
-  </div>
-
-  <!-- Main Content Wrapper -->
-  <div class="content-wrapper">
-
-    <!-- Progress Box with Circular Progress -->
-    <div class="progress-box">
-      <div class="progress-content">
-        <div class="info">
-          <h3>تقدم الخطة التسويقية</h3>
-          <p>أنت على الطريق الصحيح! أكملت 2 من 5 خطوات رئيسية</p>
-          
-          <div class="progress-stats">
-            <div class="progress-stat">
-              <span class="value">24</span>
-              <span class="label">منشور مكتمل</span>
-            </div>
-            <div class="progress-stat">
-              <span class="value">8</span>
-              <span class="label">منشور مجدول</span>
-            </div>
-            <div class="progress-stat">
-              <span class="value">3</span>
-              <span class="label">حملات نشطة</span>
-            </div>
-            <div class="progress-stat">
-              <span class="value">15</span>
-              <span class="label">يوم متبقي</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="circular-progress" style="--progress: {{ progress }}">
-          <svg viewBox="0 0 160 160">
-            <circle class="progress-bg" cx="80" cy="80" r="70"></circle>
-            <circle class="progress-fill" cx="80" cy="80" r="70"></circle>
+  <!-- Key Metrics Cards -->
+  <section class="metrics-grid">
+    <div class="metric-card published" [class.loading]="isLoading">
+      <div class="metric-icon-wrapper">
+        <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <p class="metric-label">محتوى منشور</p>
+        <h3 class="metric-value">{{ publishedContent }}</h3>
+        <div class="metric-change positive" *ngIf="contentGrowth > 0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <path d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5"/>
           </svg>
-          <span class="percent">{{ progress }}%</span>
+          <span>+{{ contentGrowth }}%</span>
         </div>
       </div>
+      <div class="metric-skeleton" *ngIf="isLoading"></div>
     </div>
 
-    <!-- Two Column Layout -->
-    <div class="two-column">
+    <div class="metric-card scheduled" [class.loading]="isLoading">
+      <div class="metric-icon-wrapper">
+        <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <p class="metric-label">محتوى مجدول</p>
+        <h3 class="metric-value">{{ scheduledContent }}</h3>
+        <p class="metric-subtitle">للأسبوع القادم</p>
+      </div>
+      <div class="metric-skeleton" *ngIf="isLoading"></div>
+    </div>
 
-      <!-- Left: Roadmap -->
-      <div class="roadmap">
-        <h3>خارطة الطريق التسويقية</h3>
-        <p class="subtitle">اتبع هذه الخطوات لبناء حضور قوي</p>
+    <div class="metric-card engagement" [class.loading]="isLoading">
+      <div class="metric-icon-wrapper">
+        <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <p class="metric-label">إجمالي التفاعل</p>
+        <h3 class="metric-value">{{ totalEngagement }}</h3>
+        <div class="progress-bar-mini">
+          <div class="progress-fill" [style.width.%]="engagementProgress"></div>
+        </div>
+      </div>
+      <div class="metric-skeleton" *ngIf="isLoading"></div>
+    </div>
 
-        <div class="steps-container">
-          <div class="step" *ngFor="let step of steps" [ngClass]="step.status">
-            <div class="step-header">
-              <div class="icon">
-                <span *ngIf="step.status === 'done'">
-                  <img src="check.png" alt="" width="20" height="20">
-                </span>
-                <span *ngIf="step.status === 'active'">◯</span>
-                <span *ngIf="step.status === 'next'">◯</span>
+    <div class="metric-card campaigns" [class.loading]="isLoading">
+      <div class="metric-icon-wrapper">
+        <svg class="metric-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+          <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/>
+        </svg>
+      </div>
+      <div class="metric-content">
+        <p class="metric-label">حملات نشطة</p>
+        <h3 class="metric-value">{{ activeCampaigns }}</h3>
+        <p class="metric-subtitle">{{ daysRemaining }} يوم متبقي</p>
+      </div>
+      <div class="metric-skeleton" *ngIf="isLoading"></div>
+    </div>
+  </section>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+    
+    <!-- Left Column -->
+    <div class="left-column">
+      
+      <!-- Marketing Progress Card -->
+      <div class="dashboard-card progress-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="title-icon">📊</span>
+            تقدم الخطة التسويقية
+          </h3>
+          <span class="progress-percentage">{{ planProgress }}%</span>
+        </div>
+        
+        <div class="card-body">
+          <!-- Circular Progress -->
+          <div class="circular-progress-container">
+            <svg class="circular-progress" viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="marketingGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <circle class="progress-bg" cx="100" cy="100" r="90"></circle>
+              <circle 
+                class="progress-bar" 
+                cx="100" 
+                cy="100" 
+                r="90"
+                [style.stroke-dasharray]="565"
+                [style.stroke-dashoffset]="565 - (565 * planProgress / 100)"
+              ></circle>
+              <text x="100" y="95" class="progress-text-large">{{ planProgress }}%</text>
+              <text x="100" y="115" class="progress-text-small">مكتمل</text>
+            </svg>
+          </div>
+
+          <!-- Progress Steps -->
+          <div class="progress-steps">
+            <div class="step" *ngFor="let step of marketingSteps; let i = index" [class.completed]="step.status === 'completed'" [class.active]="step.status === 'active'">
+              <div class="step-icon">
+                <svg *ngIf="step.status === 'completed'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/>
+                </svg>
+                <span *ngIf="step.status !== 'completed'">{{ i + 1 }}</span>
               </div>
-
-              <div class="step-info">
-                <h4>{{ step.title }}</h4>
-                <p>{{ step.desc }}</p>
+              <div class="step-content">
+                <p class="step-title">{{ step.title }}</p>
+                <p class="step-description">{{ step.description }}</p>
               </div>
-
-              <span class="badge" *ngIf="step.status === 'done'">مكتمل ✓</span>
-              <span class="badge" *ngIf="step.status === 'active'">جار العمل</span>
-              <span class="badge" *ngIf="step.status === 'next'">قادم</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Right: Timeline Content -->
-      <div class="content-section">
-        <h3>أفكار المحتوى المقترحة</h3>
-        <p class="subtitle">محتوى مخصص بناءً على جمهورك</p>
-
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-header">
-              <h5>نصيحة يومية لرواد الأعمال</h5>
-              <div class="timeline-badges">
-                <span class="timeline-badge priority-high">أولوية عالية</span>
-                <span class="timeline-badge type">post</span>
+      <!-- Content Schedule Card -->
+      <div class="dashboard-card schedule-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <svg class="title-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+            </svg>
+            جدول المحتوى
+          </h3>
+          <button class="btn-link" (click)="viewSchedule()">عرض الكل</button>
+        </div>
+        
+        <div class="card-body">
+          <div class="schedule-list" *ngIf="scheduledPosts.length > 0; else noSchedule">
+            <div class="schedule-item" *ngFor="let post of scheduledPosts">
+              <div class="schedule-indicator" [class]="post.platform"></div>
+              <div class="schedule-info">
+                <h4 class="schedule-title">{{ post.title }}</h4>
+                <div class="schedule-meta">
+                  <span class="schedule-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                      <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/>
+                    </svg>
+                    {{ post.scheduledTime }}
+                  </span>
+                  <span class="schedule-platform" [class]="post.platform">{{ getPlatformLabel(post.platform) }}</span>
+                </div>
               </div>
-            </div>
-            <div class="timeline-content">
-              <p>محتوى ملهم يومي يساعد رواد الأعمال</p>
-              <span class="timeline-social ig">📸</span>
+              <span class="schedule-status" [class]="post.status">{{ getStatusLabel(post.status) }}</span>
             </div>
           </div>
-
-          <div class="timeline-item">
-            <div class="timeline-header">
-              <h5>قصة نجاح عميل</h5>
-              <div class="timeline-badges">
-                <span class="timeline-badge priority-medium">أولوية متوسطة</span>
-                <span class="timeline-badge type">thread</span>
-              </div>
+          
+          <ng-template #noSchedule>
+            <div class="empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+              </svg>
+              <p>لا توجد منشورات مجدولة</p>
+              <button class="btn btn-secondary" (click)="createContent()">جدولة محتوى</button>
             </div>
-            <div class="timeline-content">
-              <p>شارك قصص النجاح لبناء الثقة</p>
-              <span class="timeline-social tw">🐦</span>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-header">
-              <h5>فيديو توضيحي للمنتج</h5>
-              <div class="timeline-badges">
-                <span class="timeline-badge priority-high">أولوية عالية جدًا</span>
-                <span class="timeline-badge type">video</span>
-              </div>
-            </div>
-            <div class="timeline-content">
-              <p>فيديو قصير يشرح مميزات المنتج</p>
-              <span class="timeline-social fb">f</span>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-header">
-              <h5>عرض خاص لفترة محدودة</h5>
-              <div class="timeline-badges">
-                <span class="timeline-badge priority-high">أولوية عالية</span>
-                <span class="timeline-badge type">story</span>
-              </div>
-            </div>
-            <div class="timeline-content">
-              <p>عرض حصري لزيادة المبيعات</p>
-              <span class="timeline-social ig">📸</span>
-            </div>
-          </div>
+          </ng-template>
         </div>
       </div>
 
     </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <div class="action-card">
-        <span class="action-icon">📊</span>
-        <h4>تحليل الأداء</h4>
-        <p>شاهد إحصائيات المحتوى والتفاعل</p>
+    <!-- Right Column -->
+    <div class="right-column">
+      
+      <!-- AI Content Ideas Card -->
+      <div class="dashboard-card ideas-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="title-icon">💡</span>
+            أفكار محتوى ذكية
+          </h3>
+          <span class="ai-badge">AI</span>
+        </div>
+        
+        <div class="card-body">
+          <div class="ideas-list" *ngIf="contentIdeas.length > 0; else noIdeas">
+            <div class="idea-item" *ngFor="let idea of contentIdeas" [class]="idea.priority">
+              <div class="idea-icon">
+                <span>{{ getPlatformIcon(idea.platform) }}</span>
+              </div>
+              <div class="idea-content">
+                <h4 class="idea-title">{{ idea.title }}</h4>
+                <p class="idea-description">{{ idea.description }}</p>
+                <div class="idea-tags">
+                  <span class="idea-tag priority" [class]="idea.priority">{{ getPriorityLabel(idea.priority) }}</span>
+                  <span class="idea-tag type">{{ idea.type }}</span>
+                </div>
+              </div>
+              <button class="idea-action" (click)="useIdea(idea)">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <ng-template #noIdeas>
+            <div class="empty-state">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125"/>
+              </svg>
+              <p>جاري توليد أفكار...</p>
+            </div>
+          </ng-template>
+          
+          <button class="btn btn-generate" (click)="generateAIContent()" [class.loading]="isGeneratingAI">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+              <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+            </svg>
+            <span>{{ isGeneratingAI ? 'جاري التوليد...' : 'توليد أفكار جديدة' }}</span>
+          </button>
+        </div>
       </div>
 
-      <div class="action-card">
-        <span class="action-icon">📅</span>
-        <h4>جدولة المنشورات</h4>
-        <p>خطط ونظم محتواك مسبقًا</p>
+      <!-- Quick Actions Card -->
+      <div class="dashboard-card actions-card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <span class="title-icon">⚡</span>
+            إجراءات سريعة
+          </h3>
+        </div>
+        
+        <div class="card-body">
+          <div class="actions-grid">
+            <button class="action-btn analytics" (click)="viewAnalytics()">
+              <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/>
+                </svg>
+              </div>
+              <span>تحليل الأداء</span>
+            </button>
+
+            <button class="action-btn schedule" (click)="viewSchedule()">
+              <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5"/>
+                </svg>
+              </div>
+              <span>جدولة المنشورات</span>
+            </button>
+
+            <button class="action-btn campaigns" (click)="viewCampaigns()">
+              <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                  <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445"/>
+                </svg>
+              </div>
+              <span>الحملات المدفوعة</span>
+            </button>
+
+            <button class="action-btn community" routerLink="/community">
+              <div class="action-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+                  <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894"/>
+                </svg>
+              </div>
+              <span>المجتمع</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div class="action-card">
-        <span class="action-icon">💡</span>
-        <h4>اقتراحات AI</h4>
-        <p>احصل على أفكار محتوى ذكية</p>
-      </div>
     </div>
-
   </div>
 
 </main>
+</section>

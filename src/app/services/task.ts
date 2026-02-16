@@ -3,15 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Task {
-  id?: number;
+ id?: number;
   projectId: number;
   title: string;
   description?: string;
-  status: 'todo' | 'in-progress' | 'done';
-  assignedTo?: number;
+  status: 'todo' | 'in-progress' | 'review' | 'done';
   dueDate?: string;
   createdAt?: string;
-  updatedAt?: string;
+  assignedTo?: string;
 }
 
 @Injectable({
