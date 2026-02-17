@@ -1,140 +1,281 @@
-<app-side-bar></app-side-bar>
+<app-side-bar (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
 
-<div class="financial-container">
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading-overlay">
-    <div class="spinner"></div>
-    <p>جاري تحميل البيانات المالية...</p>
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="nav-left">
+    <div>
+      <div class="nav-page-title">الحسابات المالية</div>
+      <div class="nav-page-sub">تتبع إيراداتك ومصروفاتك وأرباحك بشكل احترافي</div>
+    </div>
   </div>
-
-  <!-- Error Message -->
-  <div *ngIf="errorMessage" class="error-banner">
-    ❌ {{ errorMessage }}
+  <div class="nav-right">
+    <div class="period-selector">
+      <button (click)="changePeriod('week')"    [class.active]="selectedPeriod === 'week'"    class="period-btn">أسبوع</button>
+      <button (click)="changePeriod('month')"   [class.active]="selectedPeriod === 'month'"   class="period-btn">شهر</button>
+      <button (click)="changePeriod('quarter')" [class.active]="selectedPeriod === 'quarter'" class="period-btn">ربع سنة</button>
+      <button (click)="changePeriod('year')"    [class.active]="selectedPeriod === 'year'"    class="period-btn">سنة</button>
+    </div>
+    <button class="btn-add" (click)="refreshFinancialData()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>
+      تحديث
+    </button>
+    <button class="guide-btn" (click)="openGuide()">
+      <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+      دليل الاستخدام
+    </button>
   </div>
+</nav>
 
-  <!-- Header -->
-  <div class="page-header">
-    <h1>💰 النظرة المالية</h1>
-    <div class="header-actions">
-      <!-- Period Selector -->
-      <div class="period-selector">
-        <button (click)="changePeriod('week')" 
-                [class.active]="selectedPeriod === 'week'"
-                class="period-btn">
-          أسبوع
-        </button>
-        <button (click)="changePeriod('month')" 
-                [class.active]="selectedPeriod === 'month'"
-                class="period-btn">
-          شهر
-        </button>
-        <button (click)="changePeriod('quarter')" 
-                [class.active]="selectedPeriod === 'quarter'"
-                class="period-btn">
-          ربع سنة
-        </button>
-        <button (click)="changePeriod('year')" 
-                [class.active]="selectedPeriod === 'year'"
-                class="period-btn">
-          سنة
-        </button>
-      </div>
-      
-      <button (click)="refreshFinancialData()" class="btn-refresh">
-        🔄 تحديث
+<!-- ===== GUIDE MODAL ===== -->
+<div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>💰 دليل استخدام الحسابات المالية</h3>
+      <button class="close-btn" (click)="closeGuide()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
     </div>
-  </div>
-
-  <!-- Financial Cards -->
-  <div class="cards-grid">
-    <div *ngFor="let card of cards" class="financial-card">
-      <h3>{{ card.title }}</h3>
-      
-      <div *ngIf="!card.loading">
-        <p class="card-value">{{ card.value }}</p>
-        <span class="card-change" 
-              [class.positive]="card.up"
-              [class.negative]="!card.up">
-          {{ card.up ? '↗' : '↘' }} {{ card.percent }}
-        </span>
+    <div class="modal-body">
+      <p class="guide-intro">صفحة الحسابات المالية تمنحك رؤية شاملة عن الوضع المالي لمشروعك.</p>
+      <div class="guide-features">
+        <div class="guide-item"><span class="guide-icon">📊</span><div><h4>متابعة الإيرادات</h4><p>تتبع مصادر دخلك بشكل تفصيلي</p></div></div>
+        <div class="guide-item"><span class="guide-icon">💸</span><div><h4>إدارة المصروفات</h4><p>راقب نفقاتك وصنفها بدقة</p></div></div>
+        <div class="guide-item"><span class="guide-icon">📈</span><div><h4>تحليل الأرباح</h4><p>احسب هامش ربحك وتطوره عبر الزمن</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🔄</span><div><h4>سجل المعاملات</h4><p>استعرض جميع العمليات المالية بالتفصيل</p></div></div>
       </div>
-      
-      <div *ngIf="card.loading" class="skeleton-loader"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" (click)="closeGuide()">فهمت، شكراً</button>
     </div>
   </div>
-
-  <!-- Charts Section -->
-  <div class="charts-section">
-    
-    <!-- Revenue vs Expense Chart -->
-    <div class="chart-card">
-      <h2>📊 الإيرادات مقابل المصروفات</h2>
-      <div class="chart-container">
-        <canvas #revenueExpenseChart></canvas>
-      </div>
-    </div>
-
-    <!-- Expense Distribution Chart -->
-    <div class="chart-card">
-      <h2>🍩 توزيع المصروفات</h2>
-      <div class="chart-container">
-        <canvas #expenseDistributionChart></canvas>
-      </div>
-    </div>
-
-    <!-- Monthly Trend Chart -->
-    <div class="chart-card full-width">
-      <h2>📈 الاتجاه الشهري</h2>
-      <div class="chart-container">
-        <canvas #monthlyTrendChart></canvas>
-      </div>
-    </div>
-
-    <!-- Profit Margin Chart -->
-    <div class="chart-card full-width">
-      <h2>📉 هامش الربح</h2>
-      <div class="chart-container">
-        <canvas #profitMarginChart></canvas>
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Transactions -->
-  <div class="transactions-section">
-    <h2>📝 آخر المعاملات</h2>
-    
-    <div class="transactions-list">
-      <div *ngFor="let transaction of transactions" 
-           class="transaction-item"
-           [class.revenue]="transaction.type === 'revenue'"
-           [class.expense]="transaction.type === 'expense'">
-        
-        <div class="transaction-icon">
-          <span *ngIf="transaction.type === 'revenue'">💰</span>
-          <span *ngIf="transaction.type === 'expense'">💸</span>
-          <span *ngIf="transaction.type === 'pending'">⏳</span>
-        </div>
-        
-        <div class="transaction-info">
-          <h4>{{ transaction.title }}</h4>
-          <span class="transaction-date">{{ transaction.date }}</span>
-          <span *ngIf="transaction.category" class="transaction-category">
-            {{ transaction.category }}
-          </span>
-        </div>
-        
-        <div class="transaction-amount"
-             [class.positive]="transaction.amount > 0"
-             [class.negative]="transaction.amount < 0">
-          {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount.toLocaleString('ar-SA') }} ر.س
-        </div>
-      </div>
-      
-      <div *ngIf="transactions.length === 0 && !isLoading" class="no-transactions">
-        <p>📭 لا توجد معاملات مالية حتى الآن</p>
-      </div>
-    </div>
-  </div>
-  
 </div>
+
+<!-- ===== MAIN ===== -->
+<main class="finance-main" [class.sidebar-collapsed]="isSidebarCollapsed">
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>جاري تحميل البيانات المالية...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-banner" *ngIf="errorMessage">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- ===== WELCOME BANNER ===== -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1 class="welcome-title">الحسابات المالية <span>💰</span></h1>
+        <p class="welcome-sub">تحكم في أموالك وتتبع أداءك المالي باحترافية</p>
+      </div>
+      <div class="welcome-badges">
+        <div class="w-badge">
+          <span class="w-badge-icon">📈</span>
+          <div>
+            <span class="w-badge-lbl">صافي الربح</span>
+            <span class="w-badge-val">{{ formatCurrency(profit) }}</span>
+          </div>
+        </div>
+        <div class="w-badge">
+          <span class="w-badge-icon">📊</span>
+          <div>
+            <span class="w-badge-lbl">هامش الربح</span>
+            <span class="w-badge-val">{{ profitMargin }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== METRICS GRID ===== -->
+  <section class="metrics-grid">
+
+    <div class="mc mc-revenue">
+      <div class="mc-icon">💰</div>
+      <div class="mc-lbl">إجمالي الإيرادات</div>
+      <div class="mc-val">{{ cards[0]?.value || '0 ر.س' }}</div>
+      <div class="mc-trend up" *ngIf="cards[0]?.up">↑ {{ cards[0]?.percent }}</div>
+      <div class="mc-trend down" *ngIf="!cards[0]?.up">↓ {{ cards[0]?.percent }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill g" style="width:70%"></div></div>
+    </div>
+
+    <div class="mc mc-expenses">
+      <div class="mc-icon">💸</div>
+      <div class="mc-lbl">إجمالي المصروفات</div>
+      <div class="mc-val">{{ cards[1]?.value || '0 ر.س' }}</div>
+      <div class="mc-trend down">↑ {{ cards[1]?.percent }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill r" style="width:55%"></div></div>
+    </div>
+
+    <div class="mc mc-profit">
+      <div class="mc-icon">📊</div>
+      <div class="mc-lbl">صافي الربح</div>
+      <div class="mc-val" [class.negative-val]="profit < 0">{{ cards[2]?.value || '0 ر.س' }}</div>
+      <div class="mc-trend up" *ngIf="profit >= 0">↑ {{ cards[2]?.percent }}</div>
+      <div class="mc-trend down" *ngIf="profit < 0">↓ {{ cards[2]?.percent }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill" [class.g]="profit>=0" [class.r]="profit<0" style="width:60%"></div></div>
+    </div>
+
+    <div class="mc mc-margin">
+      <div class="mc-icon">📉</div>
+      <div class="mc-lbl">هامش الربح</div>
+      <div class="mc-val">{{ cards[3]?.value || '0%' }}</div>
+      <div class="mc-sub">نسبة الكفاءة</div>
+      <div class="mini-prog"><div class="mini-prog-fill p" [style.width.%]="profitMargin > 0 ? profitMargin : 10"></div></div>
+    </div>
+
+  </section>
+
+  <!-- ===== CHARTS ROW ===== -->
+  <div class="charts-row">
+
+    <div class="chart-card wide">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">📊 الإيرادات مقابل المصروفات</div>
+          <div class="chart-sub">مقارنة شاملة للفترة المحددة</div>
+        </div>
+        <span class="chip chip-g" *ngIf="profit > 0">↑ {{ profitMargin }}%</span>
+        <span class="chip chip-r" *ngIf="profit <= 0">↓ {{ profitMargin }}%</span>
+      </div>
+      <div style="height:240px"><canvas #revenueExpenseChart></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">🍩 توزيع المصروفات</div>
+          <div class="chart-sub">حسب الفئة</div>
+        </div>
+      </div>
+      <div style="height:240px"><canvas #expenseDistributionChart></canvas></div>
+    </div>
+
+  </div>
+
+  <div class="chart-card full-width" style="margin-bottom:16px">
+    <div class="chart-head">
+      <div>
+        <div class="chart-title">📈 الاتجاه الشهري</div>
+        <div class="chart-sub">الإيرادات والمصروفات على مدار الأشهر</div>
+      </div>
+      <span class="chip chip-b">12 شهر</span>
+    </div>
+    <div style="height:220px"><canvas #monthlyTrendChart></canvas></div>
+    <div class="chart-foot">
+      <div><span class="cs-lbl">إجمالي الإيرادات</span><span class="cs-val s">{{ formatCurrency(totalRevenue) }}</span></div>
+      <div><span class="cs-lbl">إجمالي المصروفات</span><span class="cs-val d">{{ formatCurrency(totalExpenses) }}</span></div>
+      <div><span class="cs-lbl">صافي الربح</span><span class="cs-val" [class.s]="profit>=0" [class.d]="profit<0">{{ formatCurrency(profit) }}</span></div>
+    </div>
+  </div>
+
+  <div class="chart-card full-width" style="margin-bottom:24px">
+    <div class="chart-head">
+      <div>
+        <div class="chart-title">📉 هامش الربح الشهري</div>
+        <div class="chart-sub">تطور نسبة الربحية</div>
+      </div>
+    </div>
+    <div style="height:200px"><canvas #profitMarginChart></canvas></div>
+  </div>
+
+  <!-- ===== BOTTOM GRID ===== -->
+  <div class="bottom-grid">
+
+    <div class="card transactions-card">
+      <div class="card-head">
+        <div class="card-title">📝 آخر المعاملات</div>
+        <span class="tx-count">{{ transactions.length }} معاملة</span>
+      </div>
+
+      <div class="tx-list" *ngIf="transactions.length > 0; else noTx">
+        <div class="tx-item" *ngFor="let tx of transactions"
+          [class.tx-revenue]="tx.type === 'revenue'"
+          [class.tx-expense]="tx.type === 'expense'"
+          [class.tx-pending]="tx.type === 'pending'">
+          <div class="tx-icon">
+            <span *ngIf="tx.type === 'revenue'">💰</span>
+            <span *ngIf="tx.type === 'expense'">💸</span>
+            <span *ngIf="tx.type === 'pending'">⏳</span>
+          </div>
+          <div class="tx-info">
+            <div class="tx-title">{{ tx.title }}</div>
+            <div class="tx-meta">
+              <span class="tx-date">🕐 {{ tx.date }}</span>
+              <span class="tx-cat" *ngIf="tx.category">{{ tx.category }}</span>
+            </div>
+          </div>
+          <div class="tx-amount"
+            [class.amount-pos]="tx.amount > 0"
+            [class.amount-neg]="tx.amount < 0">
+            {{ tx.amount > 0 ? '+' : '' }}{{ tx.amount.toLocaleString('ar-SA') }} ر.س
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTx>
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>لا توجد معاملات مالية حتى الآن</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="side-col">
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">📊 ملخص مالي</div>
+          <span class="prog-pct">{{ profitMargin }}%</span>
+        </div>
+        <div class="circ-wrap">
+          <div class="circ-container">
+            <svg class="circ-svg" viewBox="0 0 120 120">
+              <defs>
+                <linearGradient id="finGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#1f9950"/>
+                  <stop offset="100%" style="stop-color:#00e676"/>
+                </linearGradient>
+              </defs>
+              <circle class="c-bg" cx="60" cy="60" r="50"/>
+              <circle class="c-fill" cx="60" cy="60" r="50"
+                [style.stroke-dasharray]="314"
+                [style.stroke-dashoffset]="314 - (314 * (profitMargin > 0 ? profitMargin : 0) / 100)"
+                [class.c-fill-neg]="profit < 0"/>
+            </svg>
+            <div class="circ-center">
+              <div class="circ-pct">{{ profitMargin }}%</div>
+              <div class="circ-lbl">هامش الربح</div>
+            </div>
+          </div>
+        </div>
+        <div class="summary-rows">
+          <div class="sum-row"><span class="sum-lbl">💰 الإيرادات</span><span class="sum-val g">{{ formatCurrency(totalRevenue) }}</span></div>
+          <div class="sum-row"><span class="sum-lbl">💸 المصروفات</span><span class="sum-val r">{{ formatCurrency(totalExpenses) }}</span></div>
+          <div class="sum-row border-top"><span class="sum-lbl">📊 صافي الربح</span><span class="sum-val" [class.g]="profit>=0" [class.r]="profit<0">{{ formatCurrency(profit) }}</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">⚡ إجراءات سريعة</div>
+        </div>
+        <div class="actions-grid">
+          <button class="act-btn act-revenue"><div class="act-icon">💰</div><span>إضافة إيراد</span></button>
+          <button class="act-btn act-expense"><div class="act-icon">💸</div><span>تسجيل مصروف</span></button>
+          <button class="act-btn act-report" (click)="refreshFinancialData()"><div class="act-icon">📄</div><span>تصدير تقرير</span></button>
+          <button class="act-btn act-chart"><div class="act-icon">📊</div><span>تحليل تفصيلي</span></button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

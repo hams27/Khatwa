@@ -63,6 +63,7 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
   errorMessage = '';
   showGuide = false;
   chartsLoading = true;
+  isSidebarCollapsed = false;
   
   // Project Info
   currentProject: Project | null = null;
@@ -146,7 +147,26 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     console.log('📊 Analytics Component Initialized');
-    this.loadCurrentProject();
+    this.loadMockData();
+  }
+
+  onSidebarToggle(collapsed: boolean) {
+    this.isSidebarCollapsed = collapsed;
+  }
+
+  loadMockData() {
+    this.isLoading = false;
+    this.chartsLoading = false;
+
+    this.statsCards = [
+      { title: 'إجمالي الإيرادات',     value: '128,500 ر.س', change: '+15%', icon: '💰', color: 'blue',   loading: false },
+      { title: 'معدل إنجاز المهام',     value: '78%',          change: '+5%',  icon: '🎯', color: 'green',  loading: false },
+      { title: 'المصروفات الشهرية',     value: '74,300 ر.س',  change: '+8%',  icon: '📊', color: 'purple', loading: false },
+      { title: 'معدل النمو',            value: '32%',          change: '+12%', icon: '📈', color: 'orange', loading: false },
+    ];
+
+    this.generateInsights();
+    setTimeout(() => this.createAllCharts(), 150);
   }
   
   ngAfterViewInit() {

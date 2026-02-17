@@ -1,348 +1,385 @@
-<app-side-bar></app-side-bar>
+<app-side-bar (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
 
-<div class="tasks-container">
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading-overlay">
-    <div class="spinner"></div>
-    <p>جاري تحميل المهام...</p>
-  </div>
-
-  <!-- Success/Error Messages -->
-  <div *ngIf="successMessage" class="success-banner">
-    ✅ {{ successMessage }}
-  </div>
-
-  <div *ngIf="errorMessage" class="error-banner">
-    ❌ {{ errorMessage }}
-  </div>
-
-  <!-- Header -->
-  <div class="page-header">
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="nav-left">
     <div>
-      <h1>📋 المهام والفريق</h1>
-      <p class="subtitle">اسحب وأفلت المهام بين الأعمدة لتحديث حالتها</p>
-    </div>
-    <div class="header-actions">
-      <button (click)="openNewTaskModal()" class="btn-primary">
-        ➕ مهمة جديدة
-      </button>
-      <button (click)="refreshTasks()" class="btn-refresh">
-        🔄 تحديث
-      </button>
+      <div class="nav-page-title">المهام والفريق</div>
+      <div class="nav-page-sub">اسحب وأفلت المهام بين الأعمدة لتحديث حالتها</div>
     </div>
   </div>
-
-  <!-- Team Members Section -->
-  <div class="team-section">
-    <h2>👥 الفريق</h2>
-    <div class="team-grid">
-      <div *ngFor="let member of teamMembers" class="team-member-card">
-        <div class="member-avatar">{{ member.avatar }}</div>
-        <div class="member-info">
-          <h3>{{ member.name }}</h3>
-          <span class="member-tasks">{{ member.tasks }} مهمة</span>
-        </div>
-      </div>
-    </div>
+  <div class="nav-right">
+    <button class="btn-add" (click)="openNewTaskModal()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+      مهمة جديدة
+    </button>
+    <button class="btn-refresh" (click)="refreshTasks()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>
+      تحديث
+    </button>
+    <button class="guide-btn" (click)="openGuide()">
+      <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+      دليل الاستخدام
+    </button>
   </div>
+</nav>
 
-  <!-- Kanban Board with Drag & Drop -->
-  <div class="kanban-board">
-    
-    <!-- Column 1: To Do -->
-    <div class="kanban-column">
-      <div class="column-header todo-header">
-        <h3>📝 قائمة المهام</h3>
-        <span class="task-count">{{ todoCount }}</span>
-      </div>
-      
-      <div 
-        class="tasks-list"
-        cdkDropList
-        #todoList="cdkDropList"
-        [cdkDropListData]="todoTasks"
-        [cdkDropListConnectedTo]="[inProgressList, reviewList, completedList]"
-        (cdkDropListDropped)="drop($event, 'todo')">
-        
-        <div 
-          *ngFor="let task of todoTasks"
-          class="task-card"
-          cdkDrag
-          [cdkDragData]="task"
-          [style.border-left-color]="getPriorityColor(task.priority)">
-          
-          <!-- Drag Handle -->
-          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
-          
-          <!-- Task Content -->
-          <div class="task-content">
-            <h4>{{ task.title }}</h4>
-            <p *ngIf="task.description">{{ task.description }}</p>
-            
-            <!-- Tags -->
-            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
-              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
-            </div>
-            
-            <!-- Footer -->
-            <div class="task-footer">
-              <div class="task-meta">
-                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
-                  {{ getPriorityLabel(task.priority) }}
-                </span>
-                <span class="task-date">{{ task.date }}</span>
-              </div>
-              
-              <div class="task-actions">
-                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
-                  🗑️
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div *ngIf="todoTasks.length === 0" class="empty-column">
-          لا توجد مهام
-        </div>
+<!-- ===== GUIDE MODAL ===== -->
+<div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📋 دليل استخدام المهام والفريق</h3>
+      <button class="close-btn" (click)="closeGuide()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="guide-intro">لوحة الكانبان تتيح لك إدارة مهام فريقك بسهولة وسرعة.</p>
+      <div class="guide-features">
+        <div class="guide-item"><span class="guide-icon">🖱️</span><div><h4>السحب والإفلات</h4><p>حرّك المهام بين الأعمدة لتغيير حالتها</p></div></div>
+        <div class="guide-item"><span class="guide-icon">👥</span><div><h4>إدارة الفريق</h4><p>تابع إنجاز كل عضو في فريقك</p></div></div>
+        <div class="guide-item"><span class="guide-icon">⚡</span><div><h4>الأولويات</h4><p>حدد أولوية كل مهمة للتنظيم الأمثل</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🏷️</span><div><h4>الوسوم</h4><p>صنف المهام بالوسوم للبحث والتصفية السريعة</p></div></div>
       </div>
     </div>
-
-    <!-- Column 2: In Progress -->
-    <div class="kanban-column">
-      <div class="column-header in-progress-header">
-        <h3>🔄 قيد التنفيذ</h3>
-        <span class="task-count">{{ inProgressCount }}</span>
-      </div>
-      
-      <div 
-        class="tasks-list"
-        cdkDropList
-        #inProgressList="cdkDropList"
-        [cdkDropListData]="inProgressTasks"
-        [cdkDropListConnectedTo]="[todoList, reviewList, completedList]"
-        (cdkDropListDropped)="drop($event, 'in-progress')">
-        
-        <div 
-          *ngFor="let task of inProgressTasks"
-          class="task-card"
-          cdkDrag
-          [cdkDragData]="task"
-          [style.border-left-color]="getPriorityColor(task.priority)">
-          
-          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
-          
-          <div class="task-content">
-            <h4>{{ task.title }}</h4>
-            <p *ngIf="task.description">{{ task.description }}</p>
-            
-            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
-              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
-            </div>
-            
-            <div class="task-footer">
-              <div class="task-meta">
-                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
-                  {{ getPriorityLabel(task.priority) }}
-                </span>
-                <span class="task-date">{{ task.date }}</span>
-              </div>
-              
-              <div class="task-actions">
-                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
-                  🗑️
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div *ngIf="inProgressTasks.length === 0" class="empty-column">
-          لا توجد مهام
-        </div>
-      </div>
-    </div>
-
-    <!-- Column 3: Review -->
-    <div class="kanban-column">
-      <div class="column-header review-header">
-        <h3>👁️ المراجعة</h3>
-        <span class="task-count">{{ reviewCount }}</span>
-      </div>
-      
-      <div 
-        class="tasks-list"
-        cdkDropList
-        #reviewList="cdkDropList"
-        [cdkDropListData]="reviewTasks"
-        [cdkDropListConnectedTo]="[todoList, inProgressList, completedList]"
-        (cdkDropListDropped)="drop($event, 'in-progress')">
-        
-        <div 
-          *ngFor="let task of reviewTasks"
-          class="task-card"
-          cdkDrag
-          [cdkDragData]="task"
-          [style.border-left-color]="getPriorityColor(task.priority)">
-          
-          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
-          
-          <div class="task-content">
-            <h4>{{ task.title }}</h4>
-            <p *ngIf="task.description">{{ task.description }}</p>
-            
-            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
-              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
-            </div>
-            
-            <div class="task-footer">
-              <div class="task-meta">
-                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
-                  {{ getPriorityLabel(task.priority) }}
-                </span>
-                <span class="task-date">{{ task.date }}</span>
-              </div>
-              
-              <div class="task-actions">
-                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
-                  🗑️
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div *ngIf="reviewTasks.length === 0" class="empty-column">
-          لا توجد مهام
-        </div>
-      </div>
-    </div>
-
-    <!-- Column 4: Completed -->
-    <div class="kanban-column">
-      <div class="column-header completed-header">
-        <h3>✅ المكتملة</h3>
-        <span class="task-count">{{ completedCount }}</span>
-      </div>
-      
-      <div 
-        class="tasks-list"
-        cdkDropList
-        #completedList="cdkDropList"
-        [cdkDropListData]="completedTasks"
-        [cdkDropListConnectedTo]="[todoList, inProgressList, reviewList]"
-        (cdkDropListDropped)="drop($event, 'done')">
-        
-        <div 
-          *ngFor="let task of completedTasks"
-          class="task-card completed"
-          cdkDrag
-          [cdkDragData]="task"
-          [style.border-left-color]="getPriorityColor(task.priority)">
-          
-          <div class="drag-handle" cdkDragHandle>⋮⋮</div>
-          
-          <div class="task-content">
-            <h4>{{ task.title }}</h4>
-            <p *ngIf="task.description">{{ task.description }}</p>
-            
-            <div *ngIf="task.tags && task.tags.length > 0" class="task-tags">
-              <span *ngFor="let tag of task.tags" class="tag">{{ tag }}</span>
-            </div>
-            
-            <div class="task-footer">
-              <div class="task-meta">
-                <span class="task-priority" [style.color]="getPriorityColor(task.priority)">
-                  {{ getPriorityLabel(task.priority) }}
-                </span>
-                <span class="task-date">{{ task.date }}</span>
-              </div>
-              
-              <div class="task-actions">
-                <button (click)="deleteTask(task)" class="btn-icon-small" title="حذف">
-                  🗑️
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div *ngIf="completedTasks.length === 0" class="empty-column">
-          لا توجد مهام
-        </div>
-      </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="closeGuide()">فهمت، شكراً</button>
     </div>
   </div>
 </div>
 
-<!-- New Task Modal -->
-<div *ngIf="showNewTaskModal" class="modal-overlay" (click)="closeNewTaskModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>➕ مهمة جديدة</h2>
-    
-    <div class="form-group">
-      <label>عنوان المهمة *</label>
-      <input type="text"
-             [(ngModel)]="newTask.title"
-             placeholder="مثال: إنشاء تصميم للحملة الإعلانية"
-             class="form-control">
+<!-- ===== MAIN ===== -->
+<main class="tasks-main" [class.sidebar-collapsed]="isSidebarCollapsed">
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>جاري تحميل المهام...</p>
     </div>
-    
-    <div class="form-group">
-      <label>الوصف</label>
-      <textarea [(ngModel)]="newTask.description"
-                placeholder="تفاصيل إضافية عن المهمة..."
-                rows="4"
-                class="form-control"></textarea>
-    </div>
-    
-    <div class="form-row">
-      <div class="form-group">
-        <label>الحالة</label>
-        <select [(ngModel)]="newTask.status" class="form-control">
-          <option value="todo">قائمة المهام</option>
-          <option value="in-progress">قيد التنفيذ</option>
-          <option value="done">مكتملة</option>
-        </select>
+  </div>
+
+  <!-- Messages -->
+  <div class="success-banner" *ngIf="successMessage">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
+    {{ successMessage }}
+  </div>
+  <div class="error-banner" *ngIf="errorMessage">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- ===== WELCOME BANNER ===== -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1 class="welcome-title">المهام والفريق <span>📋</span></h1>
+        <p class="welcome-sub">تابع تقدم مشروعك وأدر فريقك بكفاءة عالية</p>
       </div>
-      
-      <div class="form-group">
-        <label>الأولوية</label>
-        <select [(ngModel)]="newTask.priority" class="form-control">
-          <option *ngFor="let p of priorityOptions" [value]="p.value">
-            {{ p.label }}
-          </option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="form-group">
-      <label>تاريخ الاستحقاق</label>
-      <input type="date"
-             [(ngModel)]="newTask.dueDate"
-             class="form-control">
-    </div>
-    
-    <div class="form-group">
-      <label>الوسوم</label>
-      <div class="tags-selector">
-        <button *ngFor="let tag of availableTags"
-                type="button"
-                (click)="toggleTag(tag)"
-                [class.selected]="newTask.tags?.includes(tag)"
-                class="tag-btn">
-          {{ tag }}
-        </button>
+      <div class="welcome-badges">
+        <div class="w-badge">
+          <span class="w-badge-icon">✅</span>
+          <div>
+            <span class="w-badge-lbl">مهام مكتملة</span>
+            <span class="w-badge-val">{{ completedCount }}</span>
+          </div>
+        </div>
+        <div class="w-badge">
+          <span class="w-badge-icon">👥</span>
+          <div>
+            <span class="w-badge-lbl">أعضاء الفريق</span>
+            <span class="w-badge-val">{{ teamMembers.length }}</span>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <div class="modal-actions">
-      <button (click)="closeNewTaskModal()" class="btn-cancel">
-        إلغاء
+  </section>
+
+  <!-- ===== METRICS ===== -->
+  <section class="metrics-grid">
+    <div class="mc">
+      <div class="mc-icon">📝</div>
+      <div class="mc-lbl">قائمة المهام</div>
+      <div class="mc-val">{{ todoCount }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill b" [style.width.%]="(todoCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon">🔄</div>
+      <div class="mc-lbl">قيد التنفيذ</div>
+      <div class="mc-val">{{ inProgressCount }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill o" [style.width.%]="(inProgressCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon">👁️</div>
+      <div class="mc-lbl">المراجعة</div>
+      <div class="mc-val">{{ reviewCount }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill p" [style.width.%]="(reviewCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon">✅</div>
+      <div class="mc-lbl">مكتملة</div>
+      <div class="mc-val">{{ completedCount }}</div>
+      <div class="mc-trend up">↑ {{ ((completedCount/(todoCount+inProgressCount+reviewCount+completedCount||1))*100).toFixed(0) }}%</div>
+      <div class="mini-prog"><div class="mini-prog-fill g" [style.width.%]="(completedCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== TEAM SECTION ===== -->
+  <section class="team-section">
+    <div class="section-head">
+      <div class="section-title">👥 أعضاء الفريق</div>
+      <button class="see-all">إدارة الفريق ›</button>
+    </div>
+    <div class="team-grid">
+      <div class="member-card" *ngFor="let member of teamMembers">
+        <div class="member-avatar">{{ member.avatar }}</div>
+        <div class="member-info">
+          <div class="member-name">{{ member.name }}</div>
+          <div class="member-role">{{ member.role || 'عضو فريق' }}</div>
+        </div>
+        <div class="member-tasks-badge">
+          <span class="tasks-num">{{ member.tasks }}</span>
+          <span class="tasks-lbl">مهمة</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== KANBAN BOARD ===== -->
+  <div class="kanban-board">
+
+    <!-- TODO -->
+    <div class="kanban-col">
+      <div class="col-header todo">
+        <div class="col-title">
+          <span class="col-dot todo-dot"></span>
+          📝 قائمة المهام
+        </div>
+        <span class="col-count">{{ todoCount }}</span>
+      </div>
+      <div class="tasks-list"
+        cdkDropList #todoList="cdkDropList"
+        [cdkDropListData]="todoTasks"
+        [cdkDropListConnectedTo]="[inProgressList, reviewList, completedList]"
+        (cdkDropListDropped)="drop($event, 'todo')">
+        <div class="task-card" *ngFor="let task of todoTasks"
+          cdkDrag [cdkDragData]="task">
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">{{ task.title }}</div>
+            <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-tags" *ngIf="task.tags && task.tags.length">
+              <span class="tag" *ngFor="let tag of task.tags">{{ tag }}</span>
+            </div>
+            <div class="task-footer">
+              <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
+              <div class="task-footer-right">
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
+                <button class="del-btn" (click)="deleteTask(task)" title="حذف">
+                  <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-col" *ngIf="todoTasks.length === 0">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+          <span>لا توجد مهام</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN PROGRESS -->
+    <div class="kanban-col">
+      <div class="col-header in-progress">
+        <div class="col-title">
+          <span class="col-dot inprog-dot"></span>
+          🔄 قيد التنفيذ
+        </div>
+        <span class="col-count">{{ inProgressCount }}</span>
+      </div>
+      <div class="tasks-list"
+        cdkDropList #inProgressList="cdkDropList"
+        [cdkDropListData]="inProgressTasks"
+        [cdkDropListConnectedTo]="[todoList, reviewList, completedList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')">
+        <div class="task-card" *ngFor="let task of inProgressTasks"
+          cdkDrag [cdkDragData]="task">
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">{{ task.title }}</div>
+            <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-tags" *ngIf="task.tags && task.tags.length">
+              <span class="tag" *ngFor="let tag of task.tags">{{ tag }}</span>
+            </div>
+            <div class="task-footer">
+              <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
+              <div class="task-footer-right">
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
+                <button class="del-btn" (click)="deleteTask(task)">
+                  <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-col" *ngIf="inProgressTasks.length === 0">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+          <span>لا توجد مهام</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEW -->
+    <div class="kanban-col">
+      <div class="col-header review">
+        <div class="col-title">
+          <span class="col-dot review-dot"></span>
+          👁️ المراجعة
+        </div>
+        <span class="col-count">{{ reviewCount }}</span>
+      </div>
+      <div class="tasks-list"
+        cdkDropList #reviewList="cdkDropList"
+        [cdkDropListData]="reviewTasks"
+        [cdkDropListConnectedTo]="[todoList, inProgressList, completedList]"
+        (cdkDropListDropped)="drop($event, 'in-progress')">
+        <div class="task-card" *ngFor="let task of reviewTasks"
+          cdkDrag [cdkDragData]="task">
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title">{{ task.title }}</div>
+            <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-tags" *ngIf="task.tags && task.tags.length">
+              <span class="tag" *ngFor="let tag of task.tags">{{ tag }}</span>
+            </div>
+            <div class="task-footer">
+              <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
+              <div class="task-footer-right">
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
+                <button class="del-btn" (click)="deleteTask(task)">
+                  <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-col" *ngIf="reviewTasks.length === 0">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+          <span>لا توجد مهام</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETED -->
+    <div class="kanban-col">
+      <div class="col-header completed">
+        <div class="col-title">
+          <span class="col-dot done-dot"></span>
+          ✅ المكتملة
+        </div>
+        <span class="col-count done-count">{{ completedCount }}</span>
+      </div>
+      <div class="tasks-list"
+        cdkDropList #completedList="cdkDropList"
+        [cdkDropListData]="completedTasks"
+        [cdkDropListConnectedTo]="[todoList, inProgressList, reviewList]"
+        (cdkDropListDropped)="drop($event, 'done')">
+        <div class="task-card task-done" *ngFor="let task of completedTasks"
+          cdkDrag [cdkDragData]="task">
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
+          <div class="task-body">
+            <div class="task-title done-title">{{ task.title }}</div>
+            <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
+            <div class="task-tags" *ngIf="task.tags && task.tags.length">
+              <span class="tag" *ngFor="let tag of task.tags">{{ tag }}</span>
+            </div>
+            <div class="task-footer">
+              <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
+              <div class="task-footer-right">
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
+                <button class="del-btn" (click)="deleteTask(task)">
+                  <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-col" *ngIf="completedTasks.length === 0">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+          <span>لا توجد مهام</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end kanban-board -->
+
+</main>
+
+<!-- ===== NEW TASK MODAL ===== -->
+<div class="modal-overlay" *ngIf="showNewTaskModal" (click)="closeNewTaskModal()">
+  <div class="modal-container modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>➕ مهمة جديدة</h3>
+      <button class="close-btn" (click)="closeNewTaskModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
-      <button (click)="createTask()" class="btn-primary">
-        إنشاء المهمة
-      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">عنوان المهمة *</label>
+        <input type="text" [(ngModel)]="newTask.title"
+          placeholder="مثال: إنشاء تصميم للحملة الإعلانية"
+          class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">الوصف</label>
+        <textarea [(ngModel)]="newTask.description"
+          placeholder="تفاصيل إضافية عن المهمة..."
+          rows="3" class="form-input"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">الحالة</label>
+          <select [(ngModel)]="newTask.status" class="form-input">
+            <option value="todo">قائمة المهام</option>
+            <option value="in-progress">قيد التنفيذ</option>
+            <option value="done">مكتملة</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الأولوية</label>
+          <select [(ngModel)]="newTask.priority" class="form-input">
+            <option *ngFor="let p of priorityOptions" [value]="p.value">{{ p.label }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">تاريخ الاستحقاق</label>
+        <input type="date" [(ngModel)]="newTask.dueDate" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">الوسوم</label>
+        <div class="tags-grid">
+          <button type="button" *ngFor="let tag of availableTags"
+            (click)="toggleTag(tag)"
+            class="tag-btn" [class.tag-active]="newTask.tags?.includes(tag)">
+            {{ tag }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeNewTaskModal()">إلغاء</button>
+      <button class="btn-primary" (click)="createTask()">إنشاء المهمة</button>
     </div>
   </div>
 </div>

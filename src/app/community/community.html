@@ -1,228 +1,318 @@
-<app-side-bar></app-side-bar>
+<app-side-bar (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
 
-<div class="community-container">
-  <!-- Loading State -->
-  <div *ngIf="isLoading" class="loading-overlay">
-    <div class="spinner"></div>
-    <p>جاري تحميل المجتمع...</p>
-  </div>
-
-  <!-- Success/Error Messages -->
-  <div *ngIf="successMessage" class="success-banner">
-    ✅ {{ successMessage }}
-  </div>
-
-  <div *ngIf="errorMessage" class="error-banner">
-    ❌ {{ errorMessage }}
-  </div>
-
-  <!-- Header -->
-  <div class="community-header">
-    <h1>💬 المجتمع</h1>
-    <div class="header-actions">
-      <button (click)="openNewPostModal()" class="btn-primary">
-        ➕ منشور جديد
-      </button>
-      <button (click)="refreshCommunity()" class="btn-refresh">
-        🔄 تحديث
-      </button>
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="nav-left">
+    <div>
+      <div class="nav-page-title">المجتمع</div>
+      <div class="nav-page-sub">شارك أفكارك وتواصل مع رواد الأعمال الآخرين</div>
     </div>
   </div>
+  <div class="nav-right">
+    <div class="search-wrap">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11"/></svg>
+      <input type="text" [(ngModel)]="searchQuery" (input)="searchPosts()"
+        placeholder="ابحث في المنشورات..." class="search-input">
+    </div>
+    <button class="btn-add" (click)="openNewPostModal()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+      منشور جديد
+    </button>
+    <button class="guide-btn" (click)="openGuide()">
+      <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+      دليل الاستخدام
+    </button>
+  </div>
+</nav>
 
-  <!-- Summary Cards -->
-  <div class="summary-grid">
-    <div *ngFor="let card of summaryCards" 
-         class="summary-card" 
-         [ngClass]="card.color">
-      <div class="card-icon">{{ card.icon }}</div>
-      <div class="card-content">
-        <h3>{{ card.title }}</h3>
-        <p *ngIf="!card.loading" class="card-value">{{ card.value }}</p>
-        <div *ngIf="card.loading" class="skeleton-loader"></div>
+<!-- ===== GUIDE MODAL ===== -->
+<div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>💬 دليل استخدام المجتمع</h3>
+      <button class="close-btn" (click)="closeGuide()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="guide-intro">انضم لمجتمع رواد الأعمال وشارك خبراتك واستفد من تجارب الآخرين.</p>
+      <div class="guide-features">
+        <div class="guide-item"><span class="guide-icon">✍️</span><div><h4>النشر والمشاركة</h4><p>شارك أفكارك وتجاربك مع المجتمع</p></div></div>
+        <div class="guide-item"><span class="guide-icon">❤️</span><div><h4>التفاعل</h4><p>أعجب بالمنشورات وعلق على ما يهمك</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🏷️</span><div><h4>الوسوم</h4><p>استخدم الوسوم للوصول للمحتوى المناسب</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🔍</span><div><h4>البحث</h4><p>ابحث عن منشورات بكلمات مفتاحية أو وسوم</p></div></div>
       </div>
     </div>
-  </div>
-
-  <!-- Filters & Search -->
-  <div class="filters-section">
-    <div class="filter-buttons">
-      <button *ngFor="let filter of availableFilters"
-              (click)="changeFilter(filter.value)"
-              [class.active]="selectedFilter === filter.value"
-              class="filter-btn">
-        {{ filter.icon }} {{ filter.label }}
-      </button>
-    </div>
-    
-    <div class="search-box">
-      <input type="text"
-             [(ngModel)]="searchQuery"
-             (input)="searchPosts()"
-             placeholder="🔍 ابحث في المنشورات..."
-             class="search-input">
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="closeGuide()">فهمت، شكراً</button>
     </div>
   </div>
+</div>
 
-  <!-- Posts List -->
-  <div class="posts-section">
-    <div *ngFor="let post of posts" class="post-card">
-      
-      <!-- Post Header -->
-      <div class="post-header">
-        <div class="author-info">
-          <div class="author-avatar">{{ post.author?.charAt(0) || 'م' }}</div>
-          <div class="author-details">
-            <h3>{{ post.author }}</h3>
-            <span class="post-time">{{ post.timeAgo }}</span>
+<!-- ===== MAIN ===== -->
+<main class="community-main" [class.sidebar-collapsed]="isSidebarCollapsed">
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner"><div class="spinner"></div><p>جاري تحميل المجتمع...</p></div>
+  </div>
+
+  <!-- Messages -->
+  <div class="success-banner" *ngIf="successMessage">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
+    {{ successMessage }}
+  </div>
+  <div class="error-banner" *ngIf="errorMessage">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- ===== WELCOME ===== -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1 class="welcome-title">مجتمع خطوة <span>💬</span></h1>
+        <p class="welcome-sub">تواصل مع رواد الأعمال وشارك الخبرات والأفكار</p>
+      </div>
+      <div class="welcome-badges">
+        <div class="w-badge">
+          <span class="w-badge-icon">📝</span>
+          <div>
+            <span class="w-badge-lbl">إجمالي المنشورات</span>
+            <span class="w-badge-val">{{ summaryCards[0]?.value || 0 }}</span>
           </div>
         </div>
-        
-        <button *ngIf="isMyPost(post)" 
-                (click)="deletePost(post)"
-                class="btn-delete">
-          🗑️
-        </button>
+        <div class="w-badge">
+          <span class="w-badge-icon">👥</span>
+          <div>
+            <span class="w-badge-lbl">أعضاء نشطون</span>
+            <span class="w-badge-val">{{ summaryCards[1]?.value || 0 }}</span>
+          </div>
+        </div>
       </div>
+    </div>
+  </section>
 
-      <!-- Post Content -->
-      <div class="post-content">
-        <h2 *ngIf="post.title">{{ post.title }}</h2>
-        <p>{{ post.content }}</p>
-        
-        <!-- Tags -->
-        <div *ngIf="post.tags && post.tags.length > 0" class="post-tags">
-          <span *ngFor="let tag of post.tags" 
-                (click)="filterByTag(tag)"
-                class="tag">
-            #{{ tag }}
-          </span>
+  <!-- ===== METRICS ===== -->
+  <section class="metrics-grid">
+    <div class="mc" *ngFor="let card of summaryCards">
+      <div class="mc-icon">{{ card.icon }}</div>
+      <div class="mc-lbl">{{ card.title }}</div>
+      <div class="mc-val" *ngIf="!card.loading">{{ card.value }}</div>
+      <div class="mc-skeleton" *ngIf="card.loading"></div>
+      <div class="mini-prog"><div class="mini-prog-fill g" style="width:65%"></div></div>
+    </div>
+    <div class="mc">
+      <div class="mc-icon">🔥</div>
+      <div class="mc-lbl">منشورات اليوم</div>
+      <div class="mc-val">{{ posts.length }}</div>
+      <div class="mini-prog"><div class="mini-prog-fill o" style="width:80%"></div></div>
+    </div>
+  </section>
+
+  <!-- ===== CONTENT LAYOUT ===== -->
+  <div class="content-layout">
+
+    <!-- ===== POSTS COLUMN ===== -->
+    <div class="posts-col">
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <div class="filter-tabs">
+          <button *ngFor="let f of availableFilters"
+            (click)="changeFilter(f.value)"
+            [class.active]="selectedFilter === f.value"
+            class="ftab">
+            {{ f.icon }} {{ f.label }}
+          </button>
         </div>
       </div>
 
-      <!-- Post Actions -->
-      <div class="post-actions">
-        <button (click)="toggleLike(post)" 
-                class="action-btn"
-                [class.liked]="post.isLiked">
-          {{ post.isLiked ? '❤️' : '🤍' }} 
-          {{ post.likesCount || 0 }}
-        </button>
-        
-        <button (click)="toggleComments(post)" class="action-btn">
-          💬 {{ post.commentsCount || 0 }}
-        </button>
-      </div>
+      <!-- Posts -->
+      <div class="posts-list" *ngIf="posts.length > 0; else noPosts">
+        <div class="post-card" *ngFor="let post of posts">
 
-      <!-- Comments Section -->
-      <div *ngIf="post.showComments" class="comments-section">
-        
-        <!-- Loading Comments -->
-        <div *ngIf="post.loadingComments" class="loading-comments">
-          جاري تحميل التعليقات...
-        </div>
+          <!-- Post Header -->
+          <div class="post-head">
+            <div class="author-wrap">
+              <div class="author-avatar">{{ post.author?.charAt(0) || 'م' }}</div>
+              <div class="author-info">
+                <div class="author-name">{{ post.author }}</div>
+                <div class="author-meta">
+                  <span class="author-role">{{ post.authorRole || 'رائد أعمال' }}</span>
+                  <span class="dot">·</span>
+                  <span class="post-time">{{ post.timeAgo }}</span>
+                </div>
+              </div>
+            </div>
+            <button class="del-btn" *ngIf="isMyPost(post)" (click)="deletePost(post)">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+            </button>
+          </div>
 
-        <!-- Comments List -->
-        <div *ngIf="!post.loadingComments" class="comments-list">
-          <div *ngFor="let comment of post.comments" class="comment-item">
-            <div class="comment-avatar">{{ comment.User?.name?.charAt(0) || 'م' }}</div>
-            <div class="comment-content">
-              <h4>{{ comment.User?.name || 'مستخدم' }}</h4>
-              <p>{{ comment.content }}</p>
+          <!-- Post Body -->
+          <div class="post-body">
+            <div class="post-title" *ngIf="post.title">{{ post.title }}</div>
+            <p class="post-content">{{ post.content }}</p>
+            <div class="post-tags" *ngIf="post.tags && post.tags.length">
+              <span class="ptag" *ngFor="let tag of post.tags" (click)="filterByTag(tag)">#{{ tag }}</span>
             </div>
           </div>
-          
-          <div *ngIf="post.comments?.length === 0" class="no-comments">
-            لا توجد تعليقات حتى الآن. كن أول من يعلق!
+
+          <!-- Post Footer -->
+          <div class="post-foot">
+            <button class="act-btn" [class.liked]="post.isLiked" (click)="toggleLike(post)">
+              <svg viewBox="0 0 16 16" fill="currentColor">
+                <path *ngIf="!post.isLiked" d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"/>
+                <path *ngIf="post.isLiked" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
+              </svg>
+              {{ post.likesCount || 0 }}
+            </button>
+            <button class="act-btn" (click)="toggleComments(post)">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+              {{ post.commentsCount || 0 }}
+            </button>
+            <button class="act-btn share-btn">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/></svg>
+              مشاركة
+            </button>
+          </div>
+
+          <!-- Comments -->
+          <div class="comments-section" *ngIf="post.showComments">
+            <div class="comment-loading" *ngIf="post.loadingComments">جاري التحميل...</div>
+            <div class="comments-list" *ngIf="!post.loadingComments">
+              <div class="comment-item" *ngFor="let comment of post.comments">
+                <div class="comment-avatar">{{ comment.User?.name?.charAt(0) || 'م' }}</div>
+                <div class="comment-body">
+                  <div class="comment-author">{{ comment.User?.name || 'مستخدم' }}</div>
+                  <div class="comment-text">{{ comment.content }}</div>
+                </div>
+              </div>
+              <div class="no-comments" *ngIf="!post.comments?.length">لا توجد تعليقات بعد. كن أول من يعلق!</div>
+            </div>
+            <div class="add-comment">
+              <input type="text" [(ngModel)]="newCommentContent[post.id!]"
+                (keyup.enter)="addComment(post)"
+                placeholder="أضف تعليقاً..." class="comment-input">
+              <button class="send-btn" (click)="addComment(post)">
+                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11z"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <ng-template #noPosts>
+        <div class="empty-state">
+          <div class="empty-icon">📝</div>
+          <p>لا توجد منشورات حالياً. كن أول من ينشر!</p>
+          <button class="btn-primary" (click)="openNewPostModal()">إنشاء منشور</button>
+        </div>
+      </ng-template>
+
+    </div><!-- end posts-col -->
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="comm-sidebar">
+
+      <!-- Top Topics -->
+      <div class="side-card">
+        <div class="side-head">
+          <div class="side-title">🏷️ المواضيع الشائعة</div>
+        </div>
+        <div class="topics-list" *ngIf="topTopics.length > 0; else noTopics">
+          <div class="topic-item" *ngFor="let topic of topTopics; let i = index"
+            (click)="filterByTag(topic.name)">
+            <div class="topic-rank">#{{ i + 1 }}</div>
+            <div class="topic-info">
+              <div class="topic-name">#{{ topic.name }}</div>
+              <div class="topic-posts">{{ topic.posts }} منشور</div>
+            </div>
+            <div class="topic-bar-wrap">
+              <div class="topic-bar" [style.width.%]="(topic.posts / topTopics[0].posts) * 100"></div>
+            </div>
           </div>
         </div>
+        <ng-template #noTopics>
+          <div class="empty-mini">لا توجد مواضيع بعد</div>
+        </ng-template>
+      </div>
 
-        <!-- Add Comment Form -->
-        <div class="add-comment-form">
-          <input type="text"
-                 [(ngModel)]="newCommentContent[post.id!]"
-                 (keyup.enter)="addComment(post)"
-                 placeholder="أضف تعليقاً..."
-                 class="comment-input">
-          <button (click)="addComment(post)" class="btn-send">
-            ↗️
+      <!-- Active Members -->
+      <div class="side-card">
+        <div class="side-head">
+          <div class="side-title">👥 الأعضاء النشطون</div>
+        </div>
+        <div class="members-list">
+          <div class="member-row" *ngFor="let member of activeMembers">
+            <div class="mem-avatar">{{ member.name.charAt(0) }}</div>
+            <div class="mem-info">
+              <div class="mem-name">{{ member.name }}</div>
+              <div class="mem-posts">{{ member.posts }} منشور</div>
+            </div>
+            <div class="mem-badge">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Post -->
+      <div class="side-card">
+        <div class="side-head">
+          <div class="side-title">✍️ شارك الآن</div>
+        </div>
+        <p class="quick-desc">لديك فكرة أو سؤال؟ شاركه مع المجتمع!</p>
+        <button class="btn-post-now" (click)="openNewPostModal()">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+          إنشاء منشور جديد
+        </button>
+      </div>
+
+    </aside>
+
+  </div><!-- end content-layout -->
+
+</main>
+
+<!-- ===== NEW POST MODAL ===== -->
+<div class="modal-overlay" *ngIf="showNewPostModal" (click)="closeNewPostModal()">
+  <div class="modal-container modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>✍️ منشور جديد</h3>
+      <button class="close-btn" (click)="closeNewPostModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">عنوان المنشور</label>
+        <input type="text" [(ngModel)]="newPost.title"
+          placeholder="اكتب عنواناً جذاباً..." class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">المحتوى *</label>
+        <textarea [(ngModel)]="newPost.content"
+          placeholder="شارك أفكارك، خبراتك، أو أسئلتك..."
+          rows="5" class="form-input"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">الوسوم</label>
+        <div class="tags-grid">
+          <button type="button" *ngFor="let tag of availableTags"
+            (click)="toggleTag(tag)"
+            class="tag-btn" [class.tag-active]="newPost.tags.includes(tag)">
+            #{{ tag }}
           </button>
         </div>
       </div>
     </div>
-
-    <!-- Empty State -->
-    <div *ngIf="posts.length === 0 && !isLoading" class="empty-state">
-      <p>📝 لا توجد منشورات حالياً. كن أول من ينشر!</p>
-      <button (click)="openNewPostModal()" class="btn-primary">
-        إنشاء منشور
-      </button>
-    </div>
-  </div>
-
-  <!-- Top Topics Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-card">
-      <h3>🏷️ المواضيع الشائعة</h3>
-      <div class="topics-list">
-        <div *ngFor="let topic of topTopics" 
-             (click)="filterByTag(topic.name)"
-             class="topic-item">
-          <span class="topic-name">#{{ topic.name }}</span>
-          <span class="topic-count">{{ topic.posts }}</span>
-        </div>
-      </div>
-      
-      <div *ngIf="topTopics.length === 0" class="no-topics">
-        لا توجد مواضيع شائعة حتى الآن
-      </div>
-    </div>
-  </aside>
-</div>
-
-<!-- New Post Modal -->
-<div *ngIf="showNewPostModal" class="modal-overlay" (click)="closeNewPostModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
-    <h2>✍️ منشور جديد</h2>
-    
-    <div class="form-group">
-      <label>عنوان المنشور</label>
-      <input type="text"
-             [(ngModel)]="newPost.title"
-             placeholder="اكتب عنواناً جذاباً..."
-             class="form-control">
-    </div>
-    
-    <div class="form-group">
-      <label>المحتوى</label>
-      <textarea [(ngModel)]="newPost.content"
-                placeholder="شارك أفكارك، خبراتك، أو أسئلتك..."
-                rows="6"
-                class="form-control"></textarea>
-    </div>
-    
-    <div class="form-group">
-      <label>الوسوم (اختر واحد أو أكثر)</label>
-      <div class="tags-selector">
-        <button *ngFor="let tag of availableTags"
-                (click)="toggleTag(tag)"
-                [class.selected]="newPost.tags.includes(tag)"
-                class="tag-btn">
-          #{{ tag }}
-        </button>
-      </div>
-    </div>
-    
-    <div class="modal-actions">
-      <button (click)="closeNewPostModal()" 
-              class="btn-cancel"
-              [disabled]="isCreatingPost">
-        إلغاء
-      </button>
-      <button (click)="createPost()" 
-              class="btn-primary"
-              [disabled]="isCreatingPost">
-        <span *ngIf="!isCreatingPost">نشر</span>
-        <span *ngIf="isCreatingPost">جاري النشر...</span>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeNewPostModal()" [disabled]="isCreatingPost">إلغاء</button>
+      <button class="btn-primary" (click)="createPost()" [disabled]="isCreatingPost">
+        {{ isCreatingPost ? 'جاري النشر...' : 'نشر المنشور' }}
       </button>
     </div>
   </div>

@@ -99,9 +99,56 @@ export class TasksAndTeam implements OnInit {
     private projectService: ProjectService
   ) { }
 
+  isSidebarCollapsed = false;
+
   ngOnInit(): void {
     console.log('📋 Tasks & Team Component Initialized');
-    this.loadCurrentProject();
+    this.loadMockData();
+  }
+
+  onSidebarToggle(collapsed: boolean) {
+    this.isSidebarCollapsed = collapsed;
+  }
+
+  openGuide() { this.showGuide = true; }
+  closeGuide() { this.showGuide = false; }
+
+  loadMockData() {
+    this.isLoading = false;
+
+    this.teamMembers = [
+      { id: 1, name: 'أحمد محمد',   avatar: 'أ', role: 'مطوّر واجهات',    tasks: 5, email: 'ahmed@khatwa.sa' },
+      { id: 2, name: 'سارة علي',    avatar: 'س', role: 'مصممة جرافيك',    tasks: 3, email: 'sara@khatwa.sa'  },
+      { id: 3, name: 'خالد عمر',    avatar: 'خ', role: 'مدير تسويق',      tasks: 4, email: 'khaled@khatwa.sa'},
+      { id: 4, name: 'نورة ناصر',   avatar: 'ن', role: 'محلل بيانات',     tasks: 2, email: 'noura@khatwa.sa' },
+      { id: 5, name: 'فهد السلمي',  avatar: 'ف', role: 'مطوّر backend',   tasks: 6, email: 'fahad@khatwa.sa' },
+    ];
+
+    this.todoTasks = [
+      { projectId: 1, id: 1,  title: 'تصميم الهوية البصرية الجديدة',    description: 'إنشاء شعار وألوان وخطوط العلامة التجارية',       status: 'todo',        priority: 'high',   tags: ['تصميم'], date: '20 فبراير 2025',   dueDate: '' },
+      { projectId: 1, id: 2,  title: 'كتابة محتوى صفحة الهبوط',          description: 'نصوص تسويقية جذابة مع مراعاة SEO',              status: 'todo',        priority: 'medium', tags: ['محتوى'], date: '22 فبراير 2025',   dueDate: '' },
+      { projectId: 1, id: 3,  title: 'إعداد خطة التسويق الرقمي',          description: 'وضع استراتيجية التواصل الاجتماعي للربع الأول',   status: 'todo',        priority: 'urgent', tags: ['تسويق','إدارة'], date: '25 فبراير 2025', dueDate: '' },
+    ];
+
+    this.inProgressTasks = [
+      { projectId: 1, id: 4,  title: 'تطوير لوحة تحكم المشرف',            description: 'بناء واجهة إدارة المستخدمين والإحصاءات',          status: 'in-progress', priority: 'high',   tags: ['تطوير'], date: '18 فبراير 2025',   dueDate: '' },
+      { projectId: 1, id: 5,  title: 'تكامل بوابة الدفع الإلكتروني',      description: 'ربط Stripe وإعداد webhooks',                     status: 'in-progress', priority: 'urgent', tags: ['تطوير','مبيعات'], date: '19 فبراير 2025', dueDate: '' },
+      { projectId: 1, id: 6,  title: 'تحليل بيانات العملاء',               description: 'استخراج تقارير سلوك المستخدم من آخر 3 أشهر',     status: 'in-progress', priority: 'medium', tags: ['إدارة'], date: '21 فبراير 2025',   dueDate: '' },
+    ];
+
+    this.reviewTasks = [
+      { projectId: 1, id: 7,  title: 'مراجعة تقرير الأداء الشهري',         description: 'مراجعة KPIs وإعداد التوصيات للإدارة',             status: 'in-progress', priority: 'medium', tags: ['إدارة'], date: '15 فبراير 2025',   dueDate: '' },
+      { projectId: 1, id: 8,  title: 'اختبار تجربة المستخدم',              description: 'User testing لنماذج التسجيل والدفع',              status: 'in-progress', priority: 'high',   tags: ['تطوير','تصميم'], date: '16 فبراير 2025', dueDate: '' },
+    ];
+
+    this.completedTasks = [
+      { projectId: 1, id: 9,  title: 'إعداد بيئة السيرفر',                 description: 'تكوين AWS EC2 وقاعدة البيانات',                   status: 'done',        priority: 'high',   tags: ['تطوير'], date: '10 فبراير 2025',   dueDate: '' },
+      { projectId: 1, id: 10, title: 'اجتماع التخطيط الربعي',               description: 'تحديد أهداف الفريق للربع الأول',                  status: 'done',        priority: 'medium', tags: ['إدارة'], date: '8 فبراير 2025',    dueDate: '' },
+      { projectId: 1, id: 11, title: 'توثيق API للمطورين',                  description: 'كتابة Swagger docs لجميع endpoints',              status: 'done',        priority: 'low',    tags: ['تطوير'], date: '5 فبراير 2025',    dueDate: '' },
+      { projectId: 1, id: 12, title: 'تصميم نماذج UX الأولية',              description: 'Wireframes لصفحات الرئيسية والتسجيل والملف',     status: 'done',        priority: 'high',   tags: ['تصميم'], date: '1 فبراير 2025',    dueDate: '' },
+    ];
+
+    this.allTasks = [...this.todoTasks, ...this.inProgressTasks, ...this.reviewTasks, ...this.completedTasks];
   }
 
   // Load Current Project
@@ -499,15 +546,6 @@ export class TasksAndTeam implements OnInit {
 
   get completedCount() {
     return this.completedTasks.length;
-  }
-
-  // Guide functions
-  openGuide() {
-    this.showGuide = true;
-  }
-
-  closeGuide() {
-    this.showGuide = false;
   }
 
   // Refresh

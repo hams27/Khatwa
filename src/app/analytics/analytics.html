@@ -1,74 +1,266 @@
-<!-- Sidebar -->
-<app-side-bar></app-side-bar>
+<app-side-bar (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
 
-<!-- Main Analytics Section -->
-<section class="analytics">
-
-  <!-- Navbar with User Guide -->
-  <nav class="navbar">
-    <button class="guide-btn" (click)="openGuide()">دليل الاستخدام</button>
-  </nav>
-<!-- Loading State -->
-<div *ngIf="isLoading" class="loading-spinner">
-  <div class="spinner"></div>
-  <p>جاري تحميل التحليلات...</p>
-</div>
-
-<!-- Error Message -->
-<div *ngIf="errorMessage" class="error-banner">
-  {{ errorMessage }}
-</div>
-
-<!-- Refresh Button -->
-<button (click)="refreshAnalytics()" class="btn-refresh" [disabled]="isLoading">
-  🔄 تحديث البيانات
-</button>
-
-<!-- Auto-Refresh Toggle -->
-<label class="toggle-switch">
-  <input type="checkbox" 
-         [(ngModel)]="autoRefreshEnabled" 
-         (change)="toggleAutoRefresh()">
-  <span>تحديث تلقائي (كل 5 دقائق)</span>
-</label>
-
-<!-- Stats Cards with Loading -->
-<div class="stats-grid">
-  <div *ngFor="let card of statsCards" class="stat-card" [class]="card.color">
-    <div class="card-icon">{{ card.icon }}</div>
-    <h3>{{ card.title }}</h3>
-    
-    <div *ngIf="!card.loading">
-      <p class="value">{{ card.value }}</p>
-      <span class="change" [class.positive]="card.change.includes('+')">
-        {{ card.change }}
-      </span>
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="nav-left">
+    <div>
+      <div class="nav-page-title">التحليلات</div>
+      <div class="nav-page-sub">رؤى ذكية لأداء مشروعك ومسار نموه</div>
     </div>
-    
-    <div *ngIf="card.loading" class="skeleton-loader"></div>
   </div>
-</div>
+  <div class="nav-right">
+    <label class="toggle-wrap">
+      <div class="toggle-switch" [class.active]="autoRefreshEnabled" (click)="toggleAutoRefresh()">
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="toggle-lbl">تحديث تلقائي</span>
+    </label>
+    <button class="btn-refresh" (click)="refreshAnalytics()" [disabled]="isLoading">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>
+      تحديث
+    </button>
+    <button class="guide-btn" (click)="openGuide()">
+      <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+      دليل الاستخدام
+    </button>
+  </div>
+</nav>
 
-<!-- Insights with Icons -->
-<div class="insights-section">
-  <h2>💡 التوقعات والتحليلات</h2>
-  
-  <div *ngFor="let insight of insights" 
-       class="insight-card" 
-       [ngClass]="getInsightClass(insight.type)">
-    
-    <div class="insight-header">
-      <span class="insight-icon">{{ getInsightIcon(insight.type) }}</span>
-      <h3>{{ insight.title }}</h3>
-      <span class="confidence">{{ insight.confidence }}% موثوقية</span>
+<!-- ===== GUIDE MODAL ===== -->
+<div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📊 دليل استخدام التحليلات</h3>
+      <button class="close-btn" (click)="closeGuide()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
     </div>
-    
-    <p>{{ insight.description }}</p>
-  </div>
-  
-  <div *ngIf="insights.length === 0 && !isLoading" class="no-insights">
-    لا توجد تحليلات كافية حتى الآن. أضف المزيد من البيانات للحصول على رؤى ذكية!
+    <div class="modal-body">
+      <p class="guide-intro">لوحة التحليلات تعطيك رؤية شاملة ودقيقة عن أداء مشروعك.</p>
+      <div class="guide-features">
+        <div class="guide-item"><span class="guide-icon">📈</span><div><h4>أداء الإيرادات</h4><p>تتبع نمو إيراداتك الفعلية والمتوقعة</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🎯</span><div><h4>إنجاز المهام</h4><p>قارن المخطط بالمنجز أسبوعياً</p></div></div>
+        <div class="guide-item"><span class="guide-icon">📊</span><div><h4>اتجاهات النمو</h4><p>رصد نمو الإيرادات والعملاء وحصة السوق</p></div></div>
+        <div class="guide-item"><span class="guide-icon">💡</span><div><h4>رؤى ذكية</h4><p>توصيات مبنية على تحليل بياناتك الفعلية</p></div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" (click)="closeGuide()">فهمت، شكراً</button>
+    </div>
   </div>
 </div>
 
-</section>
+<!-- ===== MAIN ===== -->
+<main class="analytics-main" [class.sidebar-collapsed]="isSidebarCollapsed">
+
+  <!-- Loading -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>جاري تحميل التحليلات...</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-banner" *ngIf="errorMessage">
+    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- ===== WELCOME BANNER ===== -->
+  <section class="welcome-section">
+    <div class="welcome-content">
+      <div class="welcome-text">
+        <h1 class="welcome-title">التحليلات والرؤى <span>📊</span></h1>
+        <p class="welcome-sub">بيانات دقيقة وتوقعات ذكية لمساعدتك على اتخاذ قرارات أفضل</p>
+      </div>
+      <div class="welcome-badges">
+        <div class="w-badge">
+          <span class="w-badge-icon">📈</span>
+          <div>
+            <span class="w-badge-lbl">معدل النمو</span>
+            <span class="w-badge-val">+{{ statsCards[3]?.value || '0%' }}</span>
+          </div>
+        </div>
+        <div class="w-badge">
+          <span class="w-badge-icon">🎯</span>
+          <div>
+            <span class="w-badge-lbl">إنجاز المهام</span>
+            <span class="w-badge-val">{{ statsCards[1]?.value || '0%' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS CARDS ===== -->
+  <section class="metrics-grid">
+    <div class="mc" *ngFor="let card of statsCards; let i = index" [class]="'mc-' + card.color">
+      <div class="mc-icon">{{ card.icon }}</div>
+      <div class="mc-lbl">{{ card.title }}</div>
+      <div class="mc-val" *ngIf="!card.loading">{{ card.value }}</div>
+      <div class="mc-skeleton" *ngIf="card.loading"></div>
+      <div class="mc-trend up" *ngIf="!card.loading && card.change.includes('+')">{{ card.change }}</div>
+      <div class="mc-trend down" *ngIf="!card.loading && !card.change.includes('+')">{{ card.change }}</div>
+      <div class="mini-prog">
+        <div class="mini-prog-fill" [class]="'mpf-' + card.color" style="width:70%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CHARTS ROW 1 ===== -->
+  <div class="charts-row">
+
+    <!-- Performance Chart (wide) -->
+    <div class="chart-card wide">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">📈 الأداء العام</div>
+          <div class="chart-sub">الإيرادات وإنجاز المهام ورضا العملاء — آخر 6 أشهر</div>
+        </div>
+        <span class="chip chip-g">↑ 15%</span>
+      </div>
+      <div style="height:260px"><canvas #performanceChart></canvas></div>
+    </div>
+
+    <!-- Task Completion (narrow) -->
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">✅ إنجاز المهام</div>
+          <div class="chart-sub">المخطط مقابل المكتمل أسبوعياً</div>
+        </div>
+      </div>
+      <div style="height:260px"><canvas #taskCompletionChart></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- ===== CHARTS ROW 2 ===== -->
+  <div class="charts-row" style="margin-bottom:16px">
+
+    <!-- Revenue Projection (wide) -->
+    <div class="chart-card wide">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">💰 توقعات الإيرادات</div>
+          <div class="chart-sub">الفعلي مقابل المتوقع لكامل السنة</div>
+        </div>
+        <span class="chip chip-b">توقعات 2025</span>
+      </div>
+      <div style="height:240px"><canvas #revenueProjectionChart></canvas></div>
+    </div>
+
+    <!-- Growth Trend (narrow) -->
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="chart-title">🚀 اتجاهات النمو</div>
+          <div class="chart-sub">الإيرادات والعملاء وحصة السوق</div>
+        </div>
+      </div>
+      <div style="height:240px"><canvas #growthTrendChart></canvas></div>
+    </div>
+
+  </div>
+
+  <!-- ===== INSIGHTS ===== -->
+  <div class="bottom-grid">
+
+    <!-- AI Insights -->
+    <div class="card insights-card">
+      <div class="card-head">
+        <div class="card-title">💡 رؤى ذكية وتوقعات</div>
+        <span class="ai-badge">AI</span>
+      </div>
+      <div class="insights-list" *ngIf="insights.length > 0; else noInsights">
+        <div class="insight-item" *ngFor="let insight of insights" [class]="'ins-' + insight.type">
+          <div class="ins-icon">
+            <svg *ngIf="insight.type === 'success'" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
+            <svg *ngIf="insight.type === 'warning'" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+            <svg *ngIf="insight.type === 'info'" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+            <svg *ngIf="insight.type === 'danger'" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
+          </div>
+          <div class="ins-body">
+            <div class="ins-title">{{ insight.title }}</div>
+            <div class="ins-desc">{{ insight.description }}</div>
+          </div>
+          <div class="ins-confidence">
+            <div class="conf-num">{{ insight.confidence }}%</div>
+            <div class="conf-lbl">موثوقية</div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noInsights>
+        <div class="empty-state">
+          <div class="empty-icon">💡</div>
+          <p>جاري تحليل البيانات...</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Quick Stats & Export -->
+    <div class="side-col">
+
+      <!-- KPI Summary -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">📊 ملخص المؤشرات</div>
+          <span class="chip chip-g">هذا الشهر</span>
+        </div>
+        <div class="kpi-list">
+          <div class="kpi-row">
+            <span class="kpi-lbl">🏆 أعلى إيراد شهري</span>
+            <span class="kpi-val g">32,000 ر.س</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl">🎯 أفضل أسبوع إنجاز</span>
+            <span class="kpi-val g">92%</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl">📈 متوسط نمو شهري</span>
+            <span class="kpi-val g">+18%</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl">🛒 عدد العملاء الجدد</span>
+            <span class="kpi-val b">32</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl">📉 معدل الفاقد</span>
+            <span class="kpi-val r">4.2%</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl">⭐ رضا العملاء</span>
+            <span class="kpi-val g">85%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">📤 تصدير التقارير</div>
+        </div>
+        <div class="export-grid">
+          <button class="exp-btn" (click)="exportData('pdf')">
+            <div class="exp-icon">📄</div>
+            <span>تصدير PDF</span>
+          </button>
+          <button class="exp-btn" (click)="exportData('excel')">
+            <div class="exp-icon">📊</div>
+            <span>تصدير Excel</span>
+          </button>
+        </div>
+        <div class="auto-refresh-row">
+          <span class="ar-lbl">تحديث تلقائي كل 5 دقائق</span>
+          <div class="toggle-switch sm" [class.active]="autoRefreshEnabled" (click)="toggleAutoRefresh()">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- end bottom-grid -->
+
+</main>
