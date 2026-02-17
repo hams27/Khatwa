@@ -53,19 +53,52 @@ export class AuthService {
 
   // تسجيل مستخدم جديد
   register(data: RegisterData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register`, data);
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, data)
+      .pipe(
+        map(response => {
+          // حفظ Token في localStorage بعد التسجيل
+          if (response.success && response.token) {
+            localStorage.setItem('token', response.token);
+            
+            // جلب بيانات المستخدم من endpoint تاني
+            this.getProfile().subscribe({
+              next: (profileResponse) => {
+                if (profileResponse.success && profileResponse.data) {
+                  localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
+                  this.currentUserSubject.next(profileResponse.data);
+                }
+              },
+              error: (error) => {
+                console.error('خطأ في جلب بيانات المستخدم:', error);
+              }
+            });
+          }
+          return response;
+        })
+      );
   }
 
   // تسجيل الدخول
   login(data: LoginData): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, data)
+    return this.http.post<any>(`${this.apiUrl}/auth/login`, data)
       .pipe(
         map(response => {
           // حفظ Token في localStorage
           if (response.success && response.token) {
             localStorage.setItem('token', response.token);
-            localStorage.setItem('currentUser', JSON.stringify(response.data.user));
-            this.currentUserSubject.next(response.data.user);
+            
+            // الباك إند بيبعت token بس، فهنجيب الـ user data من endpoint تاني
+            this.getProfile().subscribe({
+              next: (profileResponse) => {
+                if (profileResponse.success && profileResponse.data) {
+                  localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
+                  this.currentUserSubject.next(profileResponse.data);
+                }
+              },
+              error: (error) => {
+                console.error('خطأ في جلب بيانات المستخدم:', error);
+              }
+            });
           }
           return response;
         })

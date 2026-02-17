@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } fr
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth';
 import { ProjectService, Project } from '../services/project';
 import { TaskService } from '../services/task';
 import { FinanceService } from '../services/finance';

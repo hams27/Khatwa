@@ -3,7 +3,7 @@ import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommunityService, CommunityPost, Comment } from '../services/community';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth';
 import { HttpErrorResponse } from '@angular/common/http';
 import { interval, Subscription } from 'rxjs';
 

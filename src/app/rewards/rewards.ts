@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../services/auth';
 import { interval, Subscription } from 'rxjs';
 
 // Interfaces
