@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -74,10 +74,15 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   projectsLoading = true;
   tasksLoading = true;
   financeLoading = true;
-  chartsLoading = true;
+  chartsLoading = false;
 
   // UI State
   showGuide = false;
+  isSidebarCollapsed = false;
+
+  onSidebarToggle(collapsed: boolean) {
+    this.isSidebarCollapsed = collapsed;
+  }
 
   // Projects
   projects: Project[] = [];
@@ -135,16 +140,151 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     private authService: AuthService,
     private projectService: ProjectService,
     private taskService: TaskService,
-    private financeService: FinanceService
+    private financeService: FinanceService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.loadUserData();
-    this.loadDashboardData();
+    this.loadMockData(); // ← داتا وهمية للعرض
+    // this.loadDashboardData(); // ← فعّل هذا عند الاتصال بالـ API الحقيقي
+  }
+
+  // ==================== MOCK DATA ====================
+  loadMockData() {
+    // إيقاف حالات التحميل فوراً
+    this.isInitialLoading = false;
+    this.projectsLoading = false;
+    this.tasksLoading = false;
+    this.financeLoading = false;
+
+    // ── بيانات المستخدم ──
+    this.userName = 'محمد أحمد';
+    this.userPoints = 350;
+    this.userLevel = 4;
+
+    // ── بيانات المشروع ──
+    this.totalProjects = 1;
+    this.activeProjects = 1;
+    this.projectProgress = 66;
+    this.progressSteps = [
+      { title: 'إنشاء المشروع', description: 'قم بإنشاء مشروعك الأول', done: true },
+      { title: 'إضافة خطة تسويقية', description: 'ابدأ بخطة تسويقية مخصصة', done: true },
+      { title: 'إضافة فريق العمل', description: 'دعوة أعضاء الفريق للتعاون', done: false }
+    ];
+
+    // ── بيانات المهام ──
+    this.totalTasks = 13;
+    this.completedTasks = 8;
+    this.inProgressTasks = 3;
+    this.pendingTasks = 2;
+    this.tasksProgress = 62;
+
+    this.upcomingTasks = [
+      {
+        id: 1,
+        title: 'إعداد العرض التقديمي للمستثمرين',
+        status: 'todo',
+        priority: 'high',
+        dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) // غداً
+      },
+      {
+        id: 2,
+        title: 'مراجعة الميزانية الشهرية',
+        status: 'in_progress',
+        priority: 'medium',
+        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 3,
+        title: 'نشر محتوى سوشيال ميديا',
+        status: 'todo',
+        priority: 'low',
+        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 4,
+        title: 'اجتماع الفريق الأسبوعي',
+        status: 'todo',
+        priority: 'medium',
+        dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 5,
+        title: 'تحديث خطة التسويق',
+        status: 'in_progress',
+        priority: 'high',
+        dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
+      }
+    ];
+
+    // ── البيانات المالية ──
+    this.totalRevenue = 45000;
+    this.totalExpenses = 17550;
+    this.profit = 27450;
+    this.profitMargin = 61;
+    this.revenueChange = 12;
+    this.expensesChange = 5;
+
+    // ── نشاط الأسبوع (آخر 7 أيام) ──
+    this.weeklyActivity = [2, 5, 3, 7, 4, 8, 6];
+
+    // ── النشاط الأخير ──
+    this.recentActivities = [
+      {
+        type: 'task',
+        message: 'تم إكمال مهمة "تصميم الشعار والهوية البصرية"',
+        timestamp: new Date(Date.now() - 20 * 60 * 1000)
+      },
+      {
+        type: 'team',
+        message: 'انضم سعد الأحمدي إلى فريق المشروع',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000)
+      },
+      {
+        type: 'task',
+        message: 'مهمة "العرض التقديمي" مستحقة غداً',
+        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000)
+      },
+      {
+        type: 'finance',
+        message: 'تم تسجيل إيراد جديد بقيمة 5,000 ر.س',
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000)
+      },
+      {
+        type: 'project',
+        message: 'تم تحديث الخطة التسويقية للمشروع',
+        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+      }
+    ];
+
+    // ── توصيات الذكاء الاصطناعي ──
+    this.aiInsights = [
+      {
+        type: 'success',
+        message: 'هامش ربحك 61% ممتاز! أداؤك المالي أعلى من متوسط السوق بنسبة 18%.'
+      },
+      {
+        type: 'warning',
+        message: '38% من مهامك لم تكتمل بعد — حاول إنجاز مهمتين يومياً للبقاء في الموعد.',
+        action: 'tasks',
+        actionLabel: 'عرض المهام'
+      },
+      {
+        type: 'info',
+        message: 'الأسبوع القادم مناسب لإطلاق حملة تسويقية — جمهورك المستهدف أكثر نشاطاً.',
+        action: 'marketing',
+        actionLabel: 'ابدأ الآن'
+      }
+    ];
+
+    // الشارتس هتتعمل تلقائياً في ngAfterViewInit
+    this.chartsLoading = false;
   }
   
   ngAfterViewInit() {
-    // Charts will be created after data is loaded
+    // الـ canvas دايماً موجود في الـ DOM (بنستخدم [hidden] مش *ngIf)
+    setTimeout(() => this.createAllCharts(), 100);
   }
 
   ngOnDestroy() {
@@ -349,32 +489,24 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   
   createTasksProgressChart() {
     if (!this.tasksProgressChart) return;
-    
     const ctx = this.tasksProgressChart.nativeElement.getContext('2d');
     if (!ctx) return;
-    
+
     this.tasksChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: ['مكتملة', 'قيد التنفيذ', 'معلقة'],
         datasets: [{
-          data: [
-            this.completedTasks,
-            this.inProgressTasks,
-            this.pendingTasks
-          ],
-          backgroundColor: [
-            '#10b981', // Green
-            '#3b82f6', // Blue
-            '#ef4444'  // Red
-          ],
-          borderWidth: 2,
-          borderColor: '#ffffff'
+          data: [this.completedTasks, this.inProgressTasks, this.pendingTasks],
+          backgroundColor: ['#1f9950', '#ffa726', '#d4e8db'],
+          borderWidth: 0,
+          hoverOffset: 6
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        cutout: '68%',
         plugins: {
           legend: {
             position: 'bottom',
@@ -387,11 +519,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           tooltip: {
             callbacks: {
               label: (context) => {
-                const label = context.label || '';
                 const value = context.parsed || 0;
                 const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
-                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0';
-                return `${label}: ${value} مهمة (${percentage}%)`;
+                const pct = total > 0 ? ((value / total) * 100).toFixed(0) : '0';
+                return ` ${context.label}: ${value} مهمة (${pct}%)`;
               }
             }
           }
@@ -399,36 +530,25 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-  
+
   createMiniFinanceChart() {
     if (!this.miniFinanceChart) return;
-    
     const ctx = this.miniFinanceChart.nativeElement.getContext('2d');
     if (!ctx) return;
-    
+
     this.financeChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['الإيرادات', 'المصروفات', 'الربح'],
+        labels: ['الإيرادات', 'المصروفات', 'الأرباح'],
         datasets: [{
-          label: 'المبلغ (ر.س)',
-          data: [
-            this.totalRevenue,
-            this.totalExpenses,
-            this.profit
-          ],
+          data: [this.totalRevenue, this.totalExpenses, this.profit],
           backgroundColor: [
-            'rgba(16, 185, 129, 0.7)',
-            'rgba(239, 68, 68, 0.7)',
-            'rgba(59, 130, 246, 0.7)'
+            'rgba(31, 153, 80, 0.85)',
+            'rgba(239, 83, 80, 0.8)',
+            'rgba(30, 136, 229, 0.85)'
           ],
-          borderColor: [
-            'rgb(16, 185, 129)',
-            'rgb(239, 68, 68)',
-            'rgb(59, 130, 246)'
-          ],
-          borderWidth: 2,
-          borderRadius: 8
+          borderRadius: 8,
+          borderSkipped: false
         }]
       },
       options: {
@@ -438,63 +558,53 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (context) => {
-                const value = context.parsed.y || 0;
-                return `${value.toLocaleString('ar-SA')} ر.س`;
-              }
+              label: (context) => ` ${(context.parsed.y || 0).toLocaleString('ar-SA')} ر.س`
             }
           }
         },
         scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: 'Cairo', size: 11 } }
+          },
           y: {
             beginAtZero: true,
+            grid: { color: 'rgba(0,0,0,.04)' },
             ticks: {
-              callback: (value) => {
-                return `${value.toLocaleString('ar-SA')} ر.س`;
-              },
-              font: { family: 'Cairo' }
-            },
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
-            }
-          },
-          x: {
-            ticks: {
-              font: { family: 'Cairo', size: 12 }
-            },
-            grid: {
-              display: false
+              font: { family: 'Cairo', size: 10 },
+              callback: (v) => `${Number(v) / 1000}k`
             }
           }
         }
       }
     });
   }
-  
+
   createActivityChart() {
     if (!this.activityChart) return;
-    
     const ctx = this.activityChart.nativeElement.getContext('2d');
     if (!ctx) return;
-    
-    const weekDays = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-    
+
+    const grad = ctx.createLinearGradient(0, 0, 0, 220);
+    grad.addColorStop(0, 'rgba(31,153,80,.2)');
+    grad.addColorStop(1, 'rgba(31,153,80,0)');
+
     this.activityChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: weekDays,
+        labels: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
         datasets: [{
           label: 'المهام المكتملة',
           data: this.weeklyActivity,
-          borderColor: 'rgb(59, 130, 246)',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-          tension: 0.4,
+          borderColor: '#1f9950',
+          backgroundColor: grad,
+          tension: 0.45,
           fill: true,
+          pointBackgroundColor: '#ffffff',
+          pointBorderColor: '#1f9950',
+          pointBorderWidth: 2,
           pointRadius: 4,
-          pointHoverRadius: 6,
-          pointBackgroundColor: 'rgb(59, 130, 246)',
-          pointBorderColor: '#ffffff',
-          pointBorderWidth: 2
+          pointHoverRadius: 6
         }]
       },
       options: {
@@ -503,31 +613,18 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         plugins: {
           legend: { display: false },
           tooltip: {
-            callbacks: {
-              label: (context) => {
-                return `${context.parsed.y} مهمة`;
-              }
-            }
+            callbacks: { label: (c) => ` ${c.parsed.y} مهمة` }
           }
         },
         scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: 'Cairo', size: 10 } }
+          },
           y: {
             beginAtZero: true,
-            ticks: {
-              stepSize: 1,
-              font: { family: 'Cairo' }
-            },
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
-            }
-          },
-          x: {
-            ticks: {
-              font: { family: 'Cairo', size: 11 }
-            },
-            grid: {
-              display: false
-            }
+            grid: { color: 'rgba(0,0,0,.04)' },
+            ticks: { stepSize: 1, font: { family: 'Cairo', size: 10 } }
           }
         }
       }

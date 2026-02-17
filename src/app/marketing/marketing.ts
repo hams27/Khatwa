@@ -57,7 +57,12 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   showGuide = false;
   isLoading = false;
   isGeneratingAI = false;
-  chartsLoading = true;
+  chartsLoading = false;
+  isSidebarCollapsed = false;
+
+  // Computed
+  avgDailyEngagement = '0';
+  maxDailyEngagement = '0';
 
   // Marketing Data
   currentPlan: MarketingPlan | null = null;
@@ -133,12 +138,12 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.loadMarketingData();
+    this.initializeMockData();
     this.generateDailyEngagement();
   }
-  
+
   ngAfterViewInit() {
-    // Charts will be created after data is loaded
+    setTimeout(() => this.createAllCharts(), 100);
   }
 
   ngOnDestroy() {
@@ -239,18 +244,22 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
     this.daysRemaining = 15;
     this.contentGrowth = 12;
     this.engagementProgress = 75;
-    
-    this.completedSteps = 1;
+
+    this.completedSteps = 2;
     this.planProgress = Math.round((this.completedSteps / this.totalSteps) * 100);
-    
+
     this.updateStepsStatus();
     this.loadMockContentIdeas();
-    
-    // Load charts
-    this.chartsLoading = false;
-    setTimeout(() => {
-      this.createAllCharts();
-    }, 100);
+    this.loadMockScheduledPosts();
+  }
+
+  loadMockScheduledPosts() {
+    this.scheduledPosts = [
+      { id: '1', title: 'نصيحة يومية لرواد الأعمال 🚀', scheduledTime: 'غداً - 9:00 ص', platform: 'instagram', status: 'scheduled' },
+      { id: '2', title: 'قصة نجاح عميل جديد', scheduledTime: 'الأربعاء - 12:00 م', platform: 'facebook', status: 'scheduled' },
+      { id: '3', title: 'إنفوجرافيك: نمو السوق 2025', scheduledTime: 'الخميس - 3:00 م', platform: 'linkedin', status: 'draft' },
+      { id: '4', title: 'تغريدة عن إطلاق المنتج', scheduledTime: 'الجمعة - 10:00 ص', platform: 'twitter', status: 'scheduled' }
+    ];
   }
   
   updateStepsStatus() {
@@ -305,248 +314,125 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   }
   
   generateDailyEngagement() {
-    // Generate 30 days of engagement data
-    this.dailyEngagement = Array.from({length: 30}, () => 
+    this.dailyEngagement = Array.from({length: 30}, () =>
       Math.floor(Math.random() * 500 + 200)
     );
+    const avg = this.dailyEngagement.reduce((a, b) => a + b, 0) / 30;
+    const max = Math.max(...this.dailyEngagement);
+    this.avgDailyEngagement = avg.toFixed(0);
+    this.maxDailyEngagement = max.toString();
+  }
+
+  filterPlatform(platform: string) {
+    document.querySelectorAll('.ptab').forEach(el => el.classList.remove('active'));
+    event?.target && (event.target as HTMLElement).classList.add('active');
+  }
+
+  onSidebarToggle(collapsed: boolean) {
+    this.isSidebarCollapsed = collapsed;
   }
 
   // ==================== CHARTS ====================
-  
+
   createAllCharts() {
     this.createContentPerformanceChart();
     this.createChannelsComparisonChart();
     this.createEngagementTimelineChart();
   }
-  
+
   createContentPerformanceChart() {
     if (!this.contentChart) return;
-    
     const ctx = this.contentChart.nativeElement.getContext('2d');
     if (!ctx) return;
-    
     this.contentChartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: this.monthlyContentData.months,
         datasets: [
           {
-            type: 'bar',
-            label: 'المنشورات',
+            type: 'bar' as any, label: 'المنشورات',
             data: this.monthlyContentData.posts,
-            backgroundColor: 'rgba(59, 130, 246, 0.7)',
-            borderColor: 'rgb(59, 130, 246)',
-            borderWidth: 2,
-            borderRadius: 6,
-            yAxisID: 'y'
+            backgroundColor: 'rgba(31,153,80,.75)', borderRadius: 6, yAxisID: 'y'
           },
           {
-            type: 'line',
-            label: 'التفاعل (K)',
+            type: 'line' as any, label: 'التفاعل (K)',
             data: this.monthlyContentData.engagement,
-            borderColor: 'rgb(16, 185, 129)',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            tension: 0.4,
-            fill: true,
-            yAxisID: 'y1'
+            borderColor: '#00e676', backgroundColor: 'rgba(0,230,118,.1)',
+            tension: 0.45, fill: true,
+            pointBackgroundColor: '#fff', pointBorderColor: '#00e676',
+            pointBorderWidth: 2, pointRadius: 4, yAxisID: 'y1'
           }
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              font: { family: 'Cairo', size: 12 },
-              usePointStyle: true,
-              padding: 15
-            }
-          }
-        },
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'top', labels: { font: { family: 'Cairo', size: 11 }, usePointStyle: true, padding: 12 } } },
         scales: {
-          y: {
-            type: 'linear',
-            position: 'right',
-            title: {
-              display: true,
-              text: 'عدد المنشورات',
-              font: { family: 'Cairo' }
-            },
-            ticks: {
-              font: { family: 'Cairo' }
-            }
-          },
-          y1: {
-            type: 'linear',
-            position: 'left',
-            title: {
-              display: true,
-              text: 'التفاعل (بالآلاف)',
-              font: { family: 'Cairo' }
-            },
-            ticks: {
-              font: { family: 'Cairo' }
-            },
-            grid: {
-              drawOnChartArea: false
-            }
-          },
-          x: {
-            ticks: {
-              font: { family: 'Cairo' }
-            }
-          }
+          y:  { type: 'linear', position: 'right', grid: { display: false }, ticks: { font: { family: 'Cairo', size: 10 } } },
+          y1: { type: 'linear', position: 'left', grid: { color: 'rgba(0,0,0,.04)' }, ticks: { font: { family: 'Cairo', size: 10 } } },
+          x:  { grid: { display: false }, ticks: { font: { family: 'Cairo', size: 10 } } }
         }
       }
     });
   }
-  
+
   createChannelsComparisonChart() {
     if (!this.channelsChart) return;
-    
     const ctx = this.channelsChart.nativeElement.getContext('2d');
     if (!ctx) return;
-    
     this.channelsChartInstance = new Chart(ctx, {
       type: 'radar',
       data: {
         labels: this.channelsPerformance.labels,
         datasets: [{
-          label: 'الأداء',
-          data: this.channelsPerformance.data,
-          backgroundColor: 'rgba(59, 130, 246, 0.2)',
-          borderColor: 'rgb(59, 130, 246)',
-          borderWidth: 2,
-          pointBackgroundColor: 'rgb(59, 130, 246)',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: 'rgb(59, 130, 246)',
-          pointHoverRadius: 6
+          label: 'الأداء', data: this.channelsPerformance.data,
+          backgroundColor: 'rgba(31,153,80,.15)', borderColor: '#1f9950', borderWidth: 2,
+          pointBackgroundColor: '#1f9950', pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          r: {
-            beginAtZero: true,
-            max: 100,
-            ticks: {
-              stepSize: 20,
-              font: { family: 'Cairo' }
-            },
-            pointLabels: {
-              font: { family: 'Cairo', size: 12 }
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            display: false
-          }
-        }
+        responsive: true, maintainAspectRatio: false,
+        scales: { r: { beginAtZero: true, max: 100, ticks: { stepSize: 20, font: { family: 'Cairo', size: 9 } }, pointLabels: { font: { family: 'Cairo', size: 11 } } } },
+        plugins: { legend: { display: false } }
       }
     });
   }
-  
+
   createEngagementTimelineChart() {
     if (!this.engagementChart) return;
-    
     const ctx = this.engagementChart.nativeElement.getContext('2d');
     if (!ctx) return;
-    
-    const days = Array.from({length: 30}, (_, i) => `${i+1}`);
-    
+    const grad = ctx.createLinearGradient(0, 0, 0, 200);
+    grad.addColorStop(0, 'rgba(31,153,80,.25)');
+    grad.addColorStop(1, 'rgba(31,153,80,0)');
     this.engagementChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: days,
+        labels: Array.from({length: 30}, (_, i) => `${i+1}`),
         datasets: [{
-          label: 'التفاعل اليومي',
-          data: this.dailyEngagement,
-          borderColor: 'rgb(16, 185, 129)',
-          backgroundColor: (context) => {
-            const ctx = context.chart.ctx;
-            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
-            gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
-            return gradient;
-          },
-          tension: 0.4,
-          fill: true,
-          pointRadius: 0,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: 'rgb(16, 185, 129)',
-          pointHoverBorderColor: '#fff',
-          pointHoverBorderWidth: 2
+          label: 'التفاعل اليومي', data: this.dailyEngagement,
+          borderColor: '#1f9950', backgroundColor: grad,
+          tension: 0.45, fill: true, pointRadius: 0, pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#1f9950', pointHoverBorderColor: '#fff', pointHoverBorderWidth: 2
         }]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (context) => {
-                const value = context.parsed.y || 0;
-                return `${value.toLocaleString()} تفاعل`;
-              }
-            }
-          }
-        },
+        responsive: true, maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
         scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              font: { family: 'Cairo' },
-              callback: (value) => {
-                return value.toLocaleString();
-              }
-            },
-            grid: {
-              color: 'rgba(0, 0, 0, 0.05)'
-            }
-          },
-          x: {
-            ticks: {
-              font: { family: 'Cairo', size: 10 },
-              maxRotation: 0
-            },
-            grid: {
-              display: false
-            }
-          }
+          y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,.04)' }, ticks: { font: { family: 'Cairo', size: 10 }, callback: (v) => Number(v).toLocaleString() } },
+          x: { grid: { display: false }, ticks: { font: { family: 'Cairo', size: 9 }, maxRotation: 0 } }
         }
       }
     });
   }
-  
-  destroyCharts() {
-    if (this.contentChartInstance) {
-      this.contentChartInstance.destroy();
-    }
-    if (this.channelsChartInstance) {
-      this.channelsChartInstance.destroy();
-    }
-    if (this.engagementChartInstance) {
-      this.engagementChartInstance.destroy();
-    }
-  }
 
-  // ==================== UI ACTIONS ====================
+  destroyCharts() {
+    this.contentChartInstance?.destroy();
+    this.channelsChartInstance?.destroy();
+    this.engagementChartInstance?.destroy();
+  }
 
   openGuide() {
     this.showGuide = true;

@@ -1,8 +1,8 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
 
-  <!-- ================= Toggle Button ================= -->
+  <!-- Toggle Button -->
   <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'فتح القائمة' : 'إغلاق القائمة'">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line *ngIf="!isCollapsed" x1="3" y1="12" x2="21" y2="12"></line>
       <line *ngIf="!isCollapsed" x1="3" y1="6" x2="21" y2="6"></line>
       <line *ngIf="!isCollapsed" x1="3" y1="18" x2="21" y2="18"></line>
@@ -10,70 +10,70 @@
     </svg>
   </button>
 
-  <!-- ================= Logo Section ================= -->
+  <!-- Logo -->
   <div class="sidebar-header">
     <div class="logo">
-     <img src="logo.svg" alt="Logo">
-     <span class="logo-text" *ngIf="!isCollapsed">خطوة</span>
+      <div class="logo-icon">
+        <img src="logo.svg" alt="خطوة">
+      </div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">خطوة</div>
+        <div class="logo-sub">منصة إدارة المشاريع</div>
+      </div>
     </div>
   </div>
 
-  <!-- ================= Scrollable Main Content ================= -->
+  <!-- Content -->
   <div class="sidebar-content">
 
-    <!-- Dashboard Button -->
-    <button class="dashboard-btn" [routerLink]="'/dashboard'" [title]="isCollapsed ? 'لوحة التحكم' : ''">
-      <img src="squares.png" alt="لوحة التحكم" width="20" height="20">
-      <span *ngIf="!isCollapsed">لوحة التحكم</span>
-    </button>
+    <!-- Main nav label -->
+    <div class="nav-section">
+      <div class="nav-section-label">الرئيسية</div>
 
-    <!-- Navigation Menu -->
-    <nav class="sidebar-nav">
+      <!-- Dashboard Button -->
+      <button class="dashboard-btn" [routerLink]="'/dashboard'" [title]="isCollapsed ? 'لوحة التحكم' : ''">
+        <img src="squares.png" alt="لوحة التحكم">
+        <span class="nav-label" *ngIf="!isCollapsed">لوحة التحكم</span>
+      </button>
 
-      <!-- Dynamic Menu Items -->
-      <a
-        *ngFor="let item of menuItems"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        class="nav-item"
-        [title]="isCollapsed ? item.label : ''"
-      >
-
-        <!-- Menu Icon -->
-        <img
-          *ngIf="item.icon"
-          [src]="item.icon"
-          [alt]="item.label"
-          class="nav-icon"
-        />
-
-        <!-- Menu Label -->
-        <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
-      </a>
-
-    </nav>
+      <!-- Nav Items -->
+      <nav class="sidebar-nav">
+        <a
+          *ngFor="let item of menuItems"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="nav-item"
+          [title]="isCollapsed ? item.label : ''"
+        >
+          <img
+            *ngIf="item.icon"
+            [src]="item.icon"
+            [alt]="item.label"
+            class="nav-icon"
+          />
+          <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+        </a>
+      </nav>
+    </div>
 
   </div>
 
-  <!-- ================= User Profile Section ================= -->
+  <!-- User Section -->
   <div class="user-section" [title]="isCollapsed ? userInfo.name : ''">
+    <div class="user-avatar">{{ userInfo.avatar }}</div>
 
-    <!-- User Info -->
     <div class="user-details" *ngIf="!isCollapsed">
       <div class="user-name">{{ userInfo.name }}</div>
       <div class="user-role">{{ userInfo.role }}</div>
     </div>
 
-    <!-- User Avatar -->
-    <div class="user-avatar">{{ userInfo.avatar }}</div>
-
     <button (click)="logout()" class="logout-btn" [class.icon-only]="isCollapsed" [title]="isCollapsed ? 'تسجيل الخروج' : ''">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
         <polyline points="16 17 21 12 16 7"></polyline>
         <line x1="21" y1="12" x2="9" y2="12"></line>
       </svg>
-      <span *ngIf="!isCollapsed">تسجيل الخروج</span>
+      <span *ngIf="!isCollapsed">خروج</span>
     </button>
   </div>
 

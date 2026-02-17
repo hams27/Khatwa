@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { Router } from '@angular/router';
@@ -18,6 +18,8 @@ imports: [CommonModule, RouterModule],
 })
 export class SideBar {
   isCollapsed = false;
+
+  @Output() collapsedChange = new EventEmitter<boolean>();
 
   menuItems: MenuItem[] = [
     { label: 'الخطة التسويقية', icon: '/highlighter.svg', route: '/marketing' },
@@ -42,6 +44,7 @@ export class SideBar {
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
+    this.collapsedChange.emit(this.isCollapsed);
   }
 
   logout() {
