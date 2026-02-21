@@ -52,7 +52,11 @@ interface Activity {
 })
 export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
+  private resizeObserver?: ResizeObserver;
   
+  // Sidebar Reference
+  @ViewChild('sidebarRef') sidebarComponent?: SideBar;
+
   // Chart References
   @ViewChild('tasksProgressChart') tasksProgressChart?: ElementRef<HTMLCanvasElement>;
   @ViewChild('miniFinanceChart') miniFinanceChart?: ElementRef<HTMLCanvasElement>;
@@ -82,6 +86,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   onSidebarToggle(collapsed: boolean) {
     this.isSidebarCollapsed = collapsed;
+  }
+
+  openSidebar() {
+    this.sidebarComponent?.openMobile();
   }
 
   // Projects
@@ -288,6 +296,7 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.resizeObserver?.disconnect();
     this.destroy$.next();
     this.destroy$.complete();
     this.destroyCharts();

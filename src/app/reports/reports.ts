@@ -37,6 +37,7 @@ const MOCK_SAVED_REPORTS: SavedReport[] = [
   standalone: true
 })
 export class Reports implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('sidebarRef') sidebarComponent?: SideBar;
   @ViewChild('reportsChart') reportsChartCanvas!: ElementRef<HTMLCanvasElement>;
 
   isLoading = false; isGenerating = false;
@@ -78,6 +79,9 @@ export class Reports implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void { setTimeout(() => this.initChart(), 200); }
   ngOnDestroy(): void { if (this.chart) this.chart.destroy(); }
   onSidebarToggle(collapsed: boolean) { this.isSidebarCollapsed = collapsed; }
+
+  /** يفتح الـ sidebar على موبايل/تابلت */
+  openSidebar() { this.sidebarComponent?.openMobile(); }
 
   initChart(): void {
     if (!this.reportsChartCanvas) return;

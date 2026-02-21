@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -139,6 +139,9 @@ const ACTIVE_MEMBERS = [
 })
 export class Community implements OnInit, OnDestroy {
 
+  // ── Sidebar Reference ──
+  @ViewChild('sidebarRef') sidebarComponent?: SideBar;
+
   isLoading = false;
   isCreatingPost = false;
   errorMessage = '';
@@ -182,6 +185,11 @@ export class Community implements OnInit, OnDestroy {
 
   onSidebarToggle(collapsed: boolean) {
     this.isSidebarCollapsed = collapsed;
+  }
+
+  /** يفتح الـ sidebar على موبايل/تابلت */
+  openSidebar() {
+    this.sidebarComponent?.openMobile();
   }
 
   loadMockData() {

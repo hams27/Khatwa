@@ -1,11 +1,11 @@
 /* ===== LAYOUT ===== */
 .top-nav {
-  position: sticky; top: 0; z-index: 100;
+  position: sticky; top: 0; z-index: 1001;
   background: rgba(255,255,255,.97);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid #bfcfef;
   padding: 0 32px; height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center;
   margin-right: 260px;
   box-shadow: 0 1px 12px rgba(37,99,235,.07);
   transition: margin-right .3s cubic-bezier(.4,0,.2,1);
@@ -13,11 +13,26 @@
 }
 .top-nav.sidebar-collapsed { margin-right: 72px; }
 
+.nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
 .nav-left { display: flex; align-items: center; gap: 12px; }
 .nav-page-title { font-size: 16px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .nav-page-sub { font-size: 12px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
 .nav-right { display: flex; align-items: center; gap: 10px; }
+
+/* ===== HAMBURGER — مخفي على ديسكتوب ===== */
+.topnav-hamburger {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; background: #1a2e5e;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: background .2s; flex-shrink: 0;
+}
+.topnav-hamburger:hover { background: #2563EB; }
+.topnav-hamburger svg { width: 20px; height: 20px; color: #fff; }
+
+/* ===== DESKTOP-ONLY HELPERS ===== */
+.desktop-only     { display: block; }
+.desktop-only-flex { display: flex; }
 
 .nav-date-chip {
   font-size: 12px; color: #1a2e5e;
@@ -136,7 +151,7 @@
   border: 1.5px solid #bfcfef;
   animation: fadeUp .5s ease both; animation-delay: .25s;
 }
-.chart-card.full-width { width: 100%; }
+.chart-card.full-width { width: 95%; }
 .chart-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
 .chart-title { font-size: 14px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .chart-sub { font-size: 11px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
@@ -348,15 +363,68 @@
   to { transform: rotate(360deg); }
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-  .metrics-grid { grid-template-columns: repeat(2,1fr); }
-  .charts-row { grid-template-columns: 1fr; }
-  .bottom-grid { grid-template-columns: 1fr 1fr; }
+/* ================================================================
+   RESPONSIVE — تابلت (< 1024px)
+   ================================================================ */
+@media (max-width: 1023px) {
+
+  .top-nav,
+  .top-nav.sidebar-collapsed {
+    margin-right: 0 !important;
+    transition: none;
+  }
+  .marketing-main,
+  .marketing-main.sidebar-collapsed {
+    margin-right: 0 !important;
+    transition: none;
+  }
+
+  /* إظهار الهامبرجر */
+  .topnav-hamburger { display: flex !important; }
+
+  /* إخفاء الـ date chip على تابلت */
+  .desktop-only      { display: none !important; }
+  .desktop-only-flex { display: none !important; }
+
+  /* تصغير عناصر التوب بار */
+  .nav-page-title { font-size: 15px; }
+  .nav-page-sub   { font-size: 11px; }
+
+  /* الجريدات */
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-row   { grid-template-columns: 1fr; }
+  .bottom-grid  { grid-template-columns: 1fr; }
 }
+
+/* ================================================================
+   RESPONSIVE — موبايل (< 768px)
+   ================================================================ */
 @media (max-width: 768px) {
-  .marketing-main { padding: 16px; }
-  .top-nav { padding: 0 16px; }
-  .metrics-grid { grid-template-columns: 1fr 1fr; }
-  .bottom-grid { grid-template-columns: 1fr; }
+
+  .top-nav         { padding: 0 16px; }
+  .marketing-main  { padding: 16px; }
+
+  /* إخفاء نص الأزرار */
+  .btn-text    { display: none; }
+  .btn-create  { padding: 8px 12px; }
+  .guide-btn   { padding: 8px 12px; }
+
+  /* الويلكام */
+  .welcome-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
+  .welcome-badges  { width: 100%; }
+  .w-badge         { flex: 1; }
+  .welcome-title   { font-size: 18px; }
+
+  /* الجريد */
+  .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+
+/* ================================================================
+   RESPONSIVE — موبايل صغير (< 480px)
+   ================================================================ */
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .welcome-title { font-size: 16px; }
+  .platform-tabs { flex-wrap: wrap; gap: 4px; }
+  .actions-grid  { grid-template-columns: 1fr 1fr; }
 }

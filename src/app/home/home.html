@@ -147,20 +147,15 @@
     <h2 class="section-title scroll-reveal">لماذا <span class="">خطوة</span>؟</h2>
 
     <div class="features-bento">
-      <div class="bento-card bento-big scroll-reveal">
-        <div class="bento-icon">📊</div>
-        <h3>لوحة تحكم ذكية</h3>
-        <p>شاشة واحدة تعرضلك كل شيء عن مشروعك — المبيعات، المهام، الفريق، والتحليلات في لمحة واحدة</p>
-        <div class="bento-visual">
-          <div class="mini-chart">
-            <div class="bar" style="height:60%"></div>
-            <div class="bar" style="height:80%"></div>
-            <div class="bar" style="height:45%"></div>
-            <div class="bar" style="height:90%"></div>
-            <div class="bar" style="height:70%"></div>
-            <div class="bar" style="height:100%"></div>
-          </div>
-        </div>
+      <div class="bento-card scroll-reveal" style="transition-delay:0.25s">
+        <div class="bento-icon">✅</div>
+        <h3>إدارة المهام</h3>
+        <p>نظّم فريقك وتتبع المهام بسهولة</p>
+      </div>
+      <div class="bento-card scroll-reveal" style="transition-delay:0.3s">
+        <div class="bento-icon">📈</div>
+        <h3>تحليلات متقدمة</h3>
+        <p>بيانات وتقارير تساعدك تتخذ قرارات أذكى</p>
       </div>
       <div class="bento-card scroll-reveal" style="transition-delay:0.1s">
         <div class="bento-icon">🎯</div>
@@ -180,17 +175,24 @@
           <span class="mem-count">+10,000</span>
         </div>
       </div>
-      <div class="bento-card scroll-reveal" style="transition-delay:0.25s">
-        <div class="bento-icon">✅</div>
-        <h3>إدارة المهام</h3>
-        <p>نظّم فريقك وتتبع المهام بسهولة</p>
-      </div>
-      <div class="bento-card scroll-reveal" style="transition-delay:0.3s">
-        <div class="bento-icon">📈</div>
-        <h3>تحليلات متقدمة</h3>
-        <p>بيانات وتقارير تساعدك تتخذ قرارات أذكى</p>
-      </div>
+    
+
     </div>
+        <div class="bento-card bento-big scroll-reveal">
+        <div class="bento-icon">📊</div>
+        <h3>لوحة تحكم ذكية</h3>
+        <p>شاشة واحدة تعرضلك كل شيء عن مشروعك — المبيعات، المهام، الفريق، والتحليلات في لمحة واحدة</p>
+        <div class="bento-visual">
+          <div class="mini-chart">
+            <div class="bar" style="height:60%"></div>
+            <div class="bar" style="height:80%"></div>
+            <div class="bar" style="height:45%"></div>
+            <div class="bar" style="height:90%"></div>
+            <div class="bar" style="height:70%"></div>
+            <div class="bar" style="height:100%"></div>
+          </div>
+        </div>
+      </div>
   </div>
 </section>
 
@@ -199,30 +201,18 @@
   <div class="section-wrap">
     <div class="section-tag scroll-reveal">قصص نجاح</div>
     <h2 class="section-title scroll-reveal">ناس <span class="">غيّرت مسارها</span> مع خطوة</h2>
+  </div>
 
-    <div class="testimonials-scroll">
-      <div class="testimonials-track">
-        <div class="t-card" *ngFor="let t of testimonials">
-          <div class="t-stars">⭐⭐⭐⭐⭐</div>
-          <p class="t-text">"{{ t.text }}"</p>
-          <div class="t-author">
-            <div class="t-avatar">{{ t.name.charAt(0) }}</div>
-            <div>
-              <div class="t-name">{{ t.name }}</div>
-              <div class="t-role">{{ t.role }}</div>
-            </div>
-          </div>
-        </div>
-        <!-- Duplicate for infinite scroll effect -->
-        <div class="t-card" *ngFor="let t of testimonials">
-          <div class="t-stars">⭐⭐⭐⭐⭐</div>
-          <p class="t-text">"{{ t.text }}"</p>
-          <div class="t-author">
-            <div class="t-avatar">{{ t.name.charAt(0) }}</div>
-            <div>
-              <div class="t-name">{{ t.name }}</div>
-              <div class="t-role">{{ t.role }}</div>
-            </div>
+  <div class="testimonials-scroll">
+    <div class="testimonials-track" #testimonialsTrack>
+      <div class="t-card" *ngFor="let t of allTestimonials">
+        <div class="t-stars">⭐⭐⭐⭐⭐</div>
+        <p class="t-text">"{{ t.text }}"</p>
+        <div class="t-author">
+          <div class="t-avatar">{{ t.name.charAt(0) }}</div>
+          <div>
+            <div class="t-name">{{ t.name }}</div>
+            <div class="t-role">{{ t.role }}</div>
           </div>
         </div>
       </div>

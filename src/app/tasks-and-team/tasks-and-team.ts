@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -35,6 +35,9 @@ interface TeamMember {
   standalone: true
 })
 export class TasksAndTeam implements OnInit {
+
+  // ── Sidebar Reference ──
+  @ViewChild('sidebarRef') sidebarComponent?: SideBar;
 
   // Loading & Error States
   isLoading = false;
@@ -108,6 +111,11 @@ export class TasksAndTeam implements OnInit {
 
   onSidebarToggle(collapsed: boolean) {
     this.isSidebarCollapsed = collapsed;
+  }
+
+  /** يفتح الـ sidebar على موبايل/تابلت */
+  openSidebar() {
+    this.sidebarComponent?.openMobile();
   }
 
   openGuide() { this.showGuide = true; }

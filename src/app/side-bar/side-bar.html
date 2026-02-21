@@ -1,12 +1,23 @@
-<aside class="sidebar" [class.collapsed]="isCollapsed">
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" [class.active]="isMobileOpen" (click)="closeMobile()"></div>
 
-  <!-- Toggle Button -->
-  <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'فتح القائمة' : 'إغلاق القائمة'">
+<aside class="sidebar" [class.collapsed]="isCollapsed" [class.mobile-open]="isMobileOpen">
+
+  <!-- Toggle Button (desktop only) -->
+  <button class="toggle-btn desktop-only" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'فتح القائمة' : 'إغلاق القائمة'">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
       <line *ngIf="!isCollapsed" x1="3" y1="12" x2="21" y2="12"></line>
       <line *ngIf="!isCollapsed" x1="3" y1="6" x2="21" y2="6"></line>
       <line *ngIf="!isCollapsed" x1="3" y1="18" x2="21" y2="18"></line>
       <polyline *ngIf="isCollapsed" points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+
+  <!-- Close Button (mobile only) -->
+  <button class="mobile-close-btn mobile-only" (click)="closeMobile()" aria-label="إغلاق القائمة">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
     </svg>
   </button>
 
@@ -31,7 +42,7 @@
       <div class="nav-section-label">الرئيسية</div>
 
       <!-- Dashboard Button -->
-      <button class="dashboard-btn" [routerLink]="'/dashboard'" [title]="isCollapsed ? 'لوحة التحكم' : ''">
+      <button class="dashboard-btn" [routerLink]="'/dashboard'" (click)="closeMobile()" [title]="isCollapsed ? 'لوحة التحكم' : ''">
         <img src="squares.png" alt="لوحة التحكم">
         <span class="nav-label" *ngIf="!isCollapsed">لوحة التحكم</span>
       </button>
@@ -44,6 +55,7 @@
           routerLinkActive="active"
           class="nav-item"
           [title]="isCollapsed ? item.label : ''"
+          (click)="closeMobile()"
         >
           <img
             *ngIf="item.icon"

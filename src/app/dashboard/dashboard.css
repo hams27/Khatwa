@@ -1,8 +1,10 @@
+html, body { overflow-x: hidden; max-width: 100%; }
+
 /* ===== LAYOUT ===== */
 .top-nav {
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1001;
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid #bfcfef;
@@ -85,6 +87,31 @@
   width: 16px;
   height: 16px;
   fill: #fff;
+}
+
+/* ===== TOPNAV HAMBURGER (mobile/tablet only) ===== */
+.topnav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #1a2e5e;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.topnav-hamburger:hover {
+  background: #2563EB;
+}
+
+.topnav-hamburger svg {
+  width: 20px;
+  height: 20px;
+  color: #fff;
 }
 
 /* ===== MAIN ===== */
@@ -986,12 +1013,102 @@ h3.card-title,
   .chart-card.full-width { grid-column: 1 / -1; }
 }
 
+@media (max-width: 1023px) {
+  /* السايد بار overlay — كل margin يتشال */
+  .top-nav,
+  .top-nav.sidebar-collapsed            { margin-right: 0 !important; z-index: 900 !important; }
+  .dashboard-main {
+    margin-right: 0 !important;
+  }
+  .dashboard-main.sidebar-collapsed { margin-right: 0 !important; }
+  /* إظهار زرار الهامبرجر في التوب بار */
+  .topnav-hamburger {
+    display: flex !important;
+  }
+}
+
 @media (max-width: 768px) {
-  .dashboard-main { padding: 16px; }
-  .top-nav { padding: 0 16px; }
-  .metrics-grid { grid-template-columns: 1fr 1fr; }
+  /* إزالة الـ margin لأن الـ sidebar بيبقى overlay */
+  .top-nav,
+  .top-nav.sidebar-collapsed { margin-right: 0 !important; padding: 0 16px; z-index: 900 !important; }
+
+  .dashboard-main,
+  .dashboard-main.sidebar-collapsed { margin-right: 0 !important; padding: 16px; }
+
+  .top-nav.sidebar-collapsed {
+    margin-right: 0 !important;
+  }
+
+  .dashboard-main.sidebar-collapsed {
+    margin-right: 0 !important;
+  }
+
+  /* إظهار زرار الهامبرجر */
+  .hamburger-btn {
+    display: flex !important;
+  }
+
+  .topnav-hamburger {
+    display: flex !important;
+  }
+
+  /* تصغير عناصر الـ topbar */
+  .nav-page-title { font-size: 15px; }
+  .nav-page-sub   { font-size: 11px; }
+  .nav-date-chip  { display: none; }
+  .guide-btn span { display: none; }
+  .guide-btn      { padding: 9px 12px; }
+
+  /* الجريدات */
+  .metrics-grid   { grid-template-columns: 1fr 1fr; gap: 12px; }
   .charts-section { grid-template-columns: 1fr; }
-  .content-grid { grid-template-columns: 1fr; }
+  .content-grid   { grid-template-columns: 1fr; }
+
+  /* الويلكام */
+  .welcome-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .user-stats { width: 100%; }
+  .stat-badge { flex: 1; }
+  .welcome-title { font-size: 18px; }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .actions-grid { grid-template-columns: 1fr 1fr; }
+  .welcome-title { font-size: 16px; }
+  .metric-value  { font-size: 20px; }
+}
+
+/* ===== HAMBURGER BTN في الـ topbar ===== */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #f5f7ff;
+  border: 1px solid #bfcfef;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  background: #dbeafe;
+  border-color: #2563EB;
+}
+
+.hamburger-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: #1a2e5e;
 }
 
 /* ===== SIDEBAR COLLAPSED STATE ===== */

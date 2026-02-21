@@ -1,4 +1,4 @@
-<app-side-bar (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
+<app-side-bar #sidebarRef (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
 
 <!-- ===== TOP NAV ===== -->
 <nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
@@ -17,6 +17,14 @@
           <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
         </svg>
         <span>دليل الاستخدام</span>
+      </button>
+      <!-- Mobile menu button — hidden on desktop -->
+      <button class="topnav-hamburger" (click)="openSidebar()" aria-label="فتح القائمة">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
       </button>
     </div>
   </div>

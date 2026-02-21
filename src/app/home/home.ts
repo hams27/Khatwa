@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
   standalone: true
 })
 export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @ViewChild('testimonialsTrack') trackRef!: ElementRef;
 
   isSticky = false;
   mobileMenuOpen = false;
@@ -50,30 +52,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { icon: '🚀', title: 'ابدأ النجاح', desc: 'احصل على خطط وأدوات جاهزة فوراً وابدأ رحلتك', badge: 'فوري' },
   ];
 
+  // ✅ البيانات الأصلية للـ testimonials
   testimonials = [
     { name: 'أحمد محمد', role: 'مؤسس متجر إلكتروني', text: 'أفضل منصة استخدمتها لإدارة مشروعي. وفرت علي وقت ومجهود كتير جداً!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
     { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
     { name: 'خالد عبدالله', role: 'مدير تسويق', text: 'دعم فني ممتاز وأدوات قوية جداً. أنصح كل رائد أعمال يجربها' },
     { name: 'نورة القحطاني', role: 'رائدة أعمال', text: 'من أروع القرارات اللي اتخذتها للمشروع. الفريق محترف والمنصة سهلة' },
     { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
-    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
-    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
-    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
-    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
-    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
-    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
-    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
-    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
-    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
-    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
     { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
   ];
+
+  // ✅ النسخة المضاعفة اللي بتتعرض في الـ HTML (3 نسخ عشان اللوب يكون سلس)
+  allTestimonials: any[] = [];
 
   faqs = [
     { q: 'هل خطوة مجانية؟', a: 'نعم! يمكنك البدء مجاناً بدون بطاقة ائتمان. لدينا خطة مجانية تشمل جميع الميزات الأساسية، وخطط متقدمة للمشاريع الأكبر.', open: false },
@@ -91,18 +81,67 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private charIndex = 0;
   private isDeleting = false;
 
-  ngOnInit() {}
+  // ✅ متغيرات الـ infinite scroll
+  private scrollAnimFrame?: number;
+  private currentX = 0;
+  private isPaused = false;
+  private readonly CARD_WIDTH = 340;
+  private readonly CARD_GAP = 20;
+  private readonly SCROLL_SPEED = 0.6; // كلما قل الرقم كلما كانت الحركة أبطأ
+
+  ngOnInit() {
+    // ✅ ضاعف الـ testimonials 3 مرات عشان اللوب يكون سلس
+    this.allTestimonials = [
+      ...this.testimonials,
+      ...this.testimonials,
+      ...this.testimonials
+    ];
+  }
 
   ngAfterViewInit() {
     this.initScrollReveal();
     this.initTypewriter();
     this.startCounters();
+    // ✅ ابدأ الـ infinite scroll بعد ما الـ view يتبني
+    setTimeout(() => this.startInfiniteScroll(), 300);
   }
 
   ngOnDestroy() {
     if (this.scrollObserver) this.scrollObserver.disconnect();
     if (this.typedInterval) clearTimeout(this.typedInterval);
+    // ✅ وقف الـ animation لما الـ component يتدمر
+    if (this.scrollAnimFrame) cancelAnimationFrame(this.scrollAnimFrame);
   }
+
+  // ===== ✅ INFINITE SCROLL =====
+ startInfiniteScroll() {
+  const track = this.trackRef?.nativeElement;
+  if (!track) return;
+
+  // ✅ استنى الـ DOM يتبني عشان نحسب الـ width صح
+  requestAnimationFrame(() => {
+    const singleSetWidth = track.scrollWidth / 3;
+
+    const animate = () => {
+      if (!this.isPaused) {
+        this.currentX -= this.SCROLL_SPEED;
+
+        // ✅ modulo بيخلي الرجوع سلس بدون jump
+        if (this.currentX <= -singleSetWidth) {
+          this.currentX += singleSetWidth;
+        }
+
+        track.style.transform = `translateX(${this.currentX}px)`;
+      }
+      this.scrollAnimFrame = requestAnimationFrame(animate);
+    };
+
+    track.addEventListener('mouseenter', () => { this.isPaused = true; });
+    track.addEventListener('mouseleave', () => { this.isPaused = false; });
+
+    this.scrollAnimFrame = requestAnimationFrame(animate);
+  });
+}
 
   // ===== TYPEWRITER =====
   initTypewriter() {
@@ -152,7 +191,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           this.stats.forEach((stat, i) => {
-            let start = 0;
             const end = stat.targetNumber;
             const dur = 2000;
             const startTime = performance.now();
@@ -177,7 +215,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('window:scroll')
   onScroll() {
     this.isSticky = window.scrollY > 80;
-    // Update active nav link
     this.navLinks.forEach(link => {
       const el = document.getElementById(link.sectionId);
       if (el) {

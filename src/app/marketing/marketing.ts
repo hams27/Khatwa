@@ -44,6 +44,9 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   private destroy$ = new Subject<void>();
 
   // Chart References
+  // ── Sidebar Reference ──
+  @ViewChild('sidebarRef') sidebarComponent?: SideBar;
+
   @ViewChild('contentChart') contentChart?: ElementRef<HTMLCanvasElement>;
   @ViewChild('channelsChart') channelsChart?: ElementRef<HTMLCanvasElement>;
   @ViewChild('engagementChart') engagementChart?: ElementRef<HTMLCanvasElement>;
@@ -330,6 +333,11 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
 
   onSidebarToggle(collapsed: boolean) {
     this.isSidebarCollapsed = collapsed;
+  }
+
+  /** يفتح الـ sidebar على موبايل/تابلت */
+  openSidebar() {
+    this.sidebarComponent?.openMobile();
   }
 
   // ==================== CHARTS ====================

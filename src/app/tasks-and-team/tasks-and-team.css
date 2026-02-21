@@ -1,11 +1,11 @@
 /* ===== LAYOUT ===== */
 .top-nav {
-  position: sticky; top: 0; z-index: 100;
+  position: sticky; top: 0; z-index: 1001;
   background: rgba(255,255,255,.97);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid #bfcfef;
   padding: 0 32px; height: 64px;
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center;
   margin-right: 260px;
   box-shadow: 0 1px 12px rgba(37,99,235,.07);
   transition: margin-right .3s cubic-bezier(.4,0,.2,1);
@@ -13,11 +13,22 @@
 }
 .top-nav.sidebar-collapsed { margin-right: 72px; }
 
+.nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
 .nav-left { display: flex; align-items: center; gap: 12px; }
 .nav-page-title { font-size: 16px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .nav-page-sub { font-size: 12px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
 .nav-right { display: flex; align-items: center; gap: 10px; }
+
+/* ===== HAMBURGER — مخفي على ديسكتوب ===== */
+.topnav-hamburger {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; background: #1a2e5e;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: background .2s; flex-shrink: 0;
+}
+.topnav-hamburger:hover { background: #2563EB; }
+.topnav-hamburger svg { width: 20px; height: 20px; color: #fff; }
 
 .btn-add {
   display: flex; align-items: center; gap: 7px;
@@ -400,14 +411,64 @@ textarea.form-input { resize: vertical; }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1400px) { .kanban-board { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 900px)  { .kanban-board { grid-template-columns: 1fr; } .metrics-grid { grid-template-columns: repeat(2,1fr); } }
+/* ================================================================
+   RESPONSIVE — تابلت (< 1024px)
+   ================================================================ */
+@media (max-width: 1023px) {
+
+  .top-nav,
+  .top-nav.sidebar-collapsed {
+    margin-right: 0 !important;
+    transition: none;
+  }
+  .tasks-main,
+  .tasks-main.sidebar-collapsed {
+    margin-right: 0 !important;
+    transition: none;
+  }
+
+  /* إظهار الهامبرجر */
+  .topnav-hamburger { display: flex !important; }
+
+  /* تصغير عناصر التوب بار */
+  .nav-page-title { font-size: 15px; }
+  .nav-page-sub   { font-size: 11px; }
+
+  /* الجريد */
+  .metrics-grid  { grid-template-columns: repeat(2, 1fr); }
+  .kanban-board  { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ================================================================
+   RESPONSIVE — موبايل (< 768px)
+   ================================================================ */
 @media (max-width: 768px) {
-  .top-nav, .tasks-main { margin-right: 0; }
-  .tasks-main { padding: 16px; }
-  .welcome-content { flex-direction: column; gap: 16px; }
-  .welcome-badges { flex-direction: column; gap: 8px; }
-  .metrics-grid { grid-template-columns: 1fr 1fr; }
-  .form-row { grid-template-columns: 1fr; }
+
+  .top-nav     { padding: 0 16px; }
+  .tasks-main  { padding: 16px; }
+
+  /* إخفاء نص الأزرار */
+  .btn-text    { display: none; }
+  .btn-add     { padding: 8px 12px; }
+  .btn-refresh { padding: 8px 10px; }
+  .guide-btn   { padding: 8px 12px; }
+
+  /* الويلكام */
+  .welcome-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
+  .welcome-badges  { width: 100%; }
+  .w-badge         { flex: 1; }
+  .welcome-title   { font-size: 18px; }
+
+  /* الجريد */
+  .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .kanban-board { grid-template-columns: 1fr; }
+  .form-row     { grid-template-columns: 1fr; }
+}
+
+/* ================================================================
+   RESPONSIVE — موبايل صغير (< 480px)
+   ================================================================ */
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .welcome-title { font-size: 16px; }
 }

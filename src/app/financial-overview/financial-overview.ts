@@ -42,6 +42,9 @@ interface ChartData {
 })
 export class FinancialOverview implements OnInit, AfterViewInit, OnDestroy {
   
+  // ── Sidebar Reference ──
+  @ViewChild('sidebarRef') sidebarComponent?: SideBar;
+
   // Chart References
   @ViewChild('revenueExpenseChart') revenueExpenseChartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('expenseDistributionChart') expenseDistributionChartCanvas!: ElementRef<HTMLCanvasElement>;
@@ -724,6 +727,11 @@ export class FinancialOverview implements OnInit, AfterViewInit, OnDestroy {
   // Guide functions
   onSidebarToggle(collapsed: boolean) {
     this.isSidebarCollapsed = collapsed;
+  }
+
+  /** يفتح الـ sidebar على موبايل/تابلت */
+  openSidebar() {
+    this.sidebarComponent?.openMobile();
   }
 
   openGuide() {
