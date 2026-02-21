@@ -142,21 +142,21 @@ export class Register implements OnInit, OnDestroy {
     }
   }
 
-  validatePhone() {
-    this.phoneTouched = true;
-    const phoneRegex = /^(05)[0-9]{8}$/;
-    
-    if (!this.phone) {
-      this.phoneError = 'رقم الهاتف مطلوب';
-      return false;
-    } else if (!phoneRegex.test(this.phone)) {
-      this.phoneError = 'رقم الهاتف غير صحيح (مثال: 0512345678)';
-      return false;
-    } else {
-      this.phoneError = '';
-      return true;
-    }
+ validatePhone() {
+  this.phoneTouched = true;
+  const phoneRegex = /^0[0-9]{8,11}$/;
+  
+  if (!this.phone) {
+    this.phoneError = 'رقم الهاتف مطلوب';
+    return false;
+  } else if (!phoneRegex.test(this.phone)) {
+    this.phoneError = 'رقم الهاتف غير صحيح';
+    return false;
+  } else {
+    this.phoneError = '';
+    return true;
   }
+}
 
   validatePassword() {
     this.passwordTouched = true;
