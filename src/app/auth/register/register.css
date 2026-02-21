@@ -30,7 +30,7 @@
   position: fixed;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(255, 107, 0, 0.08), transparent);
+  background: radial-gradient(circle, rgba(26, 86, 255, 0.08), transparent);
   bottom: -150px;
   left: -150px;
   border-radius: 50%;
@@ -57,13 +57,13 @@
 .form-container {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(30px);
-  border: 1px solid rgba(30, 78, 255, 0.1);
+  border: 1px solid rgba(26, 86, 255, 0.1);
   border-radius: 32px;
   padding: 45px 40px;
   box-shadow: 
     0 25px 60px rgba(0, 0, 0, 0.08),
-    0 10px 30px rgba(30, 78, 255, 0.05),
-    0 0 80px rgba(255, 107, 0, 0.03);
+    0 10px 30px rgba(26, 86, 255, 0.05),
+    0 0 80px rgba(26, 86, 255, 0.03);
   position: relative;
   overflow: hidden;
 }
@@ -75,7 +75,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #2563EB, #ff6b00, #2563EB);
+  background: linear-gradient(90deg, #1A56FF, #6B9FFF, #1A56FF);
   background-size: 200% 100%;
   animation: borderFlow 3s linear infinite;
 }
@@ -92,7 +92,7 @@
   right: 20px;
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, rgba(30, 78, 255, 0.05), transparent);
+  background: radial-gradient(circle, rgba(26, 86, 255, 0.05), transparent);
   border-radius: 50%;
   pointer-events: none;
 }
@@ -111,7 +111,7 @@
 }
 
 .title-gradient {
-  background: #FF9705;
+  background: #1A56FF;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -243,7 +243,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size:20px;
+  font-size: 20px;
   font-weight: 600;
   color: #495057;
   margin-bottom: 8px;
@@ -252,7 +252,7 @@
 
 .form-label i {
   font-size: 20px;
-  background: #FF9705;
+  background: #1A56FF;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -282,11 +282,11 @@
 
 .form-input:focus {
   background: #ffffff;
-  border-color: #2563EB;
+  border-color: #1A56FF;
   transform: translateY(-2px);
   box-shadow: 
-    0 8px 20px rgba(30, 78, 255, 0.15),
-    0 0 0 4px rgba(30, 78, 255, 0.05);
+    0 8px 20px rgba(26, 86, 255, 0.15),
+    0 0 0 4px rgba(26, 86, 255, 0.05);
 }
 
 .form-input:focus ~ .input-glow {
@@ -305,7 +305,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #2563EB, #FF9705);
+  background: linear-gradient(90deg, #1A56FF, #6B9FFF);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -320,7 +320,7 @@
   transform: translate(-50%, -50%);
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(30, 78, 255, 0.1), transparent);
+  background: radial-gradient(circle, rgba(26, 86, 255, 0.1), transparent);
   border-radius: 12px;
   opacity: 0;
   transition: opacity 0.3s;
@@ -343,7 +343,7 @@
 }
 
 .toggle-password:hover {
-  color: #2563EB;
+  color: #1A56FF;
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -462,7 +462,7 @@
 }
 
 .checkbox-container input[type="checkbox"]:checked ~ .checkmark {
-  background: #FF9705;
+  background: #1A56FF;
   border-color: transparent;
 }
 
@@ -485,14 +485,14 @@
 }
 
 .terms-link {
-  color: #2563EB;
+  color: #1A56FF;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s;
 }
 
 .terms-link:hover {
-  color: #FF9705;
+  color: #6B9FFF;
   text-decoration: underline;
 }
 
@@ -500,7 +500,7 @@
 .submit-btn {
   width: 100%;
   padding: 16px;
-  background: #FF9705;
+  background: #1A56FF;
   border: none;
   color: white;
   border-radius: 32px;
@@ -512,17 +512,17 @@
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 12px 35px rgba(30, 78, 255, 0.35),
-    0 6px 18px rgba(255, 107, 0, 0.25);
+    0 12px 35px rgba(26, 86, 255, 0.35),
+    0 6px 18px rgba(26, 86, 255, 0.25);
   margin-top: 5px;
 }
 
 .submit-btn:hover {
-    background: linear-gradient(90deg, #2563EB, #FF9705);
+  background: linear-gradient(90deg, #1A56FF, #6B9FFF);
   transform: translateY(-4px);
   box-shadow: 
-    0 18px 45px rgba(30, 78, 255, 0.45),
-    0 10px 25px rgba(255, 107, 0, 0.35);
+    0 18px 45px rgba(26, 86, 255, 0.45),
+    0 10px 25px rgba(26, 86, 255, 0.35);
 }
 
 .submit-btn:active {
@@ -653,9 +653,9 @@
 }
 
 .social-btn.facebook:hover:not(:disabled) {
-  border-color: #2563EB;
-  color: #2563EB;
-  box-shadow: 0 10px 30px rgba(24, 119, 242, 0.2);
+  border-color: #1A56FF;
+  color: #1A56FF;
+  box-shadow: 0 10px 30px rgba(26, 86, 255, 0.2);
 }
 
 .social-btn.apple:hover:not(:disabled) {
@@ -677,7 +677,7 @@
 }
   
 .link-highlight {
-  color: #2563EB;
+  color: #1A56FF;
   text-decoration: none;
   font-weight: 700;
   display: inline-flex;
@@ -688,8 +688,8 @@
 
 .link-highlight:hover {
   gap: 8px;
-  color: #FF9705;
-  text-shadow: 0 0 15px rgba(255, 151, 5, 0.3);
+  color: #6B9FFF;
+  text-shadow: 0 0 15px rgba(26, 86, 255, 0.3);
 }
 
 /* ================= RESPONSIVE ================= */

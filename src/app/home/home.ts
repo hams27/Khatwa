@@ -1,9 +1,6 @@
-import { Component, HostListener, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, HostListener, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-
-declare const AOS: any;
 
 @Component({
   selector: 'app-home',
@@ -12,420 +9,205 @@ declare const AOS: any;
   styleUrl: './home.css',
   standalone: true
 })
-export class HomeComponent implements OnInit, AfterViewInit {
-  
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+
   isSticky = false;
-  activeLink = 'الرئيسية';
-  isAutoClimbComplete = false;
-  
- navLinks = [
-    { name: 'الرئيسية', active: true },
-    { name: 'احتياجاتك', active: false },
-    { name: 'خطوات العمل', active: false },
-    { name: 'آراء العملاء', active: false },
-    { name: ' الأسئلة الشائعة ', active: false },
-    // { name: 'تواصل', active: false }
+  mobileMenuOpen = false;
+
+  navLinks = [
+    { name: 'الرئيسية', sectionId: 'hero', active: true },
+    { name: 'احتياجاتك', sectionId: 'احتياجاتك', active: false },
+    { name: 'خطوات العمل', sectionId: 'خطوات العمل', active: false },
+    { name: 'آراء العملاء', sectionId: 'آراء العملاء', active: false },
+    { name: 'الأسئلة الشائعة', sectionId: 'الأسئلة الشائعة', active: false },
   ];
 
-stats = [
-  { label: 'رائد أعمال', targetNumber: 10000, suffix: '+', displayValue: '0' },
-  { label: 'نسبة الرضا', targetNumber: 95, suffix: '%', displayValue: '0' },
-  { label: 'زيادة في الإنتاجية', targetNumber: 50, suffix: '%', displayValue: '0' },
-];
+  stats = [
+    { label: 'رائد أعمال', targetNumber: 10000, suffix: '+', displayValue: '0+' },
+    { label: 'نسبة الرضا', targetNumber: 95, suffix: '%', displayValue: '0%' },
+    { label: 'زيادة إنتاجية', targetNumber: 50, suffix: '%', displayValue: '0%' },
+  ];
 
+  particles = Array.from({ length: 18 }, (_, i) => ({
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    delay: Math.random() * 6,
+    duration: 4 + Math.random() * 4
+  }));
 
-  constructor(private elementRef: ElementRef) {}
+  needs = [
+    { icon: '📊', title: 'لوحة تحكم ذكية', desc: 'شاشة واحدة تعرضلك كل شيء عن مشروعك في لمحة', bg: 'rgba(31,153,80,0.12)', color: '#1f9950' },
+    { icon: '🎯', title: 'تسويق مستهدف', desc: 'أدوات تسويق احترافية تساعدك توصل لعملائك الصح', bg: 'rgba(249,115,22,0.12)', color: '#f97316' },
+    { icon: '💰', title: 'إدارة مالية', desc: 'تتبع إيراداتك ومصروفاتك بدقة مع تقارير فورية', bg: 'rgba(59,130,246,0.12)', color: '#3b82f6' },
+    { icon: '✅', title: 'إدارة المهام', desc: 'نظّم فريقك وتتبع المهام حتى ما يضيع شيء', bg: 'rgba(139,92,246,0.12)', color: '#8b5cf6' },
+    { icon: '📈', title: 'تحليلات عميقة', desc: 'بيانات وتقارير تساعدك تتخذ قرارات أذكى وأسرع', bg: 'rgba(236,72,153,0.12)', color: '#ec4899' },
+    { icon: '🤝', title: 'مجتمع داعم', desc: 'تواصل مع آلاف رواد الأعمال وشارك خبراتهم', bg: 'rgba(6,182,212,0.12)', color: '#06b6d4' },
+  ];
 
-  ngOnInit() {
-    // تحميل AOS Script
-    this.loadAOSScript().then(() => {
-      // Initialize AOS بعد ما يتحمل
-      if (typeof AOS !== 'undefined') {
-        AOS.init({
-          duration: 800,
-          easing: 'ease-out-cubic',
-          once: true,
-          offset: 100,
-          delay: 50,
-        });
-      }
-    });
+  steps = [
+    { icon: '📝', title: 'أنشئ حسابك', desc: 'سجّل مجاناً في أقل من دقيقة بدون بطاقة ائتمان', badge: 'مجاني ١٠٠٪' },
+    { icon: '💼', title: 'أخبرنا عن مشروعك', desc: 'أدخل بيانات مشروعك وأهدافك وسنُعدّ كل شيء لك', badge: 'دقيقتان فقط' },
+    { icon: '🚀', title: 'ابدأ النجاح', desc: 'احصل على خطط وأدوات جاهزة فوراً وابدأ رحلتك', badge: 'فوري' },
+  ];
 
-    // Start number counter animations
-    this.startCounterAnimations();
-    
-    // Add parallax effect
-    this.initParallax();
-    
- 
-  }
+  testimonials = [
+    { name: 'أحمد محمد', role: 'مؤسس متجر إلكتروني', text: 'أفضل منصة استخدمتها لإدارة مشروعي. وفرت علي وقت ومجهود كتير جداً!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: 'خالد عبدالله', role: 'مدير تسويق', text: 'دعم فني ممتاز وأدوات قوية جداً. أنصح كل رائد أعمال يجربها' },
+    { name: 'نورة القحطاني', role: 'رائدة أعمال', text: 'من أروع القرارات اللي اتخذتها للمشروع. الفريق محترف والمنصة سهلة' },
+    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
+    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
+    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
+    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
+    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
+    { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
+    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
+    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
+    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
+    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
+    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
+    { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
+  ];
+
+  faqs = [
+    { q: 'هل خطوة مجانية؟', a: 'نعم! يمكنك البدء مجاناً بدون بطاقة ائتمان. لدينا خطة مجانية تشمل جميع الميزات الأساسية، وخطط متقدمة للمشاريع الأكبر.', open: false },
+    { q: 'هل المنصة مناسبة للمشاريع الصغيرة؟', a: 'بالتأكيد! خطوة مصممة خصيصاً لأصحاب المشاريع الصغيرة ورواد الأعمال الشباب. بسيطة في الاستخدام وقوية في الإمكانيات.', open: false },
+    { q: 'كيف يمكنني إضافة فريق العمل؟', a: 'بعد إنشاء حسابك، يمكنك دعوة أعضاء فريقك بسهولة عبر البريد الإلكتروني. كل عضو سيحصل على صلاحيات مخصصة حسب دوره.', open: false },
+    { q: 'هل بياناتي آمنة؟', a: 'أمان بياناتك أولويتنا القصوى. نستخدم تشفيراً من الدرجة الأولى وننتهج أفضل ممارسات الأمن السيبراني لحماية معلوماتك.', open: false },
+    { q: 'هل يمكنني تصدير تقارير؟', a: 'نعم! يمكنك تصدير جميع تقاريرك بصيغة PDF أو Excel في أي وقت. التقارير شاملة وتغطي جميع جوانب مشروعك.', open: false },
+    { q: 'ما هي وسائل الدعم المتاحة؟', a: 'نقدم دعماً فنياً على مدار الساعة عبر الواتساب والبريد الإلكتروني والدردشة المباشرة. فريقنا مستعد دائماً لمساعدتك.', open: false },
+  ];
+
+  private scrollObserver?: IntersectionObserver;
+  private typedInterval?: any;
+  private typedPhrases = ['خطوة بخطوة', 'نحو النجاح', 'وبنساعدك دائماً', 'نحو أهدافك'];
+  private typedIndex = 0;
+  private charIndex = 0;
+  private isDeleting = false;
+
+  ngOnInit() {}
 
   ngAfterViewInit() {
-    // Refresh AOS after view init
-    setTimeout(() => {
-      if (typeof AOS !== 'undefined') {
-        AOS.refresh();
-      }
-    }, 100);
-
-    // Add intersection observer for stats
-    this.observeStats();
-    
-    // Add magnetic effect to buttons
-    this.addMagneticEffect();
-
-    // ========== بدء أنيميشن التسلق التلقائي ==========
-    this.startAutoClimbing();
+    this.initScrollReveal();
+    this.initTypewriter();
+    this.startCounters();
   }
 
-  // ========== أنيميشن التسلق التلقائي ==========
-  startAutoClimbing() {
-    const character = document.querySelector('.character');
-    if (character) {
-      // الظهور من الشمال
-      setTimeout(() => {
-        character.classList.add('appear');
-      }, 500);
-
-      // بدء التسلق التلقائي
-      setTimeout(() => {
-        character.classList.add('auto-climbing', 'climbing');
-      }, 1700);
-
-      // إنهاء التسلق التلقائي والتحويل للتحكم اليدوي
-      setTimeout(() => {
-        character.classList.remove('auto-climbing', 'climbing');
-        character.classList.add('manual-control');
-        this.isAutoClimbComplete = true;
-      }, 5200); // 500 + 1700 + 3000 (مدة التسلق)
-    }
+  ngOnDestroy() {
+    if (this.scrollObserver) this.scrollObserver.disconnect();
+    if (this.typedInterval) clearTimeout(this.typedInterval);
   }
 
-  // تحميل AOS من CDN
-  private loadAOSScript(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // تحقق إذا AOS محمل فعلاً
-      if (typeof AOS !== 'undefined') {
-        resolve();
-        return;
+  // ===== TYPEWRITER =====
+  initTypewriter() {
+    const el = document.getElementById('typed-text');
+    if (!el) return;
+    const type = () => {
+      const phrase = this.typedPhrases[this.typedIndex];
+      if (this.isDeleting) {
+        el.textContent = phrase.substring(0, this.charIndex - 1);
+        this.charIndex--;
+      } else {
+        el.textContent = phrase.substring(0, this.charIndex + 1);
+        this.charIndex++;
       }
+      let speed = this.isDeleting ? 60 : 100;
+      if (!this.isDeleting && this.charIndex === phrase.length) {
+        speed = 2000;
+        this.isDeleting = true;
+      } else if (this.isDeleting && this.charIndex === 0) {
+        this.isDeleting = false;
+        this.typedIndex = (this.typedIndex + 1) % this.typedPhrases.length;
+        speed = 400;
+      }
+      this.typedInterval = setTimeout(type, speed);
+    };
+    setTimeout(type, 1200);
+  }
 
-      // تحميل CSS
-      const linkElement = document.createElement('link');
-      linkElement.rel = 'stylesheet';
-      linkElement.href = 'https://unpkg.com/aos@2.3.1/dist/aos.css';
-      document.head.appendChild(linkElement);
+  // ===== SCROLL REVEAL =====
+  initScrollReveal() {
+    this.scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
-      // تحميل JS
-      const scriptElement = document.createElement('script');
-      scriptElement.src = 'https://unpkg.com/aos@2.3.1/dist/aos.js';
-      scriptElement.onload = () => resolve();
-      scriptElement.onerror = () => reject();
-      document.body.appendChild(scriptElement);
+    document.querySelectorAll('.scroll-reveal').forEach(el => {
+      this.scrollObserver!.observe(el);
     });
   }
 
-  @HostListener('window:scroll', [])
-  onWindowScroll() {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    // Sticky header
-    this.isSticky = scrollTop > 100;
-    
-    // Scroll progress bar
-    const winScroll = document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    
-    document.documentElement.style.setProperty('--scroll-progress', scrolled + '%');
-    
-    // ========== CHARACTER MANUAL CONTROL بعد انتهاء التسلق التلقائي ==========
-    if (this.isAutoClimbComplete) {
-      const character = document.querySelector('.character') as HTMLElement;
-      if (character) {
-        const heroSection = document.querySelector('.hero-modern') as HTMLElement;
-        if (heroSection) {
-          const sectionTop = heroSection.offsetTop;
-          const sectionHeight = heroSection.offsetHeight;
-          const scrollProgress = (scrollTop - sectionTop) / sectionHeight;
-          
-          // تحريك الشخصية بناءً على الـ scroll فقط بعد انتهاء التسلق التلقائي
-          if (scrollProgress >= 0 && scrollProgress <= 1) {
-            const climbProgress = scrollProgress * 100;
-            
-            // حساب المواقع (من نقطة نهاية التسلق التلقائي)
-            const bottomStart = 300; // نقطة انتهاء التسلق التلقائي
-            const bottomEnd = 360;   // نقطة أعلى
-            const leftStart = 330;   // نقطة انتهاء التسلق التلقائي
-            const leftEnd = 390;     // نقطة أبعد
-            
-            const currentBottom = bottomStart + (bottomEnd - bottomStart) * (climbProgress / 100);
-            const currentLeft = leftStart + (leftEnd - leftStart) * (climbProgress / 100);
-            
-            // حساب الحجم (يستمر في التصغير)
-            const scaleStart = 0.6;
-            const scaleEnd = 0.3;
-            const currentScale = scaleStart - (scaleStart - scaleEnd) * (climbProgress / 100);
-            
-            character.style.bottom = `${currentBottom}px`;
-            character.style.left = `${currentLeft}px`;
-            character.style.transform = `scale(${currentScale})`;
-            
-            // إضافة animation class
-            if (climbProgress > 5) {
-              character.classList.add('climbing');
-            } else {
-              character.classList.remove('climbing');
-            }
-          }
+  // ===== COUNTERS =====
+  startCounters() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          this.stats.forEach((stat, i) => {
+            let start = 0;
+            const end = stat.targetNumber;
+            const dur = 2000;
+            const startTime = performance.now();
+            const step = (now: number) => {
+              const progress = Math.min((now - startTime) / dur, 1);
+              const ease = 1 - Math.pow(1 - progress, 3);
+              stat.displayValue = Math.floor(ease * end).toLocaleString() + stat.suffix;
+              if (progress < 1) requestAnimationFrame(step);
+              else stat.displayValue = end.toLocaleString() + stat.suffix;
+            };
+            setTimeout(() => requestAnimationFrame(step), i * 150);
+          });
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.5 });
+    const heroStats = document.querySelector('.hero-stats');
+    if (heroStats) observer.observe(heroStats);
+  }
+
+  // ===== SCROLL =====
+  @HostListener('window:scroll')
+  onScroll() {
+    this.isSticky = window.scrollY > 80;
+    // Update active nav link
+    this.navLinks.forEach(link => {
+      const el = document.getElementById(link.sectionId);
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= 100 && rect.bottom >= 100) {
+          this.navLinks.forEach(l => l.active = false);
+          link.active = true;
         }
       }
-    }
-    
-    // Hide/show scroll indicator
-    const scrollIndicator = document.querySelector('.scroll-indicator') as HTMLElement;
-    if (scrollIndicator) {
-      if (scrollTop > 300) {
-        scrollIndicator.classList.add('hidden');
-      } else {
-        scrollIndicator.classList.remove('hidden');
-      }
-    }
-  }
-
-  @HostListener('window:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent) {
-    // Parallax effect for floating elements
-    const floatingElements = document.querySelectorAll('.float-icon');
-    
-    floatingElements.forEach((element: any, index) => {
-      const speed = (index + 1) * 0.02;
-      const x = (window.innerWidth - event.pageX * speed) / 100;
-      const y = (window.innerHeight - event.pageY * speed) / 100;
-      
-      element.style.transform = `translateX(${x}px) translateY(${y}px)`;
-    });
-    
-    // Parallax for gradient orbs
-    const orbs = document.querySelectorAll('.gradient-orb');
-    orbs.forEach((orb: any, index) => {
-      const speed = (index + 1) * 0.01;
-      const x = (event.pageX - window.innerWidth / 2) * speed;
-      const y = (event.pageY - window.innerHeight / 2) * speed;
-      
-      orb.style.transform = `translate(${x}px, ${y}px)`;
     });
   }
 
   setActiveLink(link: any) {
     this.navLinks.forEach(l => l.active = false);
     link.active = true;
-    this.activeLink = link.name;
-    
-   
   }
 
-  // ========== COUNTER ANIMATIONS ==========
-  startCounterAnimations() {
-    this.stats.forEach((stat, index) => {
-      setTimeout(() => {
-        this.animateCounter(stat);
-      }, index * 200);
-    });
-  }
-
-animateCounter(stat: any) {
-  let start = 0;
-  const end = stat.targetNumber;
-  const suffix = stat.suffix || '';
-  const duration = 7000; // 2 ثواني
-  const startTime = performance.now();
-
-  const step = (currentTime: number) => {
-    const progress = Math.min((currentTime - startTime) / duration, 1);
-    stat.displayValue = Math.floor(progress * end).toLocaleString() + suffix;
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      stat.displayValue = end.toLocaleString() + suffix;
-    }
-  };
-
-  requestAnimationFrame(step);
-}
-
-
-  // ========== INTERSECTION OBSERVER FOR STATS ==========
- observeStats() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const index = Number(entry.target.getAttribute('data-index'));
-        this.animateCounter(this.stats[index]);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
-
-  const statElements = document.querySelectorAll('.stat-item');
-  statElements.forEach((el, i) => {
-    el.setAttribute('data-index', i.toString());
-    observer.observe(el);
-  });
-}
-
-
-  // ========== PARALLAX EFFECT ==========
-  initParallax() {
-    const parallaxElements = document.querySelectorAll('[data-parallax]');
-    
-    window.addEventListener('scroll', () => {
-      parallaxElements.forEach((element: any) => {
-        const speed = element.getAttribute('data-parallax') || 0.5;
-        const yPos = -(window.pageYOffset * parseFloat(speed));
-        element.style.transform = `translateY(${yPos}px)`;
-      });
-    });
-  }
-
-  // ========== CUSTOM CURSOR EFFECT ==========
-
-
-  // ========== MAGNETIC EFFECT FOR BUTTONS ==========
-  addMagneticEffect() {
-    const magneticElements = document.querySelectorAll('.btn-primary, .btn-secondary, .btn-outline');
-    
-    magneticElements.forEach((element: any) => {
-      element.addEventListener('mousemove', (e: MouseEvent) => {
-        const rect = element.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        
-        element.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-      });
-      
-      element.addEventListener('mouseleave', () => {
-        element.style.transform = 'translate(0, 0)';
-      });
-    });
-  }
-
-
-
-  // ========== SMOOTH SCROLL TO SECTION ==========
   scrollToSection(sectionId: string) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offsetTop = element.offsetTop - 100;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth'
-      });
+    const el = document.getElementById(sectionId);
+    if (el) {
+      const top = el.offsetTop - 72;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
   }
 
-  // ========== TILT EFFECT FOR CARDS ==========
-  initTiltEffect() {
-    const cards = document.querySelectorAll('.card');
-    
-    cards.forEach((card: any) => {
-      card.addEventListener('mousemove', (e: MouseEvent) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateX = (y - centerY) / 10;
-        const rotateY = (centerX - x) / 10;
-        
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale(1.02)`;
-      });
-      
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
-      });
-    });
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
   }
 
-  // ========== TYPING EFFECT FOR HEADING ==========
-  initTypingEffect() {
-    const heading = document.querySelector('.hero h1');
-    if (heading) {
-      const text = heading.textContent || '';
-      heading.textContent = '';
-      
-      let i = 0;
-      const typeWriter = () => {
-        if (i < text.length) {
-          heading.textContent += text.charAt(i);
-          i++;
-          setTimeout(typeWriter, 100);
-        }
-      };
-      
-      setTimeout(typeWriter, 500);
-    }
-  }
-
-  // ========== PARTICLE SYSTEM ==========
-  initParticleSystem() {
-    const particlesContainer = document.querySelector('.header-particles');
-    if (!particlesContainer) return;
-
-    for (let i = 0; i < 20; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = Math.random() * 100 + '%';
-      particle.style.animationDelay = Math.random() * 5 + 's';
-      particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
-      particlesContainer.appendChild(particle);
-    }
-  }
-
-  // ========== SCROLL REVEAL ANIMATION ==========
-  initScrollReveal() {
-    const revealElements = document.querySelectorAll('.reveal');
-    
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-        }
-      });
-    }, {
-      threshold: 0.2
-    });
-    
-    revealElements.forEach(el => revealObserver.observe(el));
-  }
-
-  // ========== TEXT SPLIT ANIMATION ==========
-  splitTextAnimation(element: HTMLElement) {
-    const text = element.textContent || '';
-    element.textContent = '';
-    
-    text.split('').forEach((char, index) => {
-      const span = document.createElement('span');
-      span.textContent = char;
-      span.style.animationDelay = `${index * 0.05}s`;
-      span.classList.add('char-animate');
-      element.appendChild(span);
-    });
-  }
-
-  // ========== DESTROY COMPONENT ==========
-  ngOnDestroy() {
-    // Clean up custom cursor
-    const cursor = document.querySelector('.custom-cursor');
-    const cursorDot = document.querySelector('.custom-cursor-dot');
-    if (cursor) cursor.remove();
-    if (cursorDot) cursorDot.remove();
-    
-    // Destroy AOS
-    if (typeof AOS !== 'undefined') {
-      AOS.refresh();
-    }
+  toggleFaq(faq: any) {
+    faq.open = !faq.open;
   }
 }

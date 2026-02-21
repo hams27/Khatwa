@@ -27,7 +27,7 @@ export class SideBar {
     { label: 'المهام والفريق', icon: '/list-task.svg', route: '/tasks-and-team' },
     { label: 'التحليلات', icon: '/graph-up-arrow.svg', route: '/analytics' },
     { label: 'المجتمع', icon: '/globe-americas.svg', route: '/community' },
-    { label: 'النقاط والمكافآت', icon: '/trophy.svg', route: '/rewards' },
+    // { label: 'النقاط والمكافآت', icon: '/trophy.svg', route: '/rewards' },
     { label: 'التقارير', icon: '/file-earmark-arrow-down.svg', route: '/reports' }
   ];
 

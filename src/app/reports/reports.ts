@@ -4,46 +4,30 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SideBar } from '../side-bar/side-bar';
 import { Chart, registerables } from 'chart.js';
-import { ProjectService, Project } from '../services/project';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
 Chart.register(...registerables);
 
-// Interfaces
 interface ReportTemplate {
-  id: number;
-  title: string;
-  description: string;
-  icon: string;
-  iconClass: string;
-  type: 'financial' | 'marketing' | 'tasks' | 'team' | 'comprehensive' | 'custom';
+  id: number; title: string; description: string;
+  icon: string; type: 'financial'|'marketing'|'tasks'|'team'|'comprehensive'|'custom'; color: string;
 }
-
 interface SavedReport {
-  id: number;
-  title: string;
-  status: 'ready' | 'draft' | 'processing';
-  date: string;
-  views: number;
-  author?: string;
-  type?: string;
-  format?: 'pdf' | 'excel';
+  id: number; title: string; status: 'ready'|'draft'|'processing';
+  date: string; views: number; author: string; type: string; format: 'pdf'|'excel';
 }
-
-interface Activity {
-  id: number;
-  title: string;
-  author: string;
-  time: string;
-}
-
 interface ReportOptions {
-  type: 'financial' | 'marketing' | 'tasks' | 'team' | 'comprehensive' | 'custom';
-  startDate: string;
-  endDate: string;
-  format: 'pdf' | 'excel';
-  includeSections?: string[];
+  type: 'financial'|'marketing'|'tasks'|'team'|'comprehensive'|'custom';
+  startDate: string; endDate: string; format: 'pdf'|'excel';
 }
+
+const MOCK_SAVED_REPORTS: SavedReport[] = [
+  { id:1, title:'التقرير المالي - يناير 2025', status:'ready', date:'١٥ يناير ٢٠٢٥', views:12, author:'أحمد الشمري', type:'financial', format:'pdf' },
+  { id:2, title:'تقرير التسويق الشهري', status:'ready', date:'١٠ فبراير ٢٠٢٥', views:8, author:'سارة المنصوري', type:'marketing', format:'pdf' },
+  { id:3, title:'تقرير الفريق - الربع الأول', status:'ready', date:'٢ مارس ٢٠٢٥', views:21, author:'أحمد الشمري', type:'team', format:'excel' },
+  { id:4, title:'تقرير المهام المكتملة', status:'draft', date:'٢٠ مارس ٢٠٢٥', views:3, author:'خالد الحربي', type:'tasks', format:'pdf' },
+  { id:5, title:'التقرير الشامل - مارس', status:'ready', date:'١ أبريل ٢٠٢٥', views:35, author:'أحمد الشمري', type:'comprehensive', format:'pdf' },
+  { id:6, title:'تقرير أداء الحملات', status:'processing', date:'٥ أبريل ٢٠٢٥', views:0, author:'نورة القحطاني', type:'marketing', format:'excel' },
+];
 
 @Component({
   selector: 'app-reports',
@@ -54,539 +38,138 @@ interface ReportOptions {
 })
 export class Reports implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('reportsChart') reportsChartCanvas!: ElementRef<HTMLCanvasElement>;
-  
-  // Loading & Error States
-  isLoading = false;
-  isGenerating = false;
-  errorMessage = '';
-  successMessage = '';
-  
-  // Current Project
-  currentProject: Project | null = null;
-  currentProjectId: number = 0;
-  
-  // Statistics (Dynamic)
-  savedReports: number = 0;
-  shares: number = 0;
-  downloads: number = 0;
 
-  // Report Templates
+  isLoading = false; isGenerating = false;
+  errorMessage = ''; successMessage = '';
+  isSidebarCollapsed = false;
+
+  totalReports = 6; totalDownloads = 87; totalShares = 34; totalViews = 312;
+
   reportTemplates: ReportTemplate[] = [
-    {
-      id: 1,
-      title: 'تقرير الأداء الشامل',
-      description: 'نظرة شاملة على جميع جوانب المشروع',
-      icon: '📊',
-      iconClass: 'blue-icon',
-      type: 'comprehensive'
-    },
-    {
-      id: 2,
-      title: 'التقرير المالي',
-      description: 'الإيرادات والمصروفات والأرباح',
-      icon: '💰',
-      iconClass: 'green-icon',
-      type: 'financial'
-    },
-    {
-      id: 3,
-      title: 'تقرير التسويق',
-      description: 'أداء الحملات والمحتوى التسويقي',
-      icon: '📈',
-      iconClass: 'orange-icon',
-      type: 'marketing'
-    },
-    {
-      id: 4,
-      title: 'تقرير المهام',
-      description: 'المهام المكتملة والمعلقة',
-      icon: '✅',
-      iconClass: 'purple-icon',
-      type: 'tasks'
-    },
-    {
-      id: 5,
-      title: 'تقرير الفريق',
-      description: 'إنتاجية الفريق والمهام المكتملة',
-      icon: '👥',
-      iconClass: 'pink-icon',
-      type: 'team'
-    },
-    {
-      id: 6,
-      title: 'تقرير مخصص',
-      description: 'اختر العناصر التي تريد تضمينها',
-      icon: '⚙️',
-      iconClass: 'cyan-icon',
-      type: 'custom'
-    }
+    { id:1, title:'تقرير الأداء الشامل', description:'نظرة شاملة على جميع جوانب المشروع', icon:'📊', type:'comprehensive', color:'#3b82f6' },
+    { id:2, title:'التقرير المالي', description:'الإيرادات والمصروفات والأرباح', icon:'💰', type:'financial', color:'#1f9950' },
+    { id:3, title:'تقرير التسويق', description:'أداء الحملات والمحتوى التسويقي', icon:'📈', type:'marketing', color:'#f97316' },
+    { id:4, title:'تقرير المهام', description:'المهام المكتملة والمعلقة والمتأخرة', icon:'✅', type:'tasks', color:'#8b5cf6' },
+    { id:5, title:'تقرير الفريق', description:'إنتاجية الفريق والمهام المكتملة', icon:'👥', type:'team', color:'#ec4899' },
+    { id:6, title:'تقرير مخصص', description:'اختر العناصر التي تريد تضمينها', icon:'⚙️', type:'custom', color:'#06b6d4' },
   ];
 
-  // Saved Reports List (Dynamic from Backend)
-  savedReportsList: SavedReport[] = [];
+  savedReportsList: SavedReport[] = [...MOCK_SAVED_REPORTS];
+  filteredReports: SavedReport[] = [...MOCK_SAVED_REPORTS];
+  searchQuery = ''; selectedTypeFilter = 'all';
 
-  // Recent Activities (Dynamic)
-  recentActivities: Activity[] = [];
-
-  // Chart Data
-  chartData = {
-    labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
-    datasets: [{
-      label: 'عدد التقارير',
-      data: [0, 0, 0, 0, 0, 0],
-      backgroundColor: '#ff6b35',
-      borderRadius: 8,
-      barThickness: 40
-    }]
-  };
-
-  private chart: any = null;
-  
-  // Report Generation Options
   reportOptions: ReportOptions = {
-    type: 'financial',
-    startDate: this.getFirstDayOfMonth(),
-    endDate: this.getToday(),
-    format: 'pdf',
-    includeSections: []
+    type: 'financial', startDate: this.getFirstDayOfMonth(), endDate: this.getToday(), format: 'pdf'
   };
-  
-  // Custom Report Sections
+
   customSections = [
-    { id: 'overview', label: 'نظرة عامة', selected: true },
-    { id: 'financial', label: 'البيانات المالية', selected: true },
-    { id: 'tasks', label: 'المهام', selected: false },
-    { id: 'team', label: 'الفريق', selected: false },
-    { id: 'marketing', label: 'التسويق', selected: false },
-    { id: 'analytics', label: 'التحليلات', selected: false }
+    { id:'overview', label:'نظرة عامة', selected:true },
+    { id:'financial', label:'البيانات المالية', selected:true },
+    { id:'tasks', label:'المهام', selected:false },
+    { id:'team', label:'الفريق', selected:false },
+    { id:'marketing', label:'التسويق', selected:false },
+    { id:'analytics', label:'التحليلات', selected:false }
   ];
-  
-  // Modal States
-  showCreateModal = false;
-  showCustomModal = false;
-  
-  // API URL
-  private apiUrl = 'http://localhost:5000/api/v1';
 
-  constructor(
-    private projectService: ProjectService,
-    private http: HttpClient
-  ) { }
+  showCreateModal = false; showCustomModal = false; showGuide = false;
+  private chart: any = null;
 
-  ngOnInit(): void {
-    console.log('📄 Reports Component Initialized');
-    this.loadCurrentProject();
-  }
+  ngOnInit(): void {}
+  ngAfterViewInit(): void { setTimeout(() => this.initChart(), 200); }
+  ngOnDestroy(): void { if (this.chart) this.chart.destroy(); }
+  onSidebarToggle(collapsed: boolean) { this.isSidebarCollapsed = collapsed; }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.initChart();
-    }, 100);
-  }
-
-  // Load Current Project
-  loadCurrentProject() {
-    this.isLoading = true;
-    
-    this.projectService.getProjects().subscribe({
-      next: (response: any) => {
-        console.log('📦 Projects loaded:', response);
-        
-        if (response && response.data && response.data.length > 0) {
-          this.currentProject = response.data[0];
-          this.currentProjectId = this.currentProject!.id!;
-          
-          // Load reports data
-          this.loadReportsData();
-        } else {
-          this.errorMessage = 'لا توجد مشاريع. قم بإنشاء مشروعك الأول!';
-          this.isLoading = false;
-        }
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('❌ Error loading projects:', error);
-        this.errorMessage = 'حدث خطأ في تحميل المشاريع';
-        this.isLoading = false;
-      }
-    });
-  }
-
-  // Load Reports Data
-  loadReportsData() {
-    console.log('📊 Loading reports data...');
-    
-    // Load report history (if available)
-    this.loadReportHistory();
-    
-    // Load report statistics
-    this.loadReportStatistics();
-    
-    this.isLoading = false;
-  }
-
-  // Load Report History
-  loadReportHistory() {
-    this.http.get(`${this.apiUrl}/projects/${this.currentProjectId}/reports/history`).subscribe({
-      next: (response: any) => {
-        console.log('📋 Report history loaded:', response);
-        
-        if (response && response.data) {
-          this.savedReportsList = response.data.map((report: any) => ({
-            id: report.id,
-            title: report.title || report.type,
-            status: 'ready',
-            date: new Date(report.createdAt).toLocaleDateString('ar-SA'),
-            views: report.views || 0,
-            author: report.author || 'أنت',
-            type: report.type,
-            format: report.format
-          }));
-          
-          this.savedReports = this.savedReportsList.length;
-          
-          // Update recent activities
-          this.updateRecentActivities();
-        }
-      },
-      error: (error: HttpErrorResponse) => {
-        console.log('ℹ️ No report history available yet');
-        // This is OK - user might not have generated reports yet
-      }
-    });
-  }
-
-  // Load Report Statistics
-  loadReportStatistics() {
-    // For now, use mock data
-    // In the future, this will come from the backend
-    this.chartData.datasets[0].data = [8, 12, 15, 10, 18, this.savedReports];
-    
-    if (this.chart) {
-      this.chart.data.datasets[0].data = this.chartData.datasets[0].data;
-      this.chart.update();
-    }
-  }
-
-  // Update Recent Activities
-  updateRecentActivities() {
-    this.recentActivities = this.savedReportsList.slice(0, 3).map(report => ({
-      id: report.id,
-      title: `تم إنشاء ${report.title}`,
-      author: report.author || 'أنت',
-      time: this.getRelativeTime(report.date)
-    }));
-  }
-
-  // Initialize Chart
   initChart(): void {
-    if (this.reportsChartCanvas && typeof window !== 'undefined') {
-      const ctx = this.reportsChartCanvas.nativeElement.getContext('2d');
-      if (ctx) {
-        this.chart = new Chart(ctx, {
-          type: 'bar',
-          data: this.chartData,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-              legend: {
-                display: false
-              },
-              tooltip: {
-                backgroundColor: '#1a1a1a',
-                padding: 12,
-                titleColor: '#fff',
-                bodyColor: '#fff',
-                borderColor: '#333',
-                borderWidth: 1,
-                displayColors: false,
-                callbacks: {
-                  label: (context: any) => {
-                    return `عدد التقارير: ${context.parsed.y}`;
-                  }
-                }
-              }
-            },
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 6,
-                  font: {
-                    family: 'Segoe UI',
-                    size: 12
-                  }
-                },
-                grid: {
-                  color: '#f0f0f0'
-                }
-              },
-              x: {
-                ticks: {
-                  font: {
-                    family: 'Segoe UI',
-                    size: 12
-                  }
-                },
-                grid: {
-                  display: false
-                }
-              }
-            }
-          }
-        });
-      }
-    }
-  }
-
-  // Get status text in Arabic
-  getStatusText(status: string): string {
-    const statusMap: { [key: string]: string } = {
-      'ready': 'جاهز',
-      'draft': 'مسودة',
-      'processing': 'قيد المعالجة'
-    };
-    return statusMap[status] || status;
-  }
-
-  // Header Actions
-  openDateFilter(): void {
-    console.log('فتح تصفية التاريخ');
-    // Implement date filter dialog
-    alert('ميزة تصفية التاريخ ستكون متاحة قريباً');
-  }
-
-  createNewReport(): void {
-    console.log('إنشاء تقرير جديد');
-    this.showCreateModal = true;
-  }
-
-  // Template Actions
-  createReport(template: ReportTemplate): void {
-    console.log('إنشاء تقرير من القالب:', template.title);
-    
-    this.reportOptions.type = template.type;
-    
-    if (template.type === 'custom') {
-      this.showCustomModal = true;
-    } else {
-      this.showCreateModal = true;
-    }
-  }
-
-  // Generate Report
-  generateReport(): void {
-    if (!this.currentProjectId) {
-      this.errorMessage = 'الرجاء اختيار مشروع أولاً';
-      return;
-    }
-
-    // Validate dates
-    if (new Date(this.reportOptions.startDate) > new Date(this.reportOptions.endDate)) {
-      this.errorMessage = 'تاريخ البداية يجب أن يكون قبل تاريخ النهاية';
-      return;
-    }
-
-    this.isGenerating = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    console.log('📊 Generating report:', this.reportOptions);
-
-    // Prepare request body
-    const requestBody: any = {
-      type: this.reportOptions.type,
-      startDate: this.reportOptions.startDate,
-      endDate: this.reportOptions.endDate,
-      format: this.reportOptions.format
-    };
-
-    // Add custom sections if custom report
-    if (this.reportOptions.type === 'custom') {
-      requestBody.includeSections = this.customSections
-        .filter(s => s.selected)
-        .map(s => s.id);
-    }
-
-    // Call API
-    this.http.post(
-      `${this.apiUrl}/projects/${this.currentProjectId}/reports/generate`,
-      requestBody,
-      { responseType: 'blob' }
-    ).subscribe({
-      next: (blob: Blob) => {
-        console.log('✅ Report generated successfully');
-        
-        // Download file
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        const timestamp = Date.now();
-        const extension = this.reportOptions.format === 'pdf' ? 'pdf' : 'xlsx';
-        a.download = `report_${this.reportOptions.type}_${timestamp}.${extension}`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-
-        this.isGenerating = false;
-        this.successMessage = 'تم إنشاء التقرير بنجاح!';
-        this.showCreateModal = false;
-        this.showCustomModal = false;
-        
-        // Reload report history
-        this.loadReportHistory();
-        
-        // Update statistics
-        this.downloads++;
-        
-        // Clear success message after 3 seconds
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
+    if (!this.reportsChartCanvas) return;
+    const ctx = this.reportsChartCanvas.nativeElement.getContext('2d');
+    if (!ctx) return;
+    this.chart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['أكتوبر','نوفمبر','ديسمبر','يناير','فبراير','مارس','أبريل'],
+        datasets: [{
+          label:'عدد التقارير', data:[4,7,5,9,6,11,8],
+          backgroundColor:'rgba(31,153,80,0.15)', borderColor:'#1f9950',
+          borderWidth:2, borderRadius:8, borderSkipped:false, barThickness:32
+        }]
       },
-      error: (error: HttpErrorResponse) => {
-        console.error('❌ Error generating report:', error);
-        
-        let errorMsg = 'حدث خطأ في إنشاء التقرير';
-        
-        if (error.status === 401) {
-          errorMsg = 'انتهت جلستك. الرجاء تسجيل الدخول مرة أخرى';
-        } else if (error.status === 400) {
-          errorMsg = 'البيانات المدخلة غير صحيحة';
-        } else if (error.status === 404) {
-          errorMsg = 'المشروع غير موجود';
-        } else if (error.status === 500) {
-          errorMsg = 'خطأ في الخادم. الرجاء المحاولة لاحقاً';
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:'#0a2e1a', padding:12, titleColor:'#a8edbc', bodyColor:'#fff',
+            borderColor:'#1f9950', borderWidth:1, displayColors:false,
+            callbacks:{ label:(c:any)=>`عدد التقارير: ${c.parsed.y}` }
+          }
+        },
+        scales: {
+          y:{beginAtZero:true, grid:{color:'#e8f0eb'}, ticks:{font:{family:'Cairo',size:11},color:'#6b9278'}},
+          x:{grid:{display:false}, ticks:{font:{family:'Cairo',size:11},color:'#6b9278'}}
         }
-        
-        this.errorMessage = errorMsg;
-        this.isGenerating = false;
       }
     });
   }
 
-  // Cancel Report Generation
-  cancelReportGeneration(): void {
-    this.showCreateModal = false;
-    this.showCustomModal = false;
-    this.errorMessage = '';
-    this.successMessage = '';
+  createReport(template: ReportTemplate): void {
+    this.reportOptions.type = template.type;
+    template.type === 'custom' ? (this.showCustomModal = true) : (this.showCreateModal = true);
   }
+  createNewReport(): void { this.showCreateModal = true; }
 
-  // Toggle Custom Section
-  toggleCustomSection(section: any): void {
-    section.selected = !section.selected;
-  }
-
-  // Saved Reports Actions
-  viewReport(report: SavedReport): void {
-    console.log('عرض التقرير:', report.title);
-    alert(`ميزة عرض التقرير ستكون متاحة قريباً`);
-  }
-
-  downloadReport(report: SavedReport): void {
-    console.log('تحميل التقرير:', report.title);
-    
-    // In real implementation, this would call the API to download
-    alert(`جاري تحميل ${report.title}...`);
-    this.downloads++;
-  }
-
-  shareReport(report: SavedReport): void {
-    console.log('مشاركة التقرير:', report.title);
-    
-    // In real implementation, this would open a share dialog
-    const shareUrl = `${window.location.origin}/reports/${report.id}`;
-    
-    if (navigator.share) {
-      navigator.share({
-        title: report.title,
-        text: `تقرير ${report.title}`,
-        url: shareUrl
-      }).then(() => {
-        console.log('تمت المشاركة بنجاح');
-        this.shares++;
-      }).catch((error) => {
-        console.log('خطأ في المشاركة:', error);
-      });
-    } else {
-      // Fallback: Copy to clipboard
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        alert('تم نسخ رابط التقرير');
-        this.shares++;
-      });
+  generateReport(): void {
+    if (new Date(this.reportOptions.startDate) > new Date(this.reportOptions.endDate)) {
+      this.showError('تاريخ البداية يجب أن يكون قبل تاريخ النهاية'); return;
     }
+    this.isGenerating = true;
+    setTimeout(() => {
+      const typeLabels: any = { financial:'التقرير المالي', marketing:'تقرير التسويق', tasks:'تقرير المهام', team:'تقرير الفريق', comprehensive:'التقرير الشامل', custom:'تقرير مخصص' };
+      const newReport: SavedReport = {
+        id:Date.now(), title:`${typeLabels[this.reportOptions.type]} - ${new Date().toLocaleDateString('ar-SA')}`,
+        status:'ready', date:new Date().toLocaleDateString('ar-SA'), views:0,
+        author:'أنت', type:this.reportOptions.type, format:this.reportOptions.format
+      };
+      this.savedReportsList.unshift(newReport);
+      this.filteredReports = [...this.savedReportsList];
+      this.totalReports++; this.totalDownloads++;
+      this.isGenerating = false; this.showCreateModal = false; this.showCustomModal = false;
+      this.showSuccess(`تم إنشاء "${newReport.title}" بنجاح وجاهز للتحميل!`);
+    }, 1200);
   }
 
+  cancelReportGeneration(): void { this.showCreateModal = false; this.showCustomModal = false; }
+  toggleCustomSection(section: any): void { section.selected = !section.selected; }
+
+  filterReports(): void {
+    let list = [...this.savedReportsList];
+    if (this.selectedTypeFilter !== 'all') list = list.filter(r => r.type === this.selectedTypeFilter);
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase();
+      list = list.filter(r => r.title.toLowerCase().includes(q) || r.author.toLowerCase().includes(q));
+    }
+    this.filteredReports = list;
+  }
+
+  viewReport(report: SavedReport): void { report.views++; this.totalViews++; this.showSuccess(`جاري فتح "${report.title}"`); }
+  downloadReport(report: SavedReport): void { this.totalDownloads++; this.showSuccess(`جاري تحميل "${report.title}" بصيغة ${report.format.toUpperCase()}`); }
+  shareReport(report: SavedReport): void { this.totalShares++; this.showSuccess('تم نسخ رابط التقرير بنجاح'); }
   deleteReport(report: SavedReport): void {
-    if (confirm(`هل أنت متأكد من حذف ${report.title}؟`)) {
-      console.log('حذف التقرير:', report.title);
-      
-      // Remove from list
-      this.savedReportsList = this.savedReportsList.filter(r => r.id !== report.id);
-      this.savedReports--;
-      
-      alert('تم حذف التقرير بنجاح');
-    }
+    if (!confirm(`هل أنت متأكد من حذف "${report.title}"؟`)) return;
+    this.savedReportsList = this.savedReportsList.filter(r => r.id !== report.id);
+    this.filteredReports = this.filteredReports.filter(r => r.id !== report.id);
+    this.totalReports--; this.showSuccess('تم حذف التقرير بنجاح');
   }
 
-  // Export Functions
-  exportToExcel(): void {
-    console.log('تصدير إلى Excel');
-    this.reportOptions.format = 'excel';
-    this.generateReport();
+  getStatusText(status: string): string {
+    const map: any = { ready:'جاهز', draft:'مسودة', processing:'قيد المعالجة' };
+    return map[status] || status;
   }
 
-  exportToPDF(): void {
-    console.log('تصدير إلى PDF');
-    this.reportOptions.format = 'pdf';
-    this.generateReport();
-  }
+  openGuide() { this.showGuide = true; }
+  closeGuide() { this.showGuide = false; }
 
-  exportAll(): void {
-    console.log('تصدير جميع البيانات');
-    this.reportOptions.type = 'comprehensive';
-    this.generateReport();
-  }
-
-  // Utility Functions
-  
-  getFirstDayOfMonth(): string {
-    const date = new Date();
-    return new Date(date.getFullYear(), date.getMonth(), 1)
-      .toISOString().split('T')[0];
-  }
-
-  getToday(): string {
-    return new Date().toISOString().split('T')[0];
-  }
-
-  getRelativeTime(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays === 0) {
-      return 'اليوم';
-    } else if (diffInDays === 1) {
-      return 'أمس';
-    } else if (diffInDays < 7) {
-      return `منذ ${diffInDays} أيام`;
-    } else if (diffInDays < 30) {
-      const weeks = Math.floor(diffInDays / 7);
-      return `منذ ${weeks} ${weeks === 1 ? 'أسبوع' : 'أسابيع'}`;
-    } else {
-      const months = Math.floor(diffInDays / 30);
-      return `منذ ${months} ${months === 1 ? 'شهر' : 'أشهر'}`;
-    }
-  }
-
-  // Cleanup
-  ngOnDestroy(): void {
-    if (this.chart) {
-      this.chart.destroy();
-    }
-  }
+  showSuccess(msg: string) { this.successMessage = msg; setTimeout(()=>this.successMessage='', 3500); }
+  showError(msg: string) { this.errorMessage = msg; setTimeout(()=>this.errorMessage='', 3500); }
+  getFirstDayOfMonth(): string { const d=new Date(); return new Date(d.getFullYear(),d.getMonth(),1).toISOString().split('T')[0]; }
+  getToday(): string { return new Date().toISOString().split('T')[0]; }
 }

@@ -469,17 +469,7 @@
     <button class="next" routerLink="/dashboard">ابدأ الآن</button>
   </div>
 </div>
-<!-- في نهاية Step 6 -->
-<div class="navigation-buttons">
-  <button (click)="goBack()" class="btn-back">رجوع</button>
-  <button 
-    (click)="saveOnboardingData()" 
-    [disabled]="isLoading || goals.length === 0"
-    class="btn-finish">
-    <span *ngIf="!isLoading">إنهاء وبدء المشروع</span>
-    <span *ngIf="isLoading">جاري الحفظ...</span>
-  </button>
-</div>
+
 
 <!-- رسالة خطأ -->
 <div *ngIf="errorMessage" class="error-message">

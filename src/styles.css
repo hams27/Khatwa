@@ -1,7 +1,3 @@
-:root {
-  --orange-main: #FF9705;
-  --orange-hover: linear-gradient(135deg, #1e4eff, #FF9705);
-}
 
 /* ===== HT Moshreq Pro ===== */
 @font-face{
@@ -52,12 +48,12 @@
 
 body{
   background: 
-    radial-gradient(circle 600px at top left, #FF970521 ,#2563EB11, transparent),
-    radial-gradient(circle 600px at center left, #FF970521,#2563EB11, transparent),
-    radial-gradient(circle 600px at center right, #2563EB11,#FF970521, transparent),
-    radial-gradient(circle 600px at top right, #2563EB11,#FF970521, transparent),
-    radial-gradient(circle 600px at bottom right, #2563EB11,#FF970521, transparent),
-    radial-gradient(circle 600px at bottom left, #FF970521,#2563EB11, transparent);
+    radial-gradient(circle 600px at top left, #2563EB21 ,#2563EB11, transparent),
+    radial-gradient(circle 600px at center left, #2563EB21,#2563EB11, transparent),
+    radial-gradient(circle 600px at center right, #2563EB11,#2563EB21, transparent),
+    radial-gradient(circle 600px at top right, #2563EB11,#2563EB21, transparent),
+    radial-gradient(circle 600px at bottom right, #2563EB11,#2563EB21, transparent),
+    radial-gradient(circle 600px at bottom left, #2563EB21,#2563EB11, transparent);
 
   text-align: center;
   padding: 0;
