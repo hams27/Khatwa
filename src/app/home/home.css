@@ -43,7 +43,7 @@
 }
 .nav-link {
   position: relative; padding: 9px 18px;
-  font-size: 16px; font-weight: 700; color: var(--text);
+  font-size: 18px; font-weight: 700; color: var(--text);
   cursor: pointer; transition: color 0.3s; border-radius: 10px;
   text-decoration: none;
   font-family: "Ht Moshreq Pro", sans-serif !important;
@@ -59,7 +59,7 @@
   display: flex; align-items: center; gap: 8px;
   padding: 12px 26px; background: #2563EB; color: #fff;
   border: none; border-radius: 14px; font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 16px; font-weight: 800; cursor: pointer;
+  font-size: 20px; font-weight: 800; cursor: pointer;
   transition: all 0.3s; white-space: nowrap; flex-shrink: 0;
 }
 .btn-cta-nav:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(37,99,235,0.55); }
@@ -181,7 +181,7 @@
   display: inline-flex; align-items: center; gap: 10px;
   padding: 18px 40px; background: #2563EB; color: #fff;
   border: none; border-radius: 18px; font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 18px; font-weight: 800; cursor: pointer;
+  font-size: 20px; font-weight: 800; cursor: pointer;
   transition: all 0.3s;
 }
 .btn-hero-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 60px rgba(37,99,235,0.55); }
@@ -189,7 +189,7 @@
   display: inline-flex; align-items: center; gap: 10px;
   padding: 18px 32px; background: rgba(37,99,235,0.09);
   border: 1.5px solid rgba(37,99,235,0.25); border-radius: 18px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 17px; font-weight: 700;
+  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 20px; font-weight: 700;
   color: #2563EB; cursor: pointer; backdrop-filter: blur(10px);
   transition: all 0.3s;
 }
