@@ -6,6 +6,7 @@ import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ProjectService, Project } from '../services/project';
 import { FinanceService } from '../services/finance';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 Chart.register(...registerables);
 
@@ -35,7 +36,7 @@ interface ChartData {
 
 @Component({
   selector: 'app-financial-overview',
-  imports: [SideBar, CommonModule, FormsModule],
+  imports: [SideBar, CommonModule, FormsModule ,AiChatComponent],
   templateUrl: './financial-overview.html',
   styleUrl: './financial-overview.css',
   standalone: true

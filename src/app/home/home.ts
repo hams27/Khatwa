@@ -52,7 +52,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { icon: '🚀', title: 'ابدأ النجاح', desc: 'احصل على خطط وأدوات جاهزة فوراً وابدأ رحلتك', badge: 'فوري' },
   ];
 
-  // ✅ البيانات الأصلية للـ testimonials
   testimonials = [
     { name: 'أحمد محمد', role: 'مؤسس متجر إلكتروني', text: 'أفضل منصة استخدمتها لإدارة مشروعي. وفرت علي وقت ومجهود كتير جداً!' },
     { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
@@ -62,7 +61,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
   ];
 
-  // ✅ النسخة المضاعفة اللي بتتعرض في الـ HTML (3 نسخ عشان اللوب يكون سلس)
   allTestimonials: any[] = [];
 
   faqs = [
@@ -81,16 +79,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private charIndex = 0;
   private isDeleting = false;
 
-  // ✅ متغيرات الـ infinite scroll
   private scrollAnimFrame?: number;
   private currentX = 0;
   private isPaused = false;
-  private readonly CARD_WIDTH = 340;
-  private readonly CARD_GAP = 20;
-  private readonly SCROLL_SPEED = 0.6; // كلما قل الرقم كلما كانت الحركة أبطأ
+  private readonly SCROLL_SPEED = 0.6;
 
   ngOnInit() {
-    // ✅ ضاعف الـ testimonials 3 مرات عشان اللوب يكون سلس
     this.allTestimonials = [
       ...this.testimonials,
       ...this.testimonials,
@@ -102,46 +96,67 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initScrollReveal();
     this.initTypewriter();
     this.startCounters();
-    // ✅ ابدأ الـ infinite scroll بعد ما الـ view يتبني
     setTimeout(() => this.startInfiniteScroll(), 300);
+    // ✅ تشغيل الفيديو في كل الأحوال
+    this.forcePlayVideo();
   }
 
   ngOnDestroy() {
     if (this.scrollObserver) this.scrollObserver.disconnect();
     if (this.typedInterval) clearTimeout(this.typedInterval);
-    // ✅ وقف الـ animation لما الـ component يتدمر
     if (this.scrollAnimFrame) cancelAnimationFrame(this.scrollAnimFrame);
   }
 
-  // ===== ✅ INFINITE SCROLL =====
- startInfiniteScroll() {
-  const track = this.trackRef?.nativeElement;
-  if (!track) return;
+  // ===== ✅ VIDEO AUTOPLAY FIX =====
+  forcePlayVideo() {
+  const video = document.querySelector('.hero-video') as HTMLVideoElement;
+  if (!video) return;
 
-  // ✅ استنى الـ DOM يتبني عشان نحسب الـ width صح
-  requestAnimationFrame(() => {
-    const singleSetWidth = track.scrollWidth / 3;
+    // reload عشان يشتغل من أول في كل مرة حتى بعد الـ refresh
+    video.load();
 
-    const animate = () => {
-      if (!this.isPaused) {
-        this.currentX -= this.SCROLL_SPEED;
-
-        // ✅ modulo بيخلي الرجوع سلس بدون jump
-        if (this.currentX <= -singleSetWidth) {
-          this.currentX += singleSetWidth;
-        }
-
-        track.style.transform = `translateX(${this.currentX}px)`;
-      }
-      this.scrollAnimFrame = requestAnimationFrame(animate);
+    const tryPlay = () => {
+    video.muted = true; // ✅ تأكيد إن muted = true من الكود
+  video.play().catch(() => {
+    document.addEventListener('click', () => video.play(), { once: true });
+    document.addEventListener('touchstart', () => video.play(), { once: true });
+  });
     };
 
-    track.addEventListener('mouseenter', () => { this.isPaused = true; });
-    track.addEventListener('mouseleave', () => { this.isPaused = false; });
+    // لو الفيديو جاهز خلاص، شغله فوراً
+    if (video.readyState >= 3) {
+      tryPlay();
+    } else {
+      // لو لسه بيحمل، استنى حتى يكون جاهز
+      video.addEventListener('canplay', tryPlay, { once: true });
+    }
+  }
 
-    this.scrollAnimFrame = requestAnimationFrame(animate);
-  });
-}
+  // ===== ✅ INFINITE SCROLL =====
+  startInfiniteScroll() {
+    const track = this.trackRef?.nativeElement;
+    if (!track) return;
+
+    requestAnimationFrame(() => {
+      const singleSetWidth = track.scrollWidth / 3;
+
+      const animate = () => {
+        if (!this.isPaused) {
+          this.currentX -= this.SCROLL_SPEED;
+          if (this.currentX <= -singleSetWidth) {
+            this.currentX += singleSetWidth;
+          }
+          track.style.transform = `translateX(${this.currentX}px)`;
+        }
+        this.scrollAnimFrame = requestAnimationFrame(animate);
+      };
+
+      track.addEventListener('mouseenter', () => { this.isPaused = true; });
+      track.addEventListener('mouseleave', () => { this.isPaused = false; });
+
+      this.scrollAnimFrame = requestAnimationFrame(animate);
+    });
+  }
 
   // ===== TYPEWRITER =====
   initTypewriter() {

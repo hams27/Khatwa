@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 interface PostWithDetails {
   id?: number;
@@ -132,7 +133,7 @@ const ACTIVE_MEMBERS = [
 
 @Component({
   selector: 'app-community',
-  imports: [CommonModule, SideBar, FormsModule],
+  imports: [CommonModule, SideBar, FormsModule ,AiChatComponent],
   templateUrl: './community.html',
   styleUrl: './community.css',
   standalone: true

@@ -1,5 +1,5 @@
 <app-side-bar #sidebarRef (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
-
+<app-ai-chat></app-ai-chat>
 <!-- ===== TOP NAV ===== -->
 <nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
   <div class="nav-content">
@@ -88,27 +88,7 @@
         </h1>
         <p class="welcome-subtitle">إليك نظرة سريعة على مشروعك اليوم</p>
       </div>
-      <div class="user-stats">
-        <div class="stat-badge points">
-          <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5"/>
-          </svg>
-          <div class="badge-info">
-            <span class="badge-label">نقاطك</span>
-            <span class="badge-value">{{ userPoints }}</span>
-          </div>
-        </div>
-        <div class="stat-badge level">
-          <svg class="badge-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702z"/>
-            <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1z"/>
-          </svg>
-          <div class="badge-info">
-            <span class="badge-label">المستوى</span>
-            <span class="badge-value">{{ userLevel }}</span>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </section>
 
@@ -206,14 +186,14 @@
     </div>
 
     <!-- Finance bar -->
-    <div class="chart-card">
+    <div class="chart-card" width="400px">
       <div class="chart-header">
         <div>
           <h3>💰 الملخص المالي</h3>
           <span class="chart-subtitle">هذا الشهر</span>
         </div>
       </div>
-      <div class="chart-container" style="height:220px">
+      <div class="chart-container " style="height:220px" >
         <canvas #miniFinanceChart></canvas>
       </div>
       <div class="chart-footer">
@@ -223,7 +203,6 @@
         </div>
       </div>
     </div>
-
     <!-- Weekly activity line -->
     <div class="chart-card full-width">
       <div class="chart-header">
@@ -246,8 +225,9 @@
         </div>
       </div>
     </div>
+</section>
 
-  </section>
+  
 
   <!-- ===== CONTENT GRID ===== -->
   <div class="content-grid">

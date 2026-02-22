@@ -9,6 +9,7 @@ import { MarketingService } from '../services/marketing';
 import { interval, Subscription } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Chart, registerables } from 'chart.js';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 Chart.register(...registerables);
 
@@ -23,7 +24,7 @@ interface Insight {
 
 @Component({
   selector: 'app-analytics',
-  imports: [CommonModule, FormsModule, SideBar],
+  imports: [CommonModule, FormsModule, SideBar ,AiChatComponent],
   templateUrl: './analytics.html',
   styleUrls: ['./analytics.css'],
   standalone: true

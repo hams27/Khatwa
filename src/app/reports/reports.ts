@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SideBar } from '../side-bar/side-bar';
 import { Chart, registerables } from 'chart.js';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 Chart.register(...registerables);
 
@@ -31,7 +32,7 @@ const MOCK_SAVED_REPORTS: SavedReport[] = [
 
 @Component({
   selector: 'app-reports',
-  imports: [CommonModule, SideBar, FormsModule],
+  imports: [CommonModule, SideBar, FormsModule ,AiChatComponent],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
   standalone: true

@@ -387,7 +387,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
 /* ===== CHARTS SECTION ===== */
 .charts-section {
   display: grid;
-  grid-template-columns: 1fr 1fr 1.6fr;
+  grid-template-columns: 1fr 1fr ;
   gap: 16px;
   margin-bottom: 24px;
 }

@@ -8,6 +8,7 @@ import { TaskService } from '../services/task';
 import { FinanceService } from '../services/finance';
 import { Subject, takeUntil, forkJoin, timeout, catchError, of } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -45,7 +46,7 @@ interface Activity {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SideBar, CommonModule],
+  imports: [SideBar, CommonModule,AiChatComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   standalone: true

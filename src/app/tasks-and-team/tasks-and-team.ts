@@ -6,6 +6,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from 
 import { TaskService, Task } from '../services/task';
 import { ProjectService, Project } from '../services/project';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 
 // Extended Task Interface
@@ -29,7 +30,7 @@ interface TeamMember {
 
 @Component({
   selector: 'app-tasks-and-team',
-  imports: [SideBar, CommonModule, FormsModule, DragDropModule],
+  imports: [SideBar, CommonModule, FormsModule, DragDropModule ,AiChatComponent],
   templateUrl: './tasks-and-team.html',
   styleUrl: './tasks-and-team.css',
   standalone: true

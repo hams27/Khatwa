@@ -6,6 +6,7 @@ import { MarketingService, MarketingPlan } from '../services/marketing';
 import { ProjectService } from '../services/project';
 import { Subject, takeUntil, timeout, catchError, of } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
+import { AiChatComponent } from '../ai-chat/ai-chat';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -35,7 +36,7 @@ interface ScheduledPost {
 
 @Component({
   selector: 'app-marketing',
-  imports: [CommonModule, SideBar, RouterLink],
+  imports: [CommonModule, SideBar, RouterLink , AiChatComponent],
   templateUrl: './marketing.html',
   styleUrls: ['./marketing.css'],
   standalone: true
