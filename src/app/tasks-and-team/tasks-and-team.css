@@ -472,3 +472,148 @@ textarea.form-input { resize: vertical; }
   .metrics-grid { grid-template-columns: 1fr; }
   .welcome-title { font-size: 16px; }
 }
+/* ===== TEAM MANAGEMENT MODAL ===== */
+.modal-team { width: 640px; max-width: 95vw; }
+
+.team-modal-body { padding: 20px 24px; max-height: 60vh; overflow-y: auto; }
+
+/* Add Member Form */
+.add-member-form {
+  background: #f0f7ff; border: 1.5px solid #bfcfef;
+  border-radius: 14px; padding: 16px 18px; margin-bottom: 20px;
+}
+.add-member-title {
+  font-size: 14px; font-weight: 700; color: #1a2e5e;
+  margin-bottom: 12px; font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.add-member-row {
+  display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;
+}
+.add-member-row:last-child { margin-bottom: 0; }
+.flex-1 { flex: 1; }
+
+.form-group { margin-bottom: 0; }
+.form-group.has-error .form-input { border-color: #e53935; }
+.form-input {
+  width: 100%; padding: 9px 13px;
+  border: 1.5px solid #bfcfef; border-radius: 9px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 13px; color: #1a2e5e;
+  background: #fff; outline: none;
+  transition: border-color .2s; box-sizing: border-box;
+}
+.form-input:focus { border-color: #2563EB; }
+.field-error {
+  display: block; font-size: 11px; color: #e53935;
+  margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+.btn-add-member {
+  padding: 9px 20px; background: #2563EB; color: #fff;
+  border: none; border-radius: 9px; cursor: pointer;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 13px; font-weight: 700; white-space: nowrap;
+  transition: all .2s; flex-shrink: 0;
+}
+.btn-add-member:hover:not(:disabled) { background: #1d4ed8; }
+.btn-add-member:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Members List */
+.members-list-title {
+  font-size: 14px; font-weight: 700; color: #1a2e5e;
+  margin-bottom: 12px; font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.members-list { display: flex; flex-direction: column; gap: 10px; }
+
+.member-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; background: #f5f7ff;
+  border: 1.5px solid #e0eaff; border-radius: 12px;
+  transition: all .2s;
+}
+.member-row:hover { background: #eff6ff; border-color: #bfcfef; }
+
+.member-avatar-lg {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, #1a2e5e, #2563EB);
+  color: #fff; font-size: 18px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+.member-info-full { flex: 1; min-width: 0; }
+.member-name-lg {
+  font-size: 14px; font-weight: 700; color: #1a2e5e;
+  display: flex; align-items: center; gap: 6px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.member-meta {
+  font-size: 12px; color: #2563EB; margin-top: 2px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+.role-badge {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: #dbeafe; color: #1d4ed8;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.role-badge.role-owner { background: #fef3c7; color: #d97706; }
+.role-badge.role-admin { background: #ede9fe; color: #7c3aed; }
+
+.member-tasks-info { flex-shrink: 0; }
+.tasks-chip {
+  font-size: 12px; font-weight: 700;
+  background: #dbeafe; color: #1d4ed8;
+  padding: 3px 10px; border-radius: 20px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+.member-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.role-select {
+  padding: 6px 10px; border: 1.5px solid #bfcfef;
+  border-radius: 8px; background: #fff;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 12px; color: #1a2e5e; cursor: pointer;
+  outline: none;
+}
+.role-select:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-remove {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1.5px solid #ffc9c9; background: #fff1f0;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.btn-remove:hover:not(:disabled) { background: #ffd7d7; border-color: #e53935; }
+.btn-remove:disabled { opacity: .3; cursor: not-allowed; }
+.btn-remove svg { width: 14px; height: 14px; fill: #e53935; }
+
+/* Empty State */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 10px; padding: 32px; text-align: center;
+}
+.empty-icon { font-size: 36px; }
+.empty-state p {
+  font-size: 14px; color: #2563EB;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+/* Cancel Button */
+.btn-cancel {
+  padding: 10px 22px; background: #f5f7ff;
+  border: 1.5px solid #bfcfef; border-radius: 10px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 14px; font-weight: 600; color: #1a2e5e;
+  cursor: pointer; transition: all .2s;
+}
+.btn-cancel:hover { background: #e0eaff; }
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal-team { width: 95vw; }
+  .add-member-row { flex-wrap: wrap; }
+  .member-actions { flex-direction: column; gap: 4px; }
+}

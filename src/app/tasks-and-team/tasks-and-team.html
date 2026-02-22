@@ -139,7 +139,7 @@
   <section class="team-section">
     <div class="section-head">
       <div class="section-title">👥 أعضاء الفريق</div>
-      <button class="see-all">إدارة الفريق ›</button>
+      <button class="see-all" (click)="openTeamModal()">إدارة الفريق ›</button>
     </div>
     <div class="team-grid">
       <div class="member-card" *ngFor="let member of teamMembers">
@@ -392,5 +392,105 @@
       <button class="btn-cancel" (click)="closeNewTaskModal()">إلغاء</button>
       <button class="btn-primary" (click)="createTask()">إنشاء المهمة</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== TEAM MANAGEMENT MODAL ===== -->
+<div class="modal-overlay" *ngIf="showTeamModal" (click)="closeTeamModal()">
+  <div class="modal-container modal-team" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>👥 إدارة الفريق</h3>
+      <button class="close-btn" (click)="closeTeamModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-body team-modal-body">
+
+      <!-- Add Member Form -->
+      <div class="add-member-form">
+        <div class="add-member-title">➕ إضافة عضو جديد</div>
+        <div class="add-member-row">
+          <div class="form-group flex-1" [class.has-error]="teamFormErrors.name">
+            <input type="text" class="form-input" [(ngModel)]="newMember.name"
+              placeholder="اسم العضو *" maxlength="50">
+            <span class="field-error" *ngIf="teamFormErrors.name">{{ teamFormErrors.name }}</span>
+          </div>
+          <div class="form-group flex-1" [class.has-error]="teamFormErrors.email">
+            <input type="email" class="form-input" [(ngModel)]="newMember.email"
+              placeholder="البريد الإلكتروني *" maxlength="100">
+            <span class="field-error" *ngIf="teamFormErrors.email">{{ teamFormErrors.email }}</span>
+          </div>
+        </div>
+        <div class="add-member-row">
+          <div class="form-group flex-1">
+            <input type="text" class="form-input" [(ngModel)]="newMember.role"
+              placeholder="المسمى الوظيفي (مثال: مطوّر، مصمم)" maxlength="50">
+          </div>
+          <div class="form-group" style="width:160px">
+            <select class="form-input" [(ngModel)]="newMember.memberRole">
+              <option value="member">عضو</option>
+              <option value="admin">مشرف</option>
+              <option value="owner">مالك</option>
+            </select>
+          </div>
+          <button class="btn-add-member" (click)="addTeamMember()" [disabled]="isAddingMember">
+            <span *ngIf="!isAddingMember">إضافة</span>
+            <span *ngIf="isAddingMember">...</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Members List -->
+      <div class="members-list-title">أعضاء الفريق الحاليين ({{ teamMembers.length }})</div>
+
+      <div class="members-list" *ngIf="teamMembers.length > 0; else noMembers">
+        <div class="member-row" *ngFor="let member of teamMembers">
+          <div class="member-avatar-lg">{{ member.avatar }}</div>
+          <div class="member-info-full">
+            <div class="member-name-lg">
+              {{ member.name }}
+              <span class="role-badge" [class.role-owner]="member.memberRole==='owner'" [class.role-admin]="member.memberRole==='admin'">
+                {{ member.memberRole==='owner' ? 'مالك' : member.memberRole==='admin' ? 'مشرف' : 'عضو' }}
+              </span>
+            </div>
+            <div class="member-meta">
+              <span *ngIf="member.email">📧 {{ member.email }}</span>
+              <span *ngIf="member.role">· {{ member.role }}</span>
+            </div>
+          </div>
+          <div class="member-tasks-info">
+            <span class="tasks-chip">{{ member.tasks }} مهمة</span>
+          </div>
+          <div class="member-actions">
+            <select class="role-select" [(ngModel)]="member.memberRole"
+              (change)="updateMemberRole(member)"
+              [disabled]="member.memberRole==='owner'">
+              <option value="member">عضو</option>
+              <option value="admin">مشرف</option>
+              <option value="owner">مالك</option>
+            </select>
+            <button class="btn-remove" (click)="removeMember(member)"
+              [disabled]="member.memberRole==='owner'" title="إزالة من الفريق">
+              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noMembers>
+        <div class="empty-state">
+          <div class="empty-icon">👥</div>
+          <p>لا يوجد أعضاء في الفريق حتى الآن. أضف أول عضو!</p>
+        </div>
+      </ng-template>
+
+    </div>
+
+    <div class="modal-footer" style="justify-content:flex-end">
+      <button class="btn-cancel" (click)="closeTeamModal()">إغلاق</button>
+    </div>
+
   </div>
 </div>

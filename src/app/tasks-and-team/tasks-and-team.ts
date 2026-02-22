@@ -26,6 +26,7 @@ interface TeamMember {
   avatar: string;
   email?: string;
   role?: string;
+  memberRole?: 'member' | 'admin' | 'owner';
 }
 
 @Component({
@@ -64,6 +65,14 @@ export class TasksAndTeam implements OnInit {
 
   // New Task Form
   showNewTaskModal = false;
+
+  // Team Management Modal
+  showTeamModal = false;
+  isAddingMember = false;
+  teamFormErrors: { name?: string; email?: string } = {};
+  newMember: { name: string; email: string; role: string; memberRole: 'member' | 'admin' | 'owner' } = {
+    name: '', email: '', role: '', memberRole: 'member'
+  };
   newTask: TaskWithDetails = {
     projectId: 0,
     title: '',
@@ -126,11 +135,11 @@ export class TasksAndTeam implements OnInit {
     this.isLoading = false;
 
     this.teamMembers = [
-      { id: 1, name: 'أحمد محمد',   avatar: 'أ', role: 'مطوّر واجهات',    tasks: 5, email: 'ahmed@khatwa.sa' },
-      { id: 2, name: 'سارة علي',    avatar: 'س', role: 'مصممة جرافيك',    tasks: 3, email: 'sara@khatwa.sa'  },
-      { id: 3, name: 'خالد عمر',    avatar: 'خ', role: 'مدير تسويق',      tasks: 4, email: 'khaled@khatwa.sa'},
-      { id: 4, name: 'نورة ناصر',   avatar: 'ن', role: 'محلل بيانات',     tasks: 2, email: 'noura@khatwa.sa' },
-      { id: 5, name: 'فهد السلمي',  avatar: 'ف', role: 'مطوّر backend',   tasks: 6, email: 'fahad@khatwa.sa' },
+      { id: 1, name: 'أحمد محمد',   avatar: 'أ', role: 'مطوّر واجهات',    tasks: 5, email: 'ahmed@khatwa.sa',  memberRole: 'owner' },
+      { id: 2, name: 'سارة علي',    avatar: 'س', role: 'مصممة جرافيك',    tasks: 3, email: 'sara@khatwa.sa',   memberRole: 'admin' },
+      { id: 3, name: 'خالد عمر',    avatar: 'خ', role: 'مدير تسويق',      tasks: 4, email: 'khaled@khatwa.sa', memberRole: 'member' },
+      { id: 4, name: 'نورة ناصر',   avatar: 'ن', role: 'محلل بيانات',     tasks: 2, email: 'noura@khatwa.sa',  memberRole: 'member' },
+      { id: 5, name: 'فهد السلمي',  avatar: 'ف', role: 'مطوّر backend',   tasks: 6, email: 'fahad@khatwa.sa',  memberRole: 'member' },
     ];
 
     this.todoTasks = [
@@ -561,4 +570,73 @@ export class TasksAndTeam implements OnInit {
   refreshTasks() {
     this.loadTasks();
   }
+
+  // ===== TEAM MANAGEMENT =====
+  openTeamModal() {
+    this.showTeamModal = true;
+    this.newMember = { name: '', email: '', role: '', memberRole: 'member' };
+    this.teamFormErrors = {};
+  }
+
+  closeTeamModal() {
+    this.showTeamModal = false;
+  }
+
+  validateTeamForm(): boolean {
+    this.teamFormErrors = {};
+    let valid = true;
+    if (!this.newMember.name.trim()) {
+      this.teamFormErrors.name = 'اسم العضو مطلوب';
+      valid = false;
+    }
+    if (!this.newMember.email.trim()) {
+      this.teamFormErrors.email = 'البريد الإلكتروني مطلوب';
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.newMember.email)) {
+      this.teamFormErrors.email = 'البريد الإلكتروني غير صحيح';
+      valid = false;
+    }
+    return valid;
+  }
+
+  addTeamMember() {
+    if (!this.validateTeamForm()) return;
+
+    // Check duplicate email
+    const exists = this.teamMembers.find(m => m.email === this.newMember.email.trim());
+    if (exists) {
+      this.teamFormErrors.email = 'هذا البريد الإلكتروني مضاف بالفعل';
+      return;
+    }
+
+    this.isAddingMember = true;
+
+    const member: TeamMember = {
+      id: Date.now(),
+      name: this.newMember.name.trim(),
+      email: this.newMember.email.trim(),
+      role: this.newMember.role.trim() || 'عضو فريق',
+      avatar: this.newMember.name.trim().charAt(0),
+      tasks: 0,
+      memberRole: this.newMember.memberRole
+    };
+
+    this.teamMembers.push(member);
+    this.newMember = { name: '', email: '', role: '', memberRole: 'member' };
+    this.teamFormErrors = {};
+    this.isAddingMember = false;
+    this.showSuccess(`✅ تم إضافة ${member.name} للفريق`);
+  }
+
+  removeMember(member: TeamMember) {
+    if (member.memberRole === 'owner') return;
+    if (!confirm(`هل أنت متأكد من إزالة "${member.name}" من الفريق؟`)) return;
+    this.teamMembers = this.teamMembers.filter(m => m.id !== member.id);
+    this.showSuccess(`تم إزالة ${member.name} من الفريق`);
+  }
+
+  updateMemberRole(member: TeamMember) {
+    this.showSuccess(`تم تحديث صلاحيات ${member.name}`);
+  }
+
 }
