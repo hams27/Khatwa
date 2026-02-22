@@ -36,8 +36,12 @@ export class Login implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadAOSScript();
-    
+    this.loadAOSScript().then(() => {
+      if (typeof (window as any).AOS !== 'undefined') {
+        (window as any).AOS.refreshHard();
+      }
+    });
+
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
     }
@@ -95,9 +99,7 @@ export class Login implements OnInit {
         next: (response: any) => {
           this.loginSuccess = true;
           this.isLoading = false;
-          
           console.log('تم تسجيل الدخول بنجاح:', response);
-          
           setTimeout(() => {
             this.router.navigate(['/dashboard']);
           }, 1500);
@@ -138,7 +140,7 @@ export class Login implements OnInit {
         (window as any).AOS.init({
           duration: 1000,
           easing: 'ease-out-cubic',
-          once: true,
+          once: false,
           offset: 50,
         });
         resolve();
@@ -157,7 +159,7 @@ export class Login implements OnInit {
           (window as any).AOS.init({
             duration: 1000,
             easing: 'ease-out-cubic',
-            once: true,
+            once: false,
             offset: 50,
           });
         }
@@ -169,17 +171,20 @@ export class Login implements OnInit {
   }
 
   loginWithGoogle() {
-    console.log('Login with Google');
-    alert('Google Login - سيتم ربطه بالـ Backend قريباً');
+    this.isLoading = true;
+    this.loginError = false;
+    window.location.href = `${this.authService.getApiUrl()}/auth/google`;
   }
 
   loginWithFacebook() {
-    console.log('Login with Facebook');
-    alert('Facebook Login - سيتم ربطه بالـ Backend قريباً');
+    this.isLoading = true;
+    this.loginError = false;
+    window.location.href = `${this.authService.getApiUrl()}/auth/facebook`;
   }
 
   loginWithApple() {
-    console.log('Login with Apple');
-    alert('Apple Login - سيتم ربطه بالـ Backend قريباً');
+    this.isLoading = true;
+    this.loginError = false;
+    window.location.href = `${this.authService.getApiUrl()}/auth/apple`;
   }
 }

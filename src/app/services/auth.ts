@@ -126,4 +126,25 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  // الحصول على base API URL (للـ social login redirects)
+  getApiUrl(): string {
+    return this.apiUrl;
+  }
+
+  // معالجة الـ token الجاي من Social OAuth redirect
+  handleSocialLoginToken(token: string) {
+    localStorage.setItem('token', token);
+    this.getProfile().subscribe({
+      next: (profileResponse) => {
+        if (profileResponse.success && profileResponse.data) {
+          localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
+          this.currentUserSubject.next(profileResponse.data);
+        }
+      },
+      error: (error) => {
+        console.error('خطأ في جلب بيانات المستخدم:', error);
+      }
+    });
+  }
 }
