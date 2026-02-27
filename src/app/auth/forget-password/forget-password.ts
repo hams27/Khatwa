@@ -32,10 +32,10 @@ export class ForgetPassword implements OnInit, OnDestroy {
     this.loadAOSScript().then(() => {
       // Init once
       (window as any).AOS.init({
-        duration: 1000,
+        duration: 400,
         easing: 'ease-out-cubic',
         once: true,
-        offset: 50,
+        offset: 0,
       });
     });
 
@@ -58,10 +58,10 @@ export class ForgetPassword implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       if (typeof (window as any).AOS !== 'undefined') {
         (window as any).AOS.init({
-          duration: 1000,
+          duration: 400,
           easing: 'ease-out-cubic',
           once: true,
-          offset: 50,
+          offset: 0,
         });
         resolve();
         return;
@@ -77,10 +77,10 @@ export class ForgetPassword implements OnInit, OnDestroy {
       scriptElement.onload = () => {
         if (typeof (window as any).AOS !== 'undefined') {
           (window as any).AOS.init({
-            duration: 1000,
+            duration: 400,
             easing: 'ease-out-cubic',
             once: true,
-            offset: 50,
+            offset: 0,
           });
         }
         resolve();

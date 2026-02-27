@@ -21,7 +21,7 @@
   right: -200px;
   border-radius: 50%;
   filter: blur(80px);
-  animation: float 20s infinite ease-in-out;
+  animation: float 10s infinite ease-in-out;
 }
 
 .login-container::after {
@@ -34,7 +34,7 @@
   left: -150px;
   border-radius: 50%;
   filter: blur(80px);
-  animation: float 25s infinite ease-in-out reverse;
+  animation: float 15s infinite ease-in-out reverse;
 }
 
 @keyframes float {
@@ -560,64 +560,6 @@
   font-size: 16px;
   white-space: nowrap;
   font-weight: 500;
-}
-
-/* ================= SOCIAL LOGIN ================= */
-.social-login {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.social-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px 12px;
-  background: #ffffff;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
-  color: #495057;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.social-btn i {
-  font-size: 20px;
-}
-
-.social-btn:hover:not(:disabled) {
-  transform: translateY(-4px);
-  background: #ffffff;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.social-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.social-btn.google:hover:not(:disabled) {
-  border-color: #ea4335;
-  color: #ea4335;
-  box-shadow: 0 10px 30px rgba(234, 67, 53, 0.2);
-}
-
-.social-btn.facebook:hover:not(:disabled) {
-  border-color: #1A56FF;
-  color: #1A56FF;
-  box-shadow: 0 10px 30px rgba(26, 86, 255, 0.2);
-}
-
-.social-btn.apple:hover:not(:disabled) {
-  border-color: #000000;
-  color: #000000;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* ================= REGISTER LINK ================= */

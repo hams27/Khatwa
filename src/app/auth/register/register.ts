@@ -51,7 +51,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.loadAOSScript().then(() => {
-      (window as any).AOS?.init({ duration: 1000, easing: 'ease-out-cubic', once: true, offset: 50 });
+      (window as any).AOS?.init({ duration: 400, easing: 'ease-out-cubic', once: true, offset: 0 });
     });
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
@@ -71,7 +71,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/aos@2.3.1/dist/aos.js';
       script.onload = () => {
-        (window as any).AOS?.init({ duration: 1000, easing: 'ease-out-cubic', once: true, offset: 50 });
+        (window as any).AOS?.init({ duration: 400, easing: 'ease-out-cubic', once: true, offset: 0 });
         resolve();
       };
       document.body.appendChild(script);

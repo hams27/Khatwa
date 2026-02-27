@@ -5,10 +5,10 @@
   <div class="form-wrapper">
     
     <div class="form-container">
-  
+        <img src="khatwa.svg" alt="">
 
       <!-- Welcome Header -->
-      <div class="form-header" data-aos="fade-up" data-aos-delay="200">
+      <div class="form-header" data-aos="fade-up" data-aos-delay="100">
         <h2 class="form-title">
           <span class="title-gradient">انضم إلينا الآن!</span>
         </h2>
@@ -33,7 +33,7 @@
         <!-- Full Name Field -->
         <div class="form-group" 
              data-aos="fade-up" 
-             data-aos-delay="300"
+             data-aos-delay="150"
              [class.has-error]="nameTouched && nameError"
              [class.has-value]="fullName">
           <label class="form-label">
@@ -62,7 +62,7 @@
         <!-- Email Field -->
         <div class="form-group" 
              data-aos="fade-up" 
-             data-aos-delay="400"
+             data-aos-delay="200"
              [class.has-error]="emailTouched && emailError"
              [class.has-value]="email">
           <label class="form-label">
@@ -91,7 +91,7 @@
         <!-- Phone Field -->
         <div class="form-group" 
              data-aos="fade-up" 
-             data-aos-delay="500"
+             data-aos-delay="250"
              [class.has-error]="phoneTouched && phoneError"
              [class.has-value]="phone">
           <label class="form-label">
@@ -120,7 +120,7 @@
         <!-- Password Field -->
         <div class="form-group" 
              data-aos="fade-up" 
-             data-aos-delay="600"
+             data-aos-delay="300"
              [class.has-error]="passwordTouched && passwordError"
              [class.has-value]="password">
           <label class="form-label">
@@ -167,7 +167,7 @@
         <!-- Confirm Password Field -->
         <div class="form-group" 
              data-aos="fade-up" 
-             data-aos-delay="700"
+             data-aos-delay="350"
              [class.has-error]="confirmPasswordTouched && confirmPasswordError"
              [class.has-value]="confirmPassword">
           <label class="form-label">
@@ -201,7 +201,7 @@
         </div>
 
         <!-- Terms & Conditions -->
-        <div class="form-options" data-aos="fade-up" data-aos-delay="800">
+        <div class="form-options" data-aos="fade-up" data-aos-delay="400">
           <label class="checkbox-container">
             <input 
               type="checkbox" 
@@ -228,7 +228,7 @@
           type="submit" 
           class="submit-btn"
           data-aos="zoom-in" 
-          data-aos-delay="900"
+          data-aos-delay="450"
           [disabled]="isLoading">
           <span class="btn-content" *ngIf="!isLoading">
             <span class="btn-text">إنشاء حساب</span>
@@ -242,7 +242,7 @@
         </button>
 
         <!-- Login Link -->
-        <div class="login-link" data-aos="fade-up" data-aos-delay="1200">
+        <div class="login-link" data-aos="fade-up" data-aos-delay="500">
           <p>
             لديك حساب بالفعل؟ 
             <a routerLink="/login" class="link-highlight">

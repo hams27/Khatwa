@@ -37,13 +37,13 @@
   width: 100%; max-width: 1280px; margin: 0 auto;
   display: flex; align-items: center; gap: 40px;
 }
-.logo img{ height: 40px; filter: none;  }
+.logo img{ height: 100px; width: 100px; filter: none; }
 .nav-links {
   display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center;
 }
 .nav-link {
   position: relative; padding: 9px 18px;
-  font-size: 18px; font-weight: 700; color: var(--text);
+  font-size: 20px; font-weight: 700; color: var(--text);
   cursor: pointer; transition: color 0.3s; border-radius: 10px;
   text-decoration: none;
   font-family: "Ht Moshreq Pro", sans-serif !important;
@@ -107,8 +107,7 @@
   background: linear-gradient(
     135deg,
     rgba(219,234,254,0.82) 0%,
-    rgba(240,244,255,0.70) 40%,
-    /* rgba(219,234,254,0.78) 100% */
+    rgba(240,244,255,0.70) 40%
   );
 }
 
@@ -232,7 +231,7 @@
 .section-title {
   font-family: "Ht Moshreq Pro", sans-serif !important;
   font-size: clamp(32px, 5vw, 56px);
-  font-weight: 900; color: var(--blue-dark); line-height: 1.2; margin-bottom: 18px;
+  font-weight: 900; color: var(--blue-dark); line-height: 1.7; margin-bottom: 18px;
 }
 .section-title .accent { color: #2563EB; }
 .section-desc { font-size: 18px; color: rgba(26,35,64,0.55); margin-bottom: 64px; font-family: "Ht Moshreq Pro", sans-serif !important; }
@@ -364,35 +363,77 @@
 }
 .mem-count { margin-right: 12px; font-size: 14px; color: rgba(26,35,64,0.6); font-family: "Ht Moshreq Pro", sans-serif !important; }
 
-.testimonials-section { 
-  background: #eef2ff; 
-  overflow: hidden; 
+/* ===== TESTIMONIALS ===== */
+.testimonials-section {
+  background: #eef2ff;
+  overflow: hidden;
 }
-.testimonials-scroll { 
+
+.testimonials-section .section-wrap {
+  padding-bottom: 40px;
+}
+
+.testimonials-scroll {
   overflow: hidden;
   width: 100%;
-  cursor: grab;
+  position: relative;
+  padding: 20px 0 40px;
+  direction: ltr; /* مهم جداً — يمنع RTL من عكس الـ animation */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
+
 .testimonials-track {
   display: flex;
+  flex-direction: row;
   gap: 20px;
-  padding: 0 24px;
   width: max-content;
+  padding: 0 20px;
   direction: ltr;
-  /* ✅ مفيش animation */
+  animation: marquee 35s linear infinite;
 }
+
+.testimonials-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* الكروت نفسها RTL عشان النص يظهر صح */
 .t-card {
-  width: 340px; flex-shrink: 0;
-  background: #fff; border: 1.5px solid rgba(37,99,235,0.10);
-  border-radius: 22px; padding: 26px; transition: all 0.3s;
-  box-shadow: 0 2px 14px rgba(37,99,235,0.06);
+  direction: rtl;
 }
-.t-card:hover { border-color: rgba(37,99,235,0.30); box-shadow: 0 6px 32px rgba(37,99,235,0.10); }
+
+.t-card {
+  width: 340px;
+  flex-shrink: 0;
+  background: #fff;
+  border: 1.5px solid rgba(37,99,235,0.10);
+  border-radius: 22px;
+  padding: 26px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 14px rgba(37,99,235,0.06);
+  direction: rtl;
+}
+.t-card:hover {
+  border-color: rgba(37,99,235,0.30);
+  box-shadow: 0 6px 32px rgba(37,99,235,0.10);
+}
 
 .t-stars { font-size: 16px; margin-bottom: 13px; }
 .t-text { font-size: 15px; color: rgba(26,35,64,0.68); line-height: 1.75; margin-bottom: 22px; font-style: italic; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .t-author { display: flex; align-items: center; gap: 13px; }
-
+.t-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(37,99,235,0.10); border: 2px solid rgba(37,99,235,0.20);
+  color: #2563EB; font-size: 16px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
 .t-name { font-size: 15px; font-weight: 800; color: var(--blue-dark); font-family: "Ht Moshreq Pro", sans-serif !important; }
 .t-role { font-size: 12px; color: rgba(26,35,64,0.4); margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
@@ -427,75 +468,400 @@
 
 /* ===== CONTACT SECTION ===== */
 .contact-section {
-  background: linear-gradient(135deg, #dbeafe 0%, #f0f4ff 100%);
-  padding: 0 24px;
+  position: relative;
+  padding: 120px 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1A56FF 0%, #0a2fa8 35%, #061a6b 65%, #030d3a 100%);
 }
+
+.contact-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.contact-section::after {
+  content: '';
+  position: absolute;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 65%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .contact-inner {
-  position: relative; max-width: 820px; margin: 0 auto;
-  padding: 110px 40px; text-align: center; overflow: hidden;
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  text-align: center;
+  overflow: hidden;
 }
-.contact-glow-1, .contact-glow-2 {
-  position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none;
+
+.contact-glow-1 {
+  position: absolute;
+  width: 100%; height: 400px;
+  background: radial-gradient(circle, rgba(255,255,255,0.10) 0%, transparent 70%);
+  top: -120px; right: -80px;
+  border-radius: 50%;
+  filter: blur(30px);
+  pointer-events: none;
+  animation: cGlow 7s ease-in-out infinite;
 }
-.contact-glow-1 { width: 300px; height: 300px; background: rgba(37,99,235,0.15); top: -50px; right: -50px; }
-.contact-glow-2 { width: 200px; height: 200px; background: rgba(37,99,235,0.12); bottom: -30px; left: -30px; }
+.contact-glow-2 {
+  position: absolute;
+  width: 100%; height: 300px;
+  background: radial-gradient(circle, rgba(107,159,255,0.15) 0%, transparent 70%);
+  bottom: -80px; left: -60px;
+  border-radius: 50%;
+  filter: blur(30px);
+  pointer-events: none;
+  animation: cGlow 9s ease-in-out infinite reverse;
+}
+@keyframes cGlow {
+  0%, 100% { transform: scale(1) translate(0,0); }
+  50% { transform: scale(1.2) translate(20px, -20px); }
+}
+
 .contact-inner h2 {
   font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: clamp(34px, 5vw, 60px); font-weight: 900; color: var(--blue-dark); margin-bottom: 18px;
+  font-size: clamp(32px, 5vw, 58px);
+  font-weight: 900;
+  color: #ffffff;
+  margin-bottom: 16px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.2);
 }
-.contact-inner > p { font-size: 18px; color: rgba(26,35,64,0.6); margin-bottom: 44px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+.contact-inner > p {
+  font-size: 18px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 64px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  line-height: 1.8;
+}
 
 .contact-methods {
-  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
 }
+
 .contact-method {
-  display: flex; align-items: center; gap: 12px;
-  background: #fff; border: 1.5px solid rgba(37,99,235,0.15);
-  border-radius: 18px; padding: 18px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  position: relative;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.contact-method span:first-child {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: 2px solid rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  position: relative;
+}
+
+.contact-method span:first-child::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.15);
+  transition: all 0.4s;
+}
+.contact-method span:first-child::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.07);
+  transition: all 0.4s;
+}
+
+.contact-method span:last-child {
   font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 17px; font-weight: 700; color: var(--blue-dark);
-  text-decoration: none; transition: all 0.3s;
-  box-shadow: 0 2px 16px rgba(37,99,235,0.06);
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  transition: color 0.3s;
+  max-width: 160px;
+  text-align: center;
+  word-break: break-all;
 }
+
 .contact-method:hover {
-  border-color: rgba(37,99,235,0.40);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(37,99,235,0.15);
-  color: #1A56FF;
+  transform: translateY(-10px) scale(1.05);
 }
-.contact-method span:first-child { font-size: 24px; }
+
+.contact-method:hover span:first-child {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.6);
+  box-shadow:
+    0 16px 50px rgba(0,0,0,0.3),
+    0 0 40px rgba(255,255,255,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+  transform: scale(1.08);
+}
+
+.contact-method:hover span:first-child::before {
+  inset: -10px;
+  border-color: rgba(255,255,255,0.3);
+}
+.contact-method:hover span:first-child::after {
+  inset: -20px;
+  border-color: rgba(255,255,255,0.12);
+}
+
+.contact-method:hover span:last-child {
+  color: #ffffff;
+}
+
+@media (max-width: 600px) {
+  .contact-methods { gap: 32px; }
+  .contact-method span:first-child { width: 84px; height: 84px; font-size: 30px; }
+}
 
 /* ===== FOOTER ===== */
-.footer { background: #1a2e5e; border-top: 1px solid rgba(255,255,255,0.10); padding: 70px 24px 0; }
+.footer {
+  position: relative;
+  background: linear-gradient(180deg, #030d3a 0%, #020820 100%);
+  padding: 80px 24px 0;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,86,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,86,255,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+}
+
+.footer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #1A56FF, #6B9FFF, #1A56FF, transparent);
+}
+
 .footer-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 64px; padding-bottom: 64px;
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 70px;
+direction: rtl !important; 
+text-align: right;
 }
-.footer-logo { height: 36px; filter: brightness(0) invert(1); margin-bottom: 18px; }
-.footer-brand p { font-size: 15px; color: rgba(255,255,255,0.5); line-height: 1.85; margin-bottom: 26px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.footer-social { display: flex; gap: 10px; }
-.s-link {
-  width: 38px; height: 38px; border-radius: 11px;
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s; text-decoration: none;
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
-.s-link:hover { background: rgba(37,99,235,0.18); border-color: rgba(37,99,235,0.40); }
-.s-link svg { fill: rgba(255,255,255,0.5); }
-.s-link:hover svg { fill: #2563EB; }
-.footer-links h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 22px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.footer-links a {
-  display: block; font-size: 14px; color: rgba(255,255,255,0.50);
-  margin-bottom: 13px; cursor: pointer; transition: color 0.2s; text-decoration: none;
+
+.footer-logo {
+  height: 44px;
+  margin-bottom: 20px;
+  padding-left: 300px !important;
+}
+
+.footer-brand p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.9;
+  margin-bottom: 28px;
   font-family: "Ht Moshreq Pro", sans-serif !important;
 }
-.footer-links a:hover { color: #2563EB; }
-.footer-links p { font-size: 14px; color: rgba(255,255,255,0.50); margin-bottom: 13px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.10);
-  padding: 22px 0; text-align: center; max-width: 1200px; margin: 0 auto;
+
+.footer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(26,86,255,0.12);
+  border: 1px solid rgba(26,86,255,0.25);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  color: #6B9FFF;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-weight: 600;
+  width: fit-content;
+  margin-bottom: 28px;
 }
-.footer-bottom p { font-size: 13px; color: rgba(255,255,255,0.28); font-family: "Ht Moshreq Pro", sans-serif !important; }
+.footer-badge::before {
+  content: '';
+  width: 7px; height: 7px;
+  background: #22c55e;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #22c55e;
+  animation: blink 2s infinite;
+}
+
+.footer-social {
+  display: flex;
+  gap: 10px;
+}
+
+.s-link {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+.s-link svg { fill: rgba(255,255,255,0.4); transition: fill 0.3s; }
+.s-link:hover {
+  background: rgba(26,86,255,0.2);
+  border-color: rgba(26,86,255,0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(26,86,255,0.2);
+}
+.s-link:hover svg { fill: #6B9FFF; }
+
+.footer-links h4 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 24px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  position: relative;
+  padding-bottom: 14px;
+}
+.footer-links h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 32px; height: 2px;
+  background: linear-gradient(90deg, #1A56FF, #6B9FFF);
+  border-radius: 2px;
+}
+
+.footer-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 14px;
+  cursor: pointer;
+  transition: all 0.25s;
+  text-decoration: none;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.footer-links a::before {
+  content: '›';
+  color: #1A56FF;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0;
+  transform: translateX(4px);
+  transition: all 0.25s;
+}
+.footer-links a:hover {
+  color: #ffffff;
+  transform: translateX(-4px);
+}
+.footer-links a:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  text-decoration: none;
+}
+.footer-contact-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(26,86,255,0.12);
+  border: 1px solid rgba(26,86,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.footer-contact-item span:last-child {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  transition: color 0.3s;
+  line-height: 1.5;
+  word-break: break-all;
+}
+.footer-contact-item:hover .footer-contact-icon {
+  background: rgba(26,86,255,0.25);
+  border-color: rgba(26,86,255,0.5);
+}
+.footer-contact-item:hover span:last-child {
+  color: rgba(255,255,255,0.8);
+}
+
+.footer-bottom {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 24px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-bottom p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.25);
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.footer-bottom-links {
+  display: flex;
+  gap: 24px;
+}
+.footer-bottom-links a {
+  font-size: 13px;
+  color: rgba(255,255,255,0.25);
+  text-decoration: none;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  transition: color 0.2s;
+}
+.footer-bottom-links a:hover { color: #6B9FFF; }
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
@@ -509,6 +875,7 @@
 
 @media (max-width: 768px) {
   .header { padding: 0 20px; }
+  .logo img {width: 70px; height: 70px;}
   .nav-links { display: none; }
   .btn-cta-nav { display: none; }
   .mobile-menu-btn { display: flex; }
@@ -527,9 +894,9 @@
   .section-wrap { padding: 70px 20px; }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 480px) {  
+  .logo img {width: 50px; height: 50px;}
   .hero-title { font-size: 32px; }
   .hero-badge { font-size: 13px; padding: 7px 14px; }
   .hero-sub { font-size: 15px; }
-  .testimonials-track { animation-duration: 20s; }
 }

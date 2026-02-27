@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, HostListener, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { label: 'زيادة إنتاجية', targetNumber: 50, suffix: '%', displayValue: '0%' },
   ];
 
-  particles = Array.from({ length: 18 }, (_, i) => ({
+  particles = Array.from({ length: 18 }, () => ({
     x: Math.random() * 100,
     y: Math.random() * 100,
     delay: Math.random() * 6,
@@ -53,10 +53,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   testimonials = [
-    { name: 'أحمد محمد', role: 'مؤسس متجر إلكتروني', text: 'أفضل منصة استخدمتها لإدارة مشروعي. وفرت علي وقت ومجهود كتير جداً!' },
-    { name: 'سارة أحمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
+    { name: ' حسام محمد', role: 'مؤسس متجر إلكتروني', text: 'أفضل منصة استخدمتها لإدارة مشروعي. وفرت علي وقت ومجهود كتير جداً!' },
+    { name: 'سارة احمد', role: 'صاحبة مشروع تصميم', text: 'المنصة ساعدتني أنظم شغلي وأزود أرباحي بنسبة ١٥٠٪ في ٣ شهور!' },
     { name: 'خالد عبدالله', role: 'مدير تسويق', text: 'دعم فني ممتاز وأدوات قوية جداً. أنصح كل رائد أعمال يجربها' },
-    { name: 'نورة القحطاني', role: 'رائدة أعمال', text: 'من أروع القرارات اللي اتخذتها للمشروع. الفريق محترف والمنصة سهلة' },
+    { name: 'حسام نصرالله', role: 'رائدة أعمال', text: 'من أروع القرارات اللي اتخذتها للمشروع. الفريق محترف والمنصة سهلة' },
     { name: 'فيصل العتيبي', role: 'صاحب شركة ناشئة', text: 'خطوة غيّرت طريقة إدارتي للمشروع بالكامل. ما تخيلت إنه أسهل من كده' },
     { name: 'منال الزهراني', role: 'مؤسسة وكالة تسويق', text: 'التحليلات والتقارير أعطتني رؤية واضحة قدرت أبني عليها قرارات صح' },
   ];
@@ -79,86 +79,44 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private charIndex = 0;
   private isDeleting = false;
 
-  private scrollAnimFrame?: number;
-  private currentX = 0;
-  private isPaused = false;
-  private readonly SCROLL_SPEED = 0.6;
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
 
   ngOnInit() {
-    this.allTestimonials = [
-      ...this.testimonials,
-      ...this.testimonials,
-      ...this.testimonials
-    ];
+    // نسختين بالظبط — الـ CSS marquee بتتحرك -50% فيرجع للبداية seamless
+    this.allTestimonials = [...this.testimonials, ...this.testimonials];
   }
 
   ngAfterViewInit() {
     this.initScrollReveal();
     this.initTypewriter();
     this.startCounters();
-    setTimeout(() => this.startInfiniteScroll(), 300);
-    // ✅ تشغيل الفيديو في كل الأحوال
     this.forcePlayVideo();
   }
 
   ngOnDestroy() {
     if (this.scrollObserver) this.scrollObserver.disconnect();
     if (this.typedInterval) clearTimeout(this.typedInterval);
-    if (this.scrollAnimFrame) cancelAnimationFrame(this.scrollAnimFrame);
   }
 
-  // ===== ✅ VIDEO AUTOPLAY FIX =====
   forcePlayVideo() {
-  const video = document.querySelector('.hero-video') as HTMLVideoElement;
-  if (!video) return;
-
-    // reload عشان يشتغل من أول في كل مرة حتى بعد الـ refresh
+    const video = document.querySelector('.hero-video') as HTMLVideoElement;
+    if (!video) return;
     video.load();
-
     const tryPlay = () => {
-    video.muted = true; // ✅ تأكيد إن muted = true من الكود
-  video.play().catch(() => {
-    document.addEventListener('click', () => video.play(), { once: true });
-    document.addEventListener('touchstart', () => video.play(), { once: true });
-  });
+      video.muted = true;
+      video.play().catch(() => {
+        document.addEventListener('click', () => video.play(), { once: true });
+        document.addEventListener('touchstart', () => video.play(), { once: true });
+      });
     };
-
-    // لو الفيديو جاهز خلاص، شغله فوراً
     if (video.readyState >= 3) {
       tryPlay();
     } else {
-      // لو لسه بيحمل، استنى حتى يكون جاهز
       video.addEventListener('canplay', tryPlay, { once: true });
     }
   }
 
-  // ===== ✅ INFINITE SCROLL =====
-  startInfiniteScroll() {
-    const track = this.trackRef?.nativeElement;
-    if (!track) return;
-
-    requestAnimationFrame(() => {
-      const singleSetWidth = track.scrollWidth / 3;
-
-      const animate = () => {
-        if (!this.isPaused) {
-          this.currentX -= this.SCROLL_SPEED;
-          if (this.currentX <= -singleSetWidth) {
-            this.currentX += singleSetWidth;
-          }
-          track.style.transform = `translateX(${this.currentX}px)`;
-        }
-        this.scrollAnimFrame = requestAnimationFrame(animate);
-      };
-
-      track.addEventListener('mouseenter', () => { this.isPaused = true; });
-      track.addEventListener('mouseleave', () => { this.isPaused = false; });
-
-      this.scrollAnimFrame = requestAnimationFrame(animate);
-    });
-  }
-
-  // ===== TYPEWRITER =====
   initTypewriter() {
     const el = document.getElementById('typed-text');
     if (!el) return;
@@ -185,7 +143,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(type, 1200);
   }
 
-  // ===== SCROLL REVEAL =====
   initScrollReveal() {
     this.scrollObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -200,33 +157,32 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // ===== COUNTERS =====
   startCounters() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          this.stats.forEach((stat, i) => {
-            const end = stat.targetNumber;
-            const dur = 2000;
-            const startTime = performance.now();
-            const step = (now: number) => {
-              const progress = Math.min((now - startTime) / dur, 1);
-              const ease = 1 - Math.pow(1 - progress, 3);
-              stat.displayValue = Math.floor(ease * end).toLocaleString() + stat.suffix;
-              if (progress < 1) requestAnimationFrame(step);
-              else stat.displayValue = end.toLocaleString() + stat.suffix;
-            };
-            setTimeout(() => requestAnimationFrame(step), i * 150);
-          });
-          observer.disconnect();
-        }
+    this.ngZone.runOutsideAngular(() => {
+      this.stats.forEach((stat, i) => {
+        const end = stat.targetNumber;
+        const dur = 1800;
+        setTimeout(() => {
+          const startTime = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min((now - startTime) / dur, 1);
+            const ease = progress < 0.7
+              ? progress
+              : 0.7 + (1 - Math.pow(1 - ((progress - 0.7) / 0.3), 2)) * 0.3;
+            stat.displayValue = Math.floor(ease * end).toLocaleString('en') + stat.suffix;
+            this.cdr.detectChanges();
+            if (progress < 1) requestAnimationFrame(step);
+            else {
+              stat.displayValue = end.toLocaleString('en') + stat.suffix;
+              this.cdr.detectChanges();
+            }
+          };
+          requestAnimationFrame(step);
+        }, i * 100);
       });
-    }, { threshold: 0.5 });
-    const heroStats = document.querySelector('.hero-stats');
-    if (heroStats) observer.observe(heroStats);
+    });
   }
 
-  // ===== SCROLL =====
   @HostListener('window:scroll')
   onScroll() {
     this.isSticky = window.scrollY > 80;
