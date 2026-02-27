@@ -111,14 +111,7 @@
   );
 }
 
-/* Particles */
-.particles { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.particle {
-  position: absolute; width: 4px; height: 4px;
-   border-radius: 50%;
-  animation: floatParticle linear infinite;
-  opacity: 0.5;
-}
+
 @keyframes floatParticle {
   0% { transform: translateY(0) scale(1); opacity: 0.4; }
   50% { transform: translateY(-40px) scale(1.5); opacity: 0.9; }
@@ -378,7 +371,7 @@
   width: 100%;
   position: relative;
   padding: 20px 0 40px;
-  direction: ltr; /* مهم جداً — يمنع RTL من عكس الـ animation */
+  direction: ltr;
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
@@ -402,7 +395,6 @@
   100% { transform: translateX(-50%); }
 }
 
-/* الكروت نفسها RTL عشان النص يظهر صح */
 .t-card {
   direction: rtl;
 }

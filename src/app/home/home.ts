@@ -83,7 +83,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private ngZone = inject(NgZone);
 
   ngOnInit() {
-    // نسختين بالظبط — الـ CSS marquee بتتحرك -50% فيرجع للبداية seamless
     this.allTestimonials = [...this.testimonials, ...this.testimonials];
   }
 
