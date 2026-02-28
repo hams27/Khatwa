@@ -94,15 +94,20 @@
 .dashboard-btn {
   width: 100%; border: none; border-radius: 10px; padding: 11px 12px;
   display: flex; align-items: center; gap: 12px;
-  background: #2563EB; color: #fff;
-  font-size: 14px; font-weight: 700; cursor: pointer;
+  background: transparent; color: #93b4ef;
+  font-size: 14px; font-weight: 600; cursor: pointer;
   transition: all 0.25s ease; margin-bottom: 4px;
-  box-shadow: 0 4px 14px rgba(37,99,235,0.30);
+  text-decoration: none;
   font-family: "Ht Moshreq Pro", sans-serif !important;
 }
 .sidebar.collapsed .dashboard-btn { padding: 11px; justify-content: center; }
-.dashboard-btn:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37,99,235,0.40); }
-.dashboard-btn img { width: 20px; height: 20px; flex-shrink: 0; filter: brightness(0) invert(1); }
+.dashboard-btn:hover { background: rgba(37,99,235,0.15); color: #fff; }
+.dashboard-btn.active {
+  background: rgba(37,99,235,0.25); color: #93c5fd; font-weight: 700;
+  box-shadow: none;
+}
+.dashboard-btn img { width: 20px; height: 20px; flex-shrink: 0; filter: brightness(0) saturate(100%) invert(60%) sepia(30%) saturate(400%) hue-rotate(195deg) brightness(120%); }
+.dashboard-btn.active img { filter: brightness(0) saturate(100%) invert(60%) sepia(60%) saturate(400%) hue-rotate(195deg) brightness(110%); }
 .dashboard-btn .nav-label { white-space: nowrap; overflow: hidden; transition: all 0.2s; opacity: 1; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .sidebar.collapsed .dashboard-btn .nav-label { width: 0; opacity: 0; }
 

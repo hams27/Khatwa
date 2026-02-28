@@ -7,11 +7,16 @@
   padding: 0 32px; height: 64px;
   display: flex; align-items: center;
   margin-right: 260px;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
   box-shadow: 0 1px 12px rgba(37,99,235,.07);
-  transition: margin-right .3s cubic-bezier(.4,0,.2,1);
+  transition: margin-right .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
   font-family: "Ht Moshreq Pro", sans-serif !important;
 }
-.top-nav.sidebar-collapsed { margin-right: 72px; }
+.top-nav.sidebar-collapsed {
+  margin-right: 72px;
+  width: calc(100% - 72px);
+}
 
 .nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
 .nav-left { display: flex; align-items: center; gap: 12px; }
@@ -70,8 +75,14 @@
   min-height: 100vh;
   font-family: "Ht Moshreq Pro", sans-serif !important;
   transition: margin-right .3s cubic-bezier(.4,0,.2,1);
+  width: calc(100% - 260px);
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
-.marketing-main.sidebar-collapsed { margin-right: 72px; }
+.marketing-main.sidebar-collapsed {
+  margin-right: 72px;
+  width: calc(100% - 72px);
+}
 
 /* ===== WELCOME ===== */
 .welcome-section { margin-bottom: 24px; }
@@ -151,7 +162,7 @@
   border: 1.5px solid #bfcfef;
   animation: fadeUp .5s ease both; animation-delay: .25s;
 }
-.chart-card.full-width { width: 95%; }
+.chart-card { width: 95%; }
 .chart-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
 .chart-title { font-size: 14px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .chart-sub { font-size: 11px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
@@ -269,7 +280,6 @@
 .act-icon { font-size: 22px; }
 .act-btn.analytics:hover { border-color: #2563EB; background: rgba(37,99,235,.06); }
 .act-btn.schedule:hover  { border-color: #1d4ed8; background: #dbeafe; }
-.act-btn.campaigns:hover { border-color: #e1306c; background: rgba(225,48,108,.05); }
 .act-btn.community:hover { border-color: #f59e0b; background: rgba(245,158,11,.05); }
 
 /* ideas */
@@ -367,30 +377,29 @@
    RESPONSIVE — تابلت (< 1024px)
    ================================================================ */
 @media (max-width: 1023px) {
+.chart-card { width: 90%; }
 
   .top-nav,
   .top-nav.sidebar-collapsed {
     margin-right: 0 !important;
+    width: 100% !important;
     transition: none;
   }
   .marketing-main,
   .marketing-main.sidebar-collapsed {
     margin-right: 0 !important;
+    width: 100% !important;
     transition: none;
   }
 
-  /* إظهار الهامبرجر */
   .topnav-hamburger { display: flex !important; }
 
-  /* إخفاء الـ date chip على تابلت */
   .desktop-only      { display: none !important; }
   .desktop-only-flex { display: none !important; }
 
-  /* تصغير عناصر التوب بار */
   .nav-page-title { font-size: 15px; }
   .nav-page-sub   { font-size: 11px; }
 
-  /* الجريدات */
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .charts-row   { grid-template-columns: 1fr; }
   .bottom-grid  { grid-template-columns: 1fr; }
@@ -400,6 +409,7 @@
    RESPONSIVE — موبايل (< 768px)
    ================================================================ */
 @media (max-width: 768px) {
+.chart-card { width: 90%; }
 
   .top-nav         { padding: 0 16px; }
   .marketing-main  { padding: 16px; }
@@ -428,3 +438,28 @@
   .platform-tabs { flex-wrap: wrap; gap: 4px; }
   .actions-grid  { grid-template-columns: 1fr 1fr; }
 }
+
+/* ===== FORMS IN MODAL ===== */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: #1a2e5e; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.form-input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #bfcfef;
+  border-radius: 10px; font-size: 13px; color: #1a2e5e;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  background: #f5f7ff; outline: none; box-sizing: border-box;
+  transition: border-color .2s;
+}
+.form-input:focus { border-color: #2563EB; background: #fff; }
+.form-input:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ===== IDEA PREVIEW CARD ===== */
+.idea-preview-card {
+  background: #f5f7ff; border: 1.5px solid #bfcfef;
+  border-radius: 12px; padding: 16px;
+}
+.idea-preview-plat { font-size: 13px; font-weight: 600; color: #2563EB; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.idea-preview-title { font-size: 15px; font-weight: 700; color: #1a2e5e; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.idea-preview-desc { font-size: 12px; color: #2563EB; line-height: 1.5; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+/* btn disabled */
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }

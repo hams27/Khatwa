@@ -63,10 +63,6 @@
       </div>
       <div class="welcome-badges">
         <div class="w-badge">
-          <span class="w-badge-icon">📣</span>
-          <div><span class="w-badge-lbl">حملات نشطة</span><span class="w-badge-val">{{ activeCampaigns }}</span></div>
-        </div>
-        <div class="w-badge">
           <span class="w-badge-icon">❤️</span>
           <div><span class="w-badge-lbl">إجمالي التفاعل</span><span class="w-badge-val">{{ totalEngagement }}</span></div>
         </div>
@@ -100,13 +96,6 @@
       <div class="mini-prog"><div class="mini-prog-fill p" [style.width.%]="engagementProgress"></div></div>
     </div>
 
-    <div class="mc campaigns">
-      <div class="mc-icon">📣</div>
-      <div class="mc-lbl">حملات نشطة</div>
-      <div class="mc-val">{{ activeCampaigns }}</div>
-      <div class="mc-sub">{{ daysRemaining }} يوم متبقي</div>
-      <div class="mini-prog"><div class="mini-prog-fill o" style="width:55%"></div></div>
-    </div>
 
   </section>
 
@@ -250,9 +239,6 @@
           <button class="act-btn schedule" (click)="viewSchedule()">
             <div class="act-icon">📅</div><span>جدولة المنشورات</span>
           </button>
-          <button class="act-btn campaigns" (click)="viewCampaigns()">
-            <div class="act-icon">📣</div><span>الحملات المدفوعة</span>
-          </button>
           <button class="act-btn community" routerLink="/community">
             <div class="act-icon">💬</div><span>المجتمع</span>
           </button>
@@ -270,14 +256,14 @@
 
       <!-- Platform Filter -->
       <div class="platform-tabs">
-        <button class="ptab active" (click)="filterPlatform('all')">الكل</button>
-        <button class="ptab" (click)="filterPlatform('instagram')">📷 انستجرام</button>
-        <button class="ptab" (click)="filterPlatform('facebook')">👍 فيسبوك</button>
-        <button class="ptab" (click)="filterPlatform('linkedin')">💼 لينكد إن</button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'all'" (click)="filterPlatform('all')">الكل</button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'instagram'" (click)="filterPlatform('instagram')">📷 انستجرام</button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'facebook'" (click)="filterPlatform('facebook')">👍 فيسبوك</button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'linkedin'" (click)="filterPlatform('linkedin')">💼 لينكد إن</button>
       </div>
 
-      <div class="ideas-list" *ngIf="contentIdeas.length > 0; else noIdeas">
-        <div class="idea-item" *ngFor="let idea of contentIdeas" [class]="idea.priority">
+      <div class="ideas-list" *ngIf="filteredIdeas.length > 0; else noIdeas">
+        <div class="idea-item" *ngFor="let idea of filteredIdeas" [class]="idea.priority">
           <div class="idea-plat">{{ getPlatformIcon(idea.platform) }}</div>
           <div class="idea-body">
             <div class="idea-title">{{ idea.title }}</div>
@@ -309,3 +295,66 @@
   </div><!-- end bottom-grid -->
 
 </main>
+
+<!-- ===== IDEA MODAL ===== -->
+<div class="modal-overlay" *ngIf="showIdeaModal" (click)="closeIdeaModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>💡 استخدام فكرة المحتوى</h3>
+      <button class="close-btn" (click)="closeIdeaModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" *ngIf="selectedIdea">
+      <div class="idea-preview-card">
+        <div class="idea-preview-plat">{{ getPlatformIcon(selectedIdea.platform) }} {{ getPlatformLabel(selectedIdea.platform) }}</div>
+        <div class="idea-preview-title">{{ selectedIdea.title }}</div>
+        <div class="idea-preview-desc">{{ selectedIdea.description }}</div>
+        <div class="idea-tags" style="margin-top:8px">
+          <span class="itag pri" [class]="selectedIdea.priority">{{ getPriorityLabel(selectedIdea.priority) }}</span>
+          <span class="itag type">{{ selectedIdea.type }}</span>
+        </div>
+      </div>
+      <p class="guide-intro" style="margin-top:16px">هل تريد إضافة هذه الفكرة كمسودة في جدول المحتوى؟</p>
+    </div>
+    <div class="modal-footer" style="gap:10px; display:flex; justify-content:flex-end;">
+      <button class="btn btn-secondary" (click)="closeIdeaModal()">إلغاء</button>
+      <button class="btn btn-primary" (click)="confirmUseIdea()">✅ إضافة للجدول</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCHEDULE MODAL ===== -->
+<div class="modal-overlay" *ngIf="showScheduleModal" (click)="closeScheduleModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📅 جدولة منشور جديد</h3>
+      <button class="close-btn" (click)="closeScheduleModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">عنوان المنشور</label>
+        <input class="form-input" type="text" [(ngModel)]="newPostTitle" placeholder="اكتب عنوان المنشور...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">المنصة</label>
+        <select class="form-input" [(ngModel)]="newPostPlatform">
+          <option value="instagram">📷 إنستجرام</option>
+          <option value="facebook">👍 فيسبوك</option>
+          <option value="twitter">🐦 تويتر</option>
+          <option value="linkedin">💼 لينكد إن</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">وقت النشر</label>
+        <input class="form-input" type="text" [(ngModel)]="newPostTime" placeholder="مثال: غداً - 10:00 ص">
+      </div>
+    </div>
+    <div class="modal-footer" style="gap:10px; display:flex; justify-content:flex-end;">
+      <button class="btn btn-secondary" (click)="closeScheduleModal()">إلغاء</button>
+      <button class="btn btn-primary" (click)="confirmSchedulePost()" [disabled]="!newPostTitle.trim()">📅 جدولة المنشور</button>
+    </div>
+  </div>
+</div>

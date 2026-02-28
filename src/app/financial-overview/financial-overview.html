@@ -77,9 +77,12 @@
       <!-- العنوان -->
       <div class="form-group" [class.has-error]="formErrors.title">
         <label class="form-label">
-          <span *ngIf="addModalType==='revenue'">عنوان الإيراد</span>
-          <span *ngIf="addModalType==='expense'">عنوان المصروف</span>
-          <span class="required">*</span>
+          <span>
+            <span *ngIf="addModalType==='revenue'">عنوان الإيراد</span>
+            <span *ngIf="addModalType==='expense'">عنوان المصروف</span>
+            <span class="required">*</span>
+          </span>
+          <span class="field-error" *ngIf="formErrors.title">{{ formErrors.title }}</span>
         </label>
         <input
           type="text"
@@ -87,12 +90,14 @@
           [(ngModel)]="newTransaction.title"
           [placeholder]="addModalType==='revenue' ? 'مثال: عقد تصميم موقع' : 'مثال: فاتورة إيجار المكتب'"
           maxlength="100">
-        <span class="field-error" *ngIf="formErrors.title">{{ formErrors.title }}</span>
       </div>
 
       <!-- المبلغ -->
       <div class="form-group" [class.has-error]="formErrors.amount">
-        <label class="form-label">المبلغ (ر.س) <span class="required">*</span></label>
+        <label class="form-label">
+          <span>المبلغ (ر.س) <span class="required">*</span></span>
+          <span class="field-error" *ngIf="formErrors.amount">{{ formErrors.amount }}</span>
+        </label>
         <div class="input-with-icon">
           <input
             type="number"
@@ -103,17 +108,18 @@
             step="0.01">
           <span class="input-suffix">ر.س</span>
         </div>
-        <span class="field-error" *ngIf="formErrors.amount">{{ formErrors.amount }}</span>
       </div>
 
       <!-- الفئة -->
       <div class="form-group" [class.has-error]="formErrors.category">
-        <label class="form-label">الفئة <span class="required">*</span></label>
+        <label class="form-label">
+          <span>الفئة <span class="required">*</span></span>
+          <span class="field-error" *ngIf="formErrors.category">{{ formErrors.category }}</span>
+        </label>
         <select class="form-input form-select" [(ngModel)]="newTransaction.category">
           <option value="">-- اختر الفئة --</option>
           <option *ngFor="let cat of modalCategories" [value]="cat">{{ cat }}</option>
         </select>
-        <span class="field-error" *ngIf="formErrors.category">{{ formErrors.category }}</span>
       </div>
 
       <!-- التاريخ -->
@@ -358,10 +364,10 @@
           <button class="act-btn act-expense" (click)="openAddModal('expense')">
             <div class="act-icon">💸</div><span>تسجيل مصروف</span>
           </button>
-          <button class="act-btn act-report" (click)="refreshFinancialData()">
+          <button class="act-btn act-report" (click)="openReportModal()">
             <div class="act-icon">📄</div><span>تصدير تقرير</span>
           </button>
-          <button class="act-btn act-chart">
+          <button class="act-btn act-chart" (click)="openAnalyticsModal()">
             <div class="act-icon">📊</div><span>تحليل تفصيلي</span>
           </button>
         </div>
@@ -371,3 +377,160 @@
   </div>
 
 </main>
+<!-- ===== EXPORT REPORT MODAL ===== -->
+<div class="modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
+  <div class="modal-container report-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📄 تصدير تقرير مالي</h3>
+      <button class="close-btn" (click)="closeReportModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="guide-intro">اختر نوع التقرير والفترة الزمنية لتصديره.</p>
+
+      <div class="report-options">
+        <div class="report-opt" [class.selected]="reportType==='summary'" (click)="reportType='summary'">
+          <div class="report-opt-icon">📊</div>
+          <div class="report-opt-info">
+            <div class="report-opt-title">ملخص مالي شامل</div>
+            <div class="report-opt-desc">إيرادات ومصروفات وأرباح وهامش الربح</div>
+          </div>
+          <div class="report-check"></div>
+        </div>
+        <div class="report-opt" [class.selected]="reportType==='transactions'" (click)="reportType='transactions'">
+          <div class="report-opt-icon">📝</div>
+          <div class="report-opt-info">
+            <div class="report-opt-title">سجل المعاملات التفصيلي</div>
+            <div class="report-opt-desc">جميع الإيرادات والمصروفات مع التفاصيل</div>
+          </div>
+          <div class="report-check"></div>
+        </div>
+        <div class="report-opt" [class.selected]="reportType==='categories'" (click)="reportType='categories'">
+          <div class="report-opt-icon">🗂️</div>
+          <div class="report-opt-info">
+            <div class="report-opt-title">تقرير حسب الفئات</div>
+            <div class="report-opt-desc">تحليل الإنفاق والإيرادات لكل فئة</div>
+          </div>
+          <div class="report-check"></div>
+        </div>
+      </div>
+
+      <div class="report-period-section">
+        <div class="report-period-title">الفترة الزمنية</div>
+        <div class="report-period-btns">
+          <button class="rp-btn" [class.active]="reportPeriod==='week'"    (click)="reportPeriod='week'">أسبوع</button>
+          <button class="rp-btn" [class.active]="reportPeriod==='month'"   (click)="reportPeriod='month'">شهر</button>
+          <button class="rp-btn" [class.active]="reportPeriod==='quarter'" (click)="reportPeriod='quarter'">ربع سنة</button>
+          <button class="rp-btn" [class.active]="reportPeriod==='year'"    (click)="reportPeriod='year'">سنة كاملة</button>
+        </div>
+      </div>
+
+      <div class="report-summary">
+        <div class="report-summary-title">📋 ملخص البيانات المضمّنة</div>
+        <div class="report-summary-row"><span>إجمالي الإيرادات</span><span>{{ formatCurrency(totalRevenue) }}</span></div>
+        <div class="report-summary-row"><span>إجمالي المصروفات</span><span>{{ formatCurrency(totalExpenses) }}</span></div>
+        <div class="report-summary-row"><span>صافي الربح</span><span>{{ formatCurrency(profit) }}</span></div>
+        <div class="report-summary-row"><span>عدد المعاملات</span><span>{{ transactions.length }} معاملة</span></div>
+      </div>
+    </div>
+    <div class="modal-footer modal-footer-btns">
+      <button class="btn-cancel" (click)="closeReportModal()">إلغاء</button>
+      <button class="btn-export" [class.spin]="isExporting" (click)="exportReport()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg>
+        {{ isExporting ? 'جاري التصدير...' : 'تصدير التقرير' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ANALYTICS MODAL ===== -->
+<div class="modal-overlay" *ngIf="showAnalyticsModal" (click)="closeAnalyticsModal()">
+  <div class="modal-container analytics-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>📊 التحليل التفصيلي</h3>
+      <button class="close-btn" (click)="closeAnalyticsModal()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <!-- KPIs -->
+      <div class="analytics-kpis">
+        <div class="akpi green">
+          <div class="akpi-icon">💰</div>
+          <div class="akpi-val">{{ formatCurrency(totalRevenue) }}</div>
+          <div class="akpi-lbl">إجمالي الإيرادات</div>
+        </div>
+        <div class="akpi red">
+          <div class="akpi-icon">💸</div>
+          <div class="akpi-val">{{ formatCurrency(totalExpenses) }}</div>
+          <div class="akpi-lbl">إجمالي المصروفات</div>
+        </div>
+        <div class="akpi" [class.green]="profit>=0" [class.red]="profit<0">
+          <div class="akpi-icon">📈</div>
+          <div class="akpi-val">{{ formatCurrency(profit) }}</div>
+          <div class="akpi-lbl">صافي الربح</div>
+        </div>
+        <div class="akpi">
+          <div class="akpi-icon">📉</div>
+          <div class="akpi-val">{{ profitMargin }}%</div>
+          <div class="akpi-lbl">هامش الربح</div>
+        </div>
+        <div class="akpi">
+          <div class="akpi-icon">📝</div>
+          <div class="akpi-val">{{ transactions.length }}</div>
+          <div class="akpi-lbl">إجمالي المعاملات</div>
+        </div>
+        <div class="akpi">
+          <div class="akpi-icon">📊</div>
+          <div class="akpi-val">{{ getAvgTransaction() }}</div>
+          <div class="akpi-lbl">متوسط المعاملة</div>
+        </div>
+      </div>
+
+      <!-- توزيع المصروفات -->
+      <div class="analytics-section">
+        <div class="analytics-section-title">💸 توزيع المصروفات حسب الفئة</div>
+        <div class="analytics-bars">
+          <div class="abar-row" *ngFor="let cat of expensesByCategory">
+            <div class="abar-label">{{ cat.name }}</div>
+            <div class="abar-track">
+              <div class="abar-fill" [class]="cat.color" [style.width.%]="cat.pct"></div>
+            </div>
+            <div class="abar-val">{{ formatCurrency(cat.amount) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- توزيع الإيرادات -->
+      <div class="analytics-section">
+        <div class="analytics-section-title">💰 توزيع الإيرادات حسب الفئة</div>
+        <div class="analytics-bars">
+          <div class="abar-row" *ngFor="let cat of revenuesByCategory">
+            <div class="abar-label">{{ cat.name }}</div>
+            <div class="abar-track">
+              <div class="abar-fill green" [style.width.%]="cat.pct"></div>
+            </div>
+            <div class="abar-val">{{ formatCurrency(cat.amount) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- التوصيات -->
+      <div class="analytics-section">
+        <div class="analytics-section-title">💡 رؤى وتوصيات</div>
+        <div class="analytics-insights">
+          <div class="insight-item" [class]="insights[0].type" *ngFor="let insight of insights">
+            <div class="insight-icon">{{ insight.icon }}</div>
+            <div class="insight-text" [innerHTML]="insight.text"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-export" (click)="closeAnalyticsModal()">إغلاق</button>
+    </div>
+  </div>
+</div>

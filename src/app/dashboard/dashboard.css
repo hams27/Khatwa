@@ -403,7 +403,7 @@ html, body { overflow-x: hidden; max-width: 100%; }
   animation: fadeUp 0.5s ease both;
   animation-delay: 0.25s;
 }
-
+.chart-card{max-width: 95%;}
 .chart-header,
 .card-header {
   display: flex;
@@ -1008,13 +1008,14 @@ h3.card-title,
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
+  .chart-card{max-width: 95%;}
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .charts-section { grid-template-columns: 1fr 1fr; }
   .chart-card.full-width { grid-column: 1 / -1; }
 }
 
 @media (max-width: 1023px) {
-  /* السايد بار overlay — كل margin يتشال */
+ .chart-card{max-width: 90%;}
   .top-nav,
   .top-nav.sidebar-collapsed            { margin-right: 0 !important; z-index: 900 !important; }
   .dashboard-main {
@@ -1028,7 +1029,7 @@ h3.card-title,
 }
 
 @media (max-width: 768px) {
-  /* إزالة الـ margin لأن الـ sidebar بيبقى overlay */
+.chart-card{max-width: 90%;}
   .top-nav,
   .top-nav.sidebar-collapsed { margin-right: 0 !important; padding: 0 16px; z-index: 900 !important; }
 
@@ -1078,6 +1079,7 @@ h3.card-title,
 }
 
 @media (max-width: 480px) {
+  .chart-card{max-width: 90%;}
   .metrics-grid { grid-template-columns: 1fr; }
   .actions-grid { grid-template-columns: 1fr 1fr; }
   .welcome-title { font-size: 16px; }

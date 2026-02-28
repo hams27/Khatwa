@@ -95,6 +95,18 @@ export class FinancialOverview implements OnInit, AfterViewInit, OnDestroy {
   addModalType: 'revenue' | 'expense' = 'revenue';
   isSubmitting = false;
 
+  // ── Report Modal ──
+  showReportModal  = false;
+  reportType: 'summary' | 'transactions' | 'categories' = 'summary';
+  reportPeriod: 'week' | 'month' | 'quarter' | 'year' = 'month';
+  isExporting = false;
+
+  // ── Analytics Modal ──
+  showAnalyticsModal = false;
+  expensesByCategory: { name: string; amount: number; pct: number; color: string }[] = [];
+  revenuesByCategory: { name: string; amount: number; pct: number }[] = [];
+  insights: { type: string; icon: string; text: string }[] = [];
+
   revenueCategories = ['خدمات رقمية', 'تطوير', 'تصميم', 'استشارات', 'عقود', 'مبيعات', 'أخرى'];
   expenseCategories = ['رواتب', 'إيجار', 'تسويق', 'تقنية', 'مواصلات', 'معدات', 'متفرقات'];
 
@@ -473,4 +485,115 @@ export class FinancialOverview implements OnInit, AfterViewInit, OnDestroy {
   openSidebar() { this.sidebarComponent?.openMobile(); }
   openGuide() { this.showGuide = true; }
   closeGuide() { this.showGuide = false; }
+
+  // ===== REPORT MODAL =====
+  openReportModal() { this.showReportModal = true; }
+  closeReportModal() { this.showReportModal = false; }
+
+  exportReport() {
+    this.isExporting = true;
+
+    const lines: string[] = [];
+    const now = new Date().toLocaleDateString('ar-SA');
+    const periodLabels: Record<string, string> = { week: 'أسبوع', month: 'شهر', quarter: 'ربع سنة', year: 'سنة كاملة' };
+
+    lines.push('تقرير مالي - خطوة');
+    lines.push('التاريخ: ' + now);
+    lines.push('الفترة: ' + periodLabels[this.reportPeriod]);
+    lines.push('');
+    lines.push('===== الملخص المالي =====');
+    lines.push('إجمالي الإيرادات: ' + this.formatCurrency(this.totalRevenue));
+    lines.push('إجمالي المصروفات: ' + this.formatCurrency(this.totalExpenses));
+    lines.push('صافي الربح: ' + this.formatCurrency(this.profit));
+    lines.push('هامش الربح: ' + this.profitMargin + '%');
+
+    if (this.reportType !== 'summary') {
+      lines.push('');
+      lines.push('===== سجل المعاملات =====');
+      lines.push('العنوان,النوع,الفئة,المبلغ,التاريخ');
+      this.transactions.forEach(tx => {
+        const type = tx.type === 'revenue' ? 'إيراد' : 'مصروف';
+        lines.push(`${tx.title},${type},${tx.category || ''},${Math.abs(tx.amount)},${tx.date}`);
+      });
+    }
+
+    const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `تقرير-مالي-${now.replace(/\//g, '-')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    setTimeout(() => {
+      this.isExporting = false;
+      this.closeReportModal();
+      this.successMessage = '✅ تم تصدير التقرير بنجاح';
+      setTimeout(() => this.successMessage = '', 3000);
+    }, 1200);
+  }
+
+  // ===== ANALYTICS MODAL =====
+  openAnalyticsModal() {
+    this.buildAnalyticsData();
+    this.showAnalyticsModal = true;
+  }
+  closeAnalyticsModal() { this.showAnalyticsModal = false; }
+
+  buildAnalyticsData() {
+    // expenses by category
+    const expMap: Record<string, number> = {};
+    const revMap: Record<string, number> = {};
+    this.transactions.forEach(tx => {
+      const cat = tx.category || 'أخرى';
+      if (tx.type === 'expense') expMap[cat] = (expMap[cat] || 0) + Math.abs(tx.amount);
+      if (tx.type === 'revenue') revMap[cat] = (revMap[cat] || 0) + tx.amount;
+    });
+
+    const expColors = ['red', 'blue', 'purple', 'orange', 'green'];
+    const sortedExp = Object.entries(expMap).sort((a, b) => b[1] - a[1]);
+    const maxExp = sortedExp[0]?.[1] || 1;
+    this.expensesByCategory = sortedExp.map(([name, amount], i) => ({
+      name, amount, pct: Math.round((amount / maxExp) * 100), color: expColors[i % expColors.length]
+    }));
+
+    const sortedRev = Object.entries(revMap).sort((a, b) => b[1] - a[1]);
+    const maxRev = sortedRev[0]?.[1] || 1;
+    this.revenuesByCategory = sortedRev.map(([name, amount]) => ({
+      name, amount, pct: Math.round((amount / maxRev) * 100)
+    }));
+
+    // insights
+    this.insights = [];
+    if (this.profitMargin >= 40) {
+      this.insights.push({ type: 'good', icon: '🎉', text: `هامش الربح <strong>${this.profitMargin}%</strong> ممتاز — أنت تُدير مشروعك بكفاءة عالية.` });
+    } else if (this.profitMargin >= 20) {
+      this.insights.push({ type: 'info', icon: '📈', text: `هامش الربح <strong>${this.profitMargin}%</strong> جيد — يمكن تحسينه بتقليل المصروفات التشغيلية.` });
+    } else {
+      this.insights.push({ type: 'warn', icon: '⚠️', text: `هامش الربح <strong>${this.profitMargin}%</strong> منخفض — راجع بنود المصروفات لتحسين الربحية.` });
+    }
+
+    const topExp = sortedExp[0];
+    if (topExp) {
+      const pct = this.totalExpenses > 0 ? Math.round((topExp[1] / this.totalExpenses) * 100) : 0;
+      this.insights.push({ type: 'info', icon: '💡', text: `أكبر بند مصروفات هو <strong>${topExp[0]}</strong> بنسبة <strong>${pct}%</strong> من إجمالي المصروفات.` });
+    }
+
+    const topRev = sortedRev[0];
+    if (topRev) {
+      const pct = this.totalRevenue > 0 ? Math.round((topRev[1] / this.totalRevenue) * 100) : 0;
+      this.insights.push({ type: 'good', icon: '🌟', text: `أكبر مصدر إيراد هو <strong>${topRev[0]}</strong> بنسبة <strong>${pct}%</strong> من إجمالي الإيرادات.` });
+    }
+
+    if (this.totalRevenue > this.totalExpenses * 1.5) {
+      this.insights.push({ type: 'good', icon: '🚀', text: 'إيراداتك تتجاوز مصروفاتك بنسبة كبيرة — المشروع في وضع مالي قوي.' });
+    }
+  }
+
+  getAvgTransaction(): string {
+    if (!this.transactions.length) return '0 ر.س';
+    const total = this.transactions.reduce((s, t) => s + Math.abs(t.amount), 0);
+    return this.formatCurrency(Math.round(total / this.transactions.length));
+  }
+
 }

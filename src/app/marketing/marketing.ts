@@ -7,6 +7,7 @@ import { ProjectService } from '../services/project';
 import { Subject, takeUntil, timeout, catchError, of } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
 import { AiChatComponent } from '../ai-chat/ai-chat';
+import { FormsModule } from '@angular/forms';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -36,7 +37,7 @@ interface ScheduledPost {
 
 @Component({
   selector: 'app-marketing',
-  imports: [CommonModule, SideBar, RouterLink , AiChatComponent],
+  imports: [CommonModule, SideBar, RouterLink, AiChatComponent, FormsModule],
   templateUrl: './marketing.html',
   styleUrls: ['./marketing.css'],
   standalone: true
@@ -64,6 +65,18 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   chartsLoading = false;
   isSidebarCollapsed = false;
 
+  // New Modal States
+  showIdeaModal = false;
+  showScheduleModal = false;
+  selectedIdea: ContentIdea | null = null;
+  newPostTitle = '';
+  newPostPlatform: 'instagram' | 'facebook' | 'twitter' | 'linkedin' = 'instagram';
+  newPostTime = '';
+
+  // Platform Filter
+  activePlatformFilter = 'all';
+  filteredIdeas: ContentIdea[] = [];
+
   // Computed
   avgDailyEngagement = '0';
   maxDailyEngagement = '0';
@@ -76,8 +89,6 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   publishedContent = 0;
   scheduledContent = 0;
   totalEngagement = '0';
-  activeCampaigns = 0;
-  daysRemaining = 0;
   contentGrowth = 0;
   engagementProgress = 0;
 
@@ -144,6 +155,7 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.initializeMockData();
     this.generateDailyEngagement();
+    this.loadMarketingData();
   }
 
   ngAfterViewInit() {
@@ -223,8 +235,6 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
     this.publishedContent = 24;
     this.scheduledContent = 8;
     this.totalEngagement = '12.5K';
-    this.activeCampaigns = 3;
-    this.daysRemaining = 15;
     this.contentGrowth = 12;
     this.engagementProgress = 75;
 
@@ -244,8 +254,6 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
     this.publishedContent = 24;
     this.scheduledContent = 8;
     this.totalEngagement = '12.5K';
-    this.activeCampaigns = 3;
-    this.daysRemaining = 15;
     this.contentGrowth = 12;
     this.engagementProgress = 75;
 
@@ -313,8 +321,25 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
         platform: 'linkedin',
         type: 'image',
         priority: 'high'
+      },
+      {
+        id: '4',
+        title: 'تريند هاشتاج أسبوعي',
+        description: 'استغلال الهاشتاجات الرائجة للوصول الأوسع',
+        platform: 'twitter',
+        type: 'post',
+        priority: 'medium'
+      },
+      {
+        id: '5',
+        title: 'مقال تعليمي تخصصي',
+        description: 'محتوى عمق يرفع المصداقية المهنية',
+        platform: 'linkedin',
+        type: 'article',
+        priority: 'low'
       }
     ];
+    this.filteredIdeas = [...this.contentIdeas];
   }
   
   generateDailyEngagement() {
@@ -328,8 +353,13 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
   }
 
   filterPlatform(platform: string) {
+    this.activePlatformFilter = platform;
     document.querySelectorAll('.ptab').forEach(el => el.classList.remove('active'));
-    event?.target && (event.target as HTMLElement).classList.add('active');
+    if (platform === 'all') {
+      this.filteredIdeas = [...this.contentIdeas];
+    } else {
+      this.filteredIdeas = this.contentIdeas.filter(idea => idea.platform === platform);
+    }
   }
 
   onSidebarToggle(collapsed: boolean) {
@@ -453,46 +483,97 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
 
   generateAIPlan() {
     this.isGeneratingAI = true;
-    
-    // Simulate AI generation
     setTimeout(() => {
       this.isGeneratingAI = false;
-      alert('سيتم إضافة هذه الميزة قريباً عند اكتمال تطوير الذكاء الاصطناعي');
+      this.generateAIContent();
     }, 2000);
   }
 
   createContent(idea?: ContentIdea) {
     if (idea) {
-      console.log('Creating content:', idea);
-      alert(`سيتم إنشاء محتوى: ${idea.title}`);
+      this.selectedIdea = idea;
+      this.newPostTitle = idea.title;
+      this.newPostPlatform = idea.platform;
     } else {
-      console.log('Creating new content');
-      alert('سيتم فتح نافذة إنشاء محتوى جديد');
+      this.selectedIdea = null;
+      this.newPostTitle = '';
+      this.newPostPlatform = 'instagram';
     }
+    this.newPostTime = '';
+    this.showScheduleModal = true;
   }
 
   useIdea(idea: ContentIdea) {
-    console.log('Using idea:', idea);
-    alert(`سيتم استخدام الفكرة: ${idea.title}`);
+    this.selectedIdea = idea;
+    this.showIdeaModal = true;
   }
+
+  closeIdeaModal() {
+    this.showIdeaModal = false;
+    this.selectedIdea = null;
+  }
+
+  confirmUseIdea() {
+    if (!this.selectedIdea) return;
+    this.scheduledPosts.unshift({
+      id: String(Date.now()),
+      title: this.selectedIdea.title,
+      scheduledTime: 'مجدول - قريباً',
+      platform: this.selectedIdea.platform,
+      status: 'draft'
+    });
+    this.scheduledContent++;
+    this.closeIdeaModal();
+  }
+
+  closeScheduleModal() {
+    this.showScheduleModal = false;
+    this.selectedIdea = null;
+    this.newPostTitle = '';
+    this.newPostTime = '';
+  }
+
+  confirmSchedulePost() {
+    if (!this.newPostTitle.trim()) return;
+    this.scheduledPosts.unshift({
+      id: String(Date.now()),
+      title: this.newPostTitle,
+      scheduledTime: this.newPostTime || 'غير محدد',
+      platform: this.newPostPlatform,
+      status: 'scheduled'
+    });
+    this.scheduledContent++;
+    this.closeScheduleModal();
+  }
+
 
   generateAIContent() {
     this.isGeneratingAI = true;
     
-    // Simulate AI generation
     setTimeout(() => {
       this.isGeneratingAI = false;
-      alert('تم توليد أفكار محتوى جديدة بواسطة الذكاء الاصطناعي');
       
-      // Add some AI-generated ideas
-      this.contentIdeas.unshift({
-        id: String(this.contentIdeas.length + 1),
-        title: 'محتوى مقترح من AI',
-        description: 'فكرة محتوى تم توليدها بالذكاء الاصطناعي',
-        platform: 'instagram',
-        type: 'post',
-        priority: 'high'
-      });
+      const aiIdeas: ContentIdea[] = [
+        {
+          id: String(Date.now()),
+          title: 'كيف يحل منتجنا مشكلتك؟',
+          description: 'محتوى problem/solution يزيد التحويل بشكل ملحوظ',
+          platform: 'instagram',
+          type: 'carousel',
+          priority: 'high'
+        },
+        {
+          id: String(Date.now() + 1),
+          title: 'وراء الكواليس - كيف نعمل',
+          description: 'محتوى أصيل يبني الثقة مع الجمهور',
+          platform: 'facebook',
+          type: 'video',
+          priority: 'medium'
+        }
+      ];
+      
+      this.contentIdeas.unshift(...aiIdeas);
+      this.filterPlatform(this.activePlatformFilter);
     }, 2000);
   }
 
@@ -506,14 +587,9 @@ export class Marketing implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/analytics']);
   }
 
-  viewCampaigns() {
-    console.log('Viewing campaigns');
-    alert('سيتم إضافة صفحة الحملات قريباً');
-  }
 
   viewSchedule() {
-    console.log('Viewing schedule');
-    alert('سيتم إضافة صفحة جدولة المنشورات قريباً');
+    this.showScheduleModal = true;
   }
 
   // ==================== UTILITY FUNCTIONS ====================

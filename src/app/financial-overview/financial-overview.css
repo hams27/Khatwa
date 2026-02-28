@@ -7,11 +7,13 @@
   padding: 0 32px; height: 64px;
   display: flex; align-items: center;
   margin-right: 260px;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
   box-shadow: 0 1px 12px rgba(37,99,235,.07);
-  transition: margin-right .3s cubic-bezier(.4,0,.2,1);
+  transition: margin-right .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
   font-family: "Ht Moshreq Pro", sans-serif !important;
 }
-.top-nav.sidebar-collapsed { margin-right: 72px; }
+.top-nav.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
 
 .nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
 .nav-left { display: flex; align-items: center; gap: 12px; }
@@ -76,10 +78,13 @@
   padding: 28px 32px;
   background: #f5f7ff;
   min-height: 100vh;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
+  overflow-x: hidden;
   font-family: "Ht Moshreq Pro", sans-serif !important;
-  transition: margin-right .3s cubic-bezier(.4,0,.2,1);
+  transition: margin-right .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
 }
-.finance-main.sidebar-collapsed { margin-right: 72px; }
+.finance-main.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
 
 /* ===== LOADING ===== */
 .loading-overlay {
@@ -117,10 +122,13 @@
   backdrop-filter: blur(4px);
   display: flex; align-items: center; justify-content: center;
   z-index: 300;
+  padding: 16px;
 }
 .modal-container {
   background: #fff; border-radius: 20px;
   width: 460px; max-width: 92vw;
+  max-height: 80vh;
+  display: flex; flex-direction: column;
   box-shadow: 0 24px 64px rgba(37,99,235,.15);
   animation: fadeUp .3s ease;
 }
@@ -128,7 +136,19 @@
   display: flex; align-items: center; justify-content: space-between;
   padding: 20px 24px 16px;
   border-bottom: 1px solid #bfcfef;
+  flex-shrink: 0;
 }
+.modal-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 20px 24px;
+}
+.modal-footer {
+  flex-shrink: 0;
+  padding: 16px 24px 20px;
+  border-top: 1px solid #bfcfef;
+}
+
 .modal-header h3 { font-size: 17px; font-weight: 700; color: #1a2e5e; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .close-btn {
   width: 32px; height: 32px; border-radius: 8px;
@@ -139,7 +159,6 @@
 .close-btn:hover { background: #dbeafe; }
 .close-btn svg { width: 14px; height: 14px; fill: #2563EB; }
 
-.modal-body { padding: 20px 24px; }
 .guide-intro { font-size: 14px; color: #2563EB; margin-bottom: 16px; line-height: 1.65; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .guide-features { display: flex; flex-direction: column; gap: 12px; }
 .guide-item {
@@ -150,7 +169,6 @@
 .guide-icon { font-size: 22px; flex-shrink: 0; }
 .guide-item h4 { font-size: 14px; font-weight: 700; color: #1a2e5e; margin: 0 0 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .guide-item p { font-size: 13px; color: #2563EB; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.modal-footer { padding: 16px 24px 20px; border-top: 1px solid #bfcfef; display: flex; justify-content: flex-end; }
 .btn-primary {
   padding: 11px 26px; background: #2563EB; color: #fff;
   border: none; border-radius: 10px;
@@ -236,6 +254,7 @@
   padding: 20px; box-shadow: 0 2px 16px rgba(37,99,235,.07);
   border: 1.5px solid #bfcfef;
   animation: fadeUp .5s ease both; animation-delay: .25s;
+  max-width: 95%;
 }
 .chart-card.full-width { width: 100%; }
 .chart-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
@@ -369,16 +388,19 @@
    RESPONSIVE — تابلت (< 1024px)
    ================================================================ */
 @media (max-width: 1023px) {
+ .chart-card{max-width: 95%;} 
 
   /* إلغاء الـ margin — السايد بار بيبقى overlay */
   .top-nav,
   .top-nav.sidebar-collapsed {
     margin-right: 0 !important;
+    width: 100% !important;
     transition: none;
   }
   .finance-main,
   .finance-main.sidebar-collapsed {
     margin-right: 0 !important;
+    width: 100% !important;
     transition: none;
   }
 
@@ -402,6 +424,7 @@
    RESPONSIVE — موبايل (< 768px)
    ================================================================ */
 @media (max-width: 768px) {
+ .chart-card{max-width: 90%;} 
 
   .top-nav        { padding: 0 16px; }
   .finance-main   { padding: 16px; }
@@ -425,6 +448,8 @@
    RESPONSIVE — موبايل صغير (< 480px)
    ================================================================ */
 @media (max-width: 480px) {
+   .chart-card{max-width: 90%;} 
+
   .metrics-grid { grid-template-columns: 1fr; }
   .welcome-title { font-size: 16px; }
   .actions-grid  { grid-template-columns: 1fr 1fr; }
@@ -439,40 +464,22 @@
 
 /* Form */
 .form-group { margin-bottom: 16px; }
-.form-group.has-error .form-input { border-color: #e53935; }
+.form-group.has-error .form-input { border-color: #e53935; background: #fff5f5; }
 
 .form-label {
-  display: block; font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 700;
   color: #1a2e5e; margin-bottom: 6px;
   font-family: "Ht Moshreq Pro", sans-serif !important;
 }
 .required { color: #e53935; margin-right: 2px; }
 
-.form-input {
-  width: 100%; padding: 10px 14px;
-  border: 1.5px solid #bfcfef; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 14px; color: #1a2e5e;
-  background: #f5f7ff;
-  outline: none; transition: border-color .2s;
-  box-sizing: border-box;
-}
-.form-input:focus { border-color: #2563EB; background: #fff; }
-.form-select { cursor: pointer; }
-.form-textarea { resize: vertical; min-height: 60px; }
-
-.input-with-icon { position: relative; }
-.input-with-icon .form-input { padding-left: 50px; }
-.input-suffix {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  font-size: 13px; font-weight: 700; color: #2563EB;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-
 .field-error {
-  display: block; font-size: 12px; color: #e53935;
-  margin-top: 4px; font-family: "Ht Moshreq Pro", sans-serif !important;
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: #e53935; font-weight: 600;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
 }
+.field-error::before { content: '⚠'; font-size: 11px; }
 
 /* Profit Preview */
 .profit-preview {
@@ -529,3 +536,125 @@
   font-family: "Ht Moshreq Pro", sans-serif !important;
   animation: fadeUp .3s ease;
 }
+/* ===== FORM INPUT (مكرر للتأكد من وجوده بعد التعديل) ===== */
+.form-input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid #bfcfef; border-radius: 10px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 14px; color: #1a2e5e;
+  background: #f5f7ff;
+  outline: none; transition: border-color .2s, background .2s;
+  box-sizing: border-box;
+}
+.form-input:focus { border-color: #2563EB; background: #fff; }
+.form-select { cursor: pointer; }
+.form-textarea { resize: vertical; min-height: 60px; }
+
+.input-with-icon { position: relative; }
+.input-with-icon .form-input { padding-left: 50px; }
+.input-suffix {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; font-weight: 700; color: #2563EB;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+/* ===== EXPORT REPORT MODAL ===== */
+.report-modal { width: 520px; max-width: 95vw; }
+
+.report-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.report-opt {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: 12px;
+  border: 1.5px solid #bfcfef; background: #f5f7ff;
+  cursor: pointer; transition: all .2s;
+}
+.report-opt:hover { border-color: #2563EB; background: #eff6ff; }
+.report-opt.selected { border-color: #2563EB; background: #dbeafe; }
+.report-opt-icon { font-size: 24px; flex-shrink: 0; }
+.report-opt-info { flex: 1; }
+.report-opt-title { font-size: 14px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-opt-desc  { font-size: 12px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #bfcfef; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.report-opt.selected .report-check { background: #2563EB; border-color: #2563EB; }
+.report-opt.selected .report-check::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+
+.report-period-section { margin-bottom: 16px; }
+.report-period-title { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 8px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-period-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.rp-btn {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid #bfcfef; background: #f5f7ff;
+  font-size: 12px; font-weight: 600; color: #2563EB;
+  cursor: pointer; transition: all .2s;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.rp-btn.active, .rp-btn:hover { background: #dbeafe; border-color: #2563EB; color: #1d4ed8; }
+
+.report-summary {
+  background: #f0fdf4; border: 1.5px solid #bbf7d0;
+  border-radius: 12px; padding: 14px 16px;
+}
+.report-summary-title { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 10px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: #1a2e5e; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-summary-row span:last-child { font-weight: 700; }
+
+.btn-export {
+  padding: 11px 28px; border: none; border-radius: 10px;
+  background: #2563EB; color: #fff;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-export:hover { background: #1d4ed8; transform: translateY(-1px); }
+.btn-export.spin svg { animation: spinAnim .8s linear infinite; }
+@keyframes spinAnim { to { transform: rotate(360deg); } }
+.btn-export svg { width: 15px; height: 15px; }
+
+/* ===== ANALYTICS MODAL ===== */
+.analytics-modal { width: 640px; max-width: 95vw; }
+
+.analytics-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.akpi {
+  background: #f5f7ff; border: 1.5px solid #bfcfef;
+  border-radius: 12px; padding: 14px; text-align: center;
+}
+.akpi-icon  { font-size: 22px; margin-bottom: 6px; }
+.akpi-val   { font-size: 18px; font-weight: 800; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.akpi-lbl   { font-size: 11px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.akpi.green { background: #f0fdf4; border-color: #bbf7d0; }
+.akpi.green .akpi-val { color: #166534; }
+.akpi.red   { background: #fff5f5; border-color: #fecaca; }
+.akpi.red   .akpi-val { color: #e53935; }
+
+.analytics-section { margin-bottom: 20px; }
+.analytics-section-title {
+  font-size: 14px; font-weight: 700; color: #1a2e5e;
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 2px solid #bfcfef;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+.analytics-bars { display: flex; flex-direction: column; gap: 10px; }
+.abar-row { display: flex; align-items: center; gap: 10px; }
+.abar-label { font-size: 12px; font-weight: 600; color: #1a2e5e; min-width: 80px; text-align: right; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.abar-track { flex: 1; height: 10px; background: #e0eaff; border-radius: 10px; overflow: hidden; }
+.abar-fill  { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+.abar-fill.green { background: linear-gradient(90deg, #1f9950, #00e676); }
+.abar-fill.red   { background: linear-gradient(90deg, #e53935, #ff7043); }
+.abar-fill.blue  { background: linear-gradient(90deg, #1e88e5, #64b5f6); }
+.abar-fill.purple{ background: linear-gradient(90deg, #7c4dff, #b388ff); }
+.abar-fill.orange{ background: linear-gradient(90deg, #ffa726, #ffcc02); }
+.abar-val  { font-size: 12px; font-weight: 700; color: #1a2e5e; min-width: 80px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+.analytics-insights { display: flex; flex-direction: column; gap: 8px; }
+.insight-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border-radius: 10px;
+}
+.insight-item.good   { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.insight-item.warn   { background: #fffbeb; border: 1px solid #fde68a; }
+.insight-item.info   { background: #eff6ff; border: 1px solid #bfcfef; }
+.insight-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.insight-text { font-size: 13px; color: #1a2e5e; line-height: 1.5; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.insight-text strong { font-weight: 700; }
