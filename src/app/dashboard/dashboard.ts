@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { ProjectService, Project } from '../services/project';
 import { TaskService } from '../services/task';
@@ -46,7 +46,7 @@ interface Activity {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [SideBar, CommonModule,AiChatComponent],
+  imports: [SideBar, CommonModule, AiChatComponent, RouterLink, RouterModule],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css',
   standalone: true
@@ -759,37 +759,51 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
   }
 
   completeTask(taskId: number) {
-    if (!this.currentProject) return;
+    // إزالة المهمة من القائمة وتحديث العدادات
+    const taskIndex = this.upcomingTasks.findIndex(t => t.id === taskId);
+    if (taskIndex === -1) return;
 
-    this.taskService.updateTask(taskId, { status: 'done' })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.loadProjectData(this.currentProject!.id!);
-        },
-        error: (error) => {
-          console.error('Error completing task:', error);
-        }
-      });
+    // أزل المهمة من القائمة
+    this.upcomingTasks.splice(taskIndex, 1);
+
+    // حدّث العدادات
+    this.completedTasks++;
+    this.totalTasks = this.upcomingTasks.length + this.completedTasks;
+    if (this.totalTasks > 0) {
+      this.tasksProgress = Math.round((this.completedTasks / this.totalTasks) * 100);
+    }
+
+    // حدّث الـ progress steps
+    if (this.totalTasks > 0) {
+      this.progressSteps[0].done = true;
+      this.projectProgress = Math.min(this.projectProgress + 5, 100);
+    }
+
+    // أضف للنشاط الأخير
+    this.recentActivities.unshift({
+      type: 'task',
+      message: 'تم إكمال مهمة بنجاح ✓',
+      timestamp: new Date()
+    });
+
+    // لو في API — استخدم الكود ده
+    // if (!this.currentProject) return;
+    // this.taskService.updateTask(taskId, { status: 'done' })
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe({ next: () => this.loadProjectData(this.currentProject!.id!) });
   }
 
   handleInsightAction(action: string) {
-    switch (action) {
-      case 'tasks':
-        this.router.navigate(['/tasks-and-team']);
-        break;
-      case 'finance':
-        this.router.navigate(['/financial-overview']);
-        break;
-      case 'create-project':
-        this.createNewProject();
-        break;
-      case 'team':
-        this.router.navigate(['/tasks-and-team']);
-        break;
-      case 'marketing':
-        this.router.navigate(['/marketing']);
-        break;
+    const routes: { [key: string]: string } = {
+      'tasks':          '/tasks-and-team',
+      'finance':        '/financial-overview',
+      'team':           '/tasks-and-team',
+      'marketing':      '/marketing',
+    };
+    if (action === 'create-project') {
+      this.createNewProject();
+    } else if (routes[action]) {
+      this.router.navigate([routes[action]]);
     }
   }
 
