@@ -4,12 +4,19 @@
 /* ===== SCROLL REVEAL ===== */
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+              transform 0.6s cubic-bezier(0.16,1,0.3,1);
 }
 .scroll-reveal.visible {
   opacity: 1;
   transform: translateY(0);
+}
+/* عناصر already visible في الـ viewport — بدون animation */
+.scroll-reveal.visible-instant {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: none !important;
 }
 .reveal-up {
   opacity: 0;
@@ -296,7 +303,7 @@
   box-shadow: 0 2px 16px rgba(37,99,235,0.05);
 }
 .step-card:hover { background: #f8fbff; border-color: rgba(37,99,235,0.30); box-shadow: 0 6px 32px rgba(37,99,235,0.10); }
-.step-icon-wrap { font-size: 34px; margin-bottom: 14px; }
+.step-icon-wrap { font-size: 34px; margin-bottom: 14px;  color: #2563EB;}
 .step-card h3 { font-size: 22px; font-weight: 800; color: var(--blue-dark); margin-bottom: 9px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .step-card p { font-size: 16px; color: rgba(26,35,64,0.55); line-height: 1.75; margin-bottom: 18px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .step-badge {
@@ -329,7 +336,7 @@
 }
 .bento-big { height: 300px; }
 .bento-wide { grid-column: span 2; }
-.bento-icon { font-size: 32px; margin-bottom: 14px; }
+.bento-icon { font-size: 32px; margin-bottom: 14px;  color: #2563EB;}
 .bento-card h3 { font-size: 18px; font-weight: 800; color: var(--blue-dark); margin-bottom: 9px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .bento-card p { font-size: 15px; color: rgba(26,35,64,0.55); line-height: 1.65; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
@@ -416,6 +423,7 @@
 }
 
 .t-stars { font-size: 16px; margin-bottom: 13px; }
+.t-stars img { filter: brightness(0) saturate(100%) invert(80%) sepia(60%) saturate(400%) hue-rotate(5deg); }
 .t-text { font-size: 15px; color: rgba(26,35,64,0.68); line-height: 1.75; margin-bottom: 22px; font-style: italic; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .t-author { display: flex; align-items: center; gap: 13px; }
 .t-avatar {
@@ -891,4 +899,64 @@ text-align: right;
   .hero-title { font-size: 32px; }
   .hero-badge { font-size: 13px; padding: 7px 14px; }
   .hero-sub { font-size: 15px; }
+}
+/* ===== FAB — SCROLL TO TOP ===== */
+.fab-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 999;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #2563EB;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.45);
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16,1,0.3,1),
+              transform 0.35s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.3s,
+              background 0.3s;
+}
+.fab-top .bi{
+  color: #f0f4ff !important;
+}
+.fab-top svg {
+  fill: #ffffff !important;
+  transition: transform 0.3s;
+}
+
+.fab-top.fab-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.fab-top:hover {
+  background: #1d4ed8;
+  box-shadow: 0 12px 40px rgba(37,99,235,0.65);
+  transform: translateY(-4px) scale(1.08);
+}
+
+.fab-top:hover svg {
+  transform: translateY(-2px);
+}
+
+.fab-top:active {
+  transform: scale(0.94);
+}
+
+@media (max-width: 768px) {
+  .fab-top {
+    bottom: 20px;
+    right: 20px;
+    width: 46px;
+    height: 46px;
+  }
 }
