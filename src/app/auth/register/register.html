@@ -27,6 +27,21 @@
         <p>{{ errorMessage }}</p>
       </div>
 
+      <!-- Email Already Exists Notification -->
+      <div class="email-exists-box" *ngIf="emailExists" data-aos="zoom-in">
+        <div class="email-exists-icon">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="email-exists-content">
+          <p class="email-exists-title">هذا البريد مسجّل بالفعل!</p>
+          <p class="email-exists-sub">يبدو أن لديك حساباً بالفعل، سجّل دخولك للمتابعة</p>
+          <a routerLink="/login" class="go-login-btn">
+            <i class="fas fa-sign-in-alt"></i>
+            تسجيل الدخول
+          </a>
+        </div>
+      </div>
+
       <!-- Register Form -->
       <form class="register-form" (ngSubmit)="onSubmit()" *ngIf="!registerSuccess">
         

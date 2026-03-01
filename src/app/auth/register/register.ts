@@ -26,6 +26,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   isLoading = false;
   registerSuccess = false;
   registerError = false;
+  emailExists = false;
   errorMessage = '';
   formSubmitted = false;
 
@@ -146,6 +147,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
 
     this.isLoading = true;
     this.registerError = false;
+    this.emailExists = false;
 
     this.authService.register({
       name: this.fullName,
@@ -165,12 +167,25 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
         setTimeout(() => this.router.navigate(['/layout']), 1500);
       },
       error: (error: any) => {
-        this.registerError = true;
         this.isLoading = false;
-        if (error.error?.message) this.errorMessage = error.error.message;
-        else if (error.status === 400) this.errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
-        else if (error.status === 0) this.errorMessage = 'فشل الاتصال بالسيرفر';
-        else this.errorMessage = 'حدث خطأ. حاول مرة أخرى';
+
+        const msg = error.error?.message?.toLowerCase() ?? '';
+        const isEmailExists =
+          error.status === 400 ||
+          error.status === 409 ||
+          msg.includes('exist') ||
+          msg.includes('already') ||
+          msg.includes('مستخدم') ||
+          msg.includes('موجود');
+
+        if (isEmailExists) {
+          this.emailExists = true;
+        } else {
+          this.registerError = true;
+          if (error.status === 0) this.errorMessage = 'فشل الاتصال بالسيرفر';
+          else this.errorMessage = error.error?.message ?? 'حدث خطأ. حاول مرة أخرى';
+        }
+
         this.shakeForm();
       }
     });
