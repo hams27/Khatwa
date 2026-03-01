@@ -155,7 +155,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
 
-    const elements = document.querySelectorAll('.scroll-reveal');
+    const elements = document.querySelectorAll('.scroll-reveal, .need-card, .step-block, .bento-card, .bento-big, .faq-item, .t-card');
     elements.forEach(el => {
       const rect = el.getBoundingClientRect();
       if (rect.top < window.innerHeight && rect.bottom > 0) {
