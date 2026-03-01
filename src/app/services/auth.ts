@@ -56,16 +56,24 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
     return this.http.post<any>(`${this.apiUrl}/auth/register`, data)
       .pipe(
         map(response => {
-          // حفظ Token في localStorage بعد التسجيل
           if (response.success && response.token) {
             localStorage.setItem('token', response.token);
-            
-            // جلب بيانات المستخدم من endpoint تاني
+
+            // ✅ احفظ الاسم فوراً من بيانات التسجيل قبل ما getProfile يرجع
+            const immediateUser = {
+              name: data.name,
+              email: data.email,
+            };
+            localStorage.setItem('currentUser', JSON.stringify(immediateUser));
+            this.currentUserSubject.next(immediateUser);
+
+            // جلب بيانات المستخدم الكاملة من الباك (id وغيره)
             this.getProfile().subscribe({
               next: (profileResponse) => {
-                if (profileResponse.success && profileResponse.data) {
-                  localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
-                  this.currentUserSubject.next(profileResponse.data);
+                const user = profileResponse?.data?.user ?? profileResponse?.data ?? profileResponse?.user ?? null;
+                if (user?.name) {
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  this.currentUserSubject.next(user);
                 }
               },
               error: (error) => {
@@ -83,16 +91,16 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
     return this.http.post<any>(`${this.apiUrl}/auth/login`, data)
       .pipe(
         map(response => {
-          // حفظ Token في localStorage
           if (response.success && response.token) {
             localStorage.setItem('token', response.token);
-            
-            // الباك إند بيبعت token بس، فهنجيب الـ user data من endpoint تاني
+
+            // جلب بيانات المستخدم من الباك
             this.getProfile().subscribe({
               next: (profileResponse) => {
-                if (profileResponse.success && profileResponse.data) {
-                  localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
-                  this.currentUserSubject.next(profileResponse.data);
+                const user = profileResponse?.data?.user ?? profileResponse?.data ?? profileResponse?.user ?? null;
+                if (user?.name) {
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  this.currentUserSubject.next(user);
                 }
               },
               error: (error) => {
@@ -146,9 +154,10 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
     localStorage.setItem('token', token);
     this.getProfile().subscribe({
       next: (profileResponse) => {
-        if (profileResponse.success && profileResponse.data) {
-          localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
-          this.currentUserSubject.next(profileResponse.data);
+        const user = profileResponse?.data?.user ?? profileResponse?.data ?? profileResponse?.user ?? null;
+        if (user?.name) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
         }
       },
       error: (error) => {
