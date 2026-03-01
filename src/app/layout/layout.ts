@@ -56,8 +56,18 @@ export class Layout implements OnInit {
   ) {}
 
   ngOnInit() {
-    // الـ key مرتبط بالـ user — لا حاجة لمسح البيانات يدوياً
-    this.loadProgress();
+    // امسح أي progress قديم مرتبط بـ guest أو sessions سابقة
+    localStorage.removeItem('onboarding_progress_guest');
+
+    // لو في user محفوظ امسح progress القديم بتاعه عشان يبدأ من الأول
+    const user = this.authService.currentUserValue;
+    if (user) {
+      const uid = user?.id ?? user?.email ?? 'guest';
+      localStorage.removeItem(`onboarding_progress_${uid}`);
+    }
+
+    // ابدأ من Step 1 دايماً
+    this.step = 1;
   }
 
   /** يرجع مفتاح فريد لكل مستخدم بناءً على user id أو email */
