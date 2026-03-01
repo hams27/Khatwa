@@ -34,7 +34,7 @@ export class SideBar {
   ];
 
   userInfo = {
-    name: 'محمد أحمد',
+    name: 'المستخدم',
     role: 'صاحب مشروع',
     avatar: 'م'
   };
@@ -43,7 +43,14 @@ export class SideBar {
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    // جلب بيانات المستخدم من AuthService (localStorage / JWT)
+    const user = this.authService.currentUserValue;
+    if (user?.name) {
+      this.userInfo.name   = user.name;
+      this.userInfo.avatar = user.name.trim().charAt(0);
+    }
+  }
 
   @HostListener('document:keydown.escape')
   onEscapeKey() {

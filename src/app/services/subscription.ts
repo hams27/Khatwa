@@ -16,7 +16,7 @@ export interface Subscription {
   providedIn: 'root'
 })
 export class SubscriptionService {
-  private apiUrl = 'http://localhost:5000/api/v1/subscriptions';
+  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1/subscriptions';
 
   constructor(private http: HttpClient) {}
 

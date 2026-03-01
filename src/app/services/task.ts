@@ -17,7 +17,7 @@ export interface Task {
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:5000/api/v1';
+  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
 
   constructor(private http: HttpClient) {}
 

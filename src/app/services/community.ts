@@ -33,7 +33,7 @@ export interface Comment {
   providedIn: 'root'
 })
 export class CommunityService {
-  private apiUrl = 'http://localhost:5000/api/v1/community';
+  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1/community';
 
   constructor(private http: HttpClient) {}
 

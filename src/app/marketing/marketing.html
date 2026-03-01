@@ -207,19 +207,19 @@
         </div>
       </div>
 
-      <!-- marketingSteps تُحمَّل من loadPlanProgress() -->
+      <!-- marketingSteps — كل خطوة قابلة للنقر لتحديدها أو إلغاء تحديدها
+           toggleStep(i) يُحدّث status الخطوة ويُعيد حساب planProgress والدائرة -->
       <div class="steps-list">
         <div class="step-row"
           *ngFor="let step of marketingSteps; let i = index"
           [class.done]="step.status === 'completed'"
           [class.active]="step.status === 'active'"
-          [class.pending]="step.status === 'pending'">
+          [class.pending]="step.status === 'pending'"
+          (click)="toggleStep(i)"
+          [title]="step.status === 'completed' ? 'اضغط لإلغاء التحديد' : 'اضغط للتحديد كمكتمل'">
           <div class="step-num">
-            <!-- أيقونة مكتمل -->
             <i class="bi bi-check-lg" *ngIf="step.status === 'completed'"></i>
-            <!-- أيقونة جارٍ -->
             <i class="bi bi-arrow-repeat" *ngIf="step.status === 'active'"></i>
-            <!-- رقم الخطوة لو pending -->
             <span *ngIf="step.status === 'pending'">{{ i + 1 }}</span>
           </div>
           <div class="step-info">
@@ -229,6 +229,9 @@
           <span class="step-badge" [class]="step.status">
             {{ step.status === 'completed' ? 'مكتمل' : step.status === 'active' ? 'جارٍ' : 'قادم' }}
           </span>
+          <i class="bi step-toggle-hint"
+            [class.bi-check-circle]="step.status !== 'completed'"
+            [class.bi-x-circle]="step.status === 'completed'"></i>
         </div>
       </div>
     </div>

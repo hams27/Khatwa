@@ -266,6 +266,26 @@
 .step-badge.active    { background: rgba(37,99,235,.15); color: #1a2e5e; }
 .step-badge.pending   { background: #f5f7ff; color: #2563EB; border: 1px solid #bfcfef; }
 
+/* ── Step interactive ── */
+.step-row {
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.step-row:hover {
+  transform: translateX(-2px);
+  box-shadow: 0 2px 10px rgba(37,99,235,.10);
+}
+.step-toggle-hint {
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+.step-row:hover .step-toggle-hint { opacity: 1; }
+.step-row.pending .step-toggle-hint,
+.step-row.active  .step-toggle-hint { color: #2563EB; }
+.step-row.done    .step-toggle-hint { color: #ef5350; }
+
 /* ================================================================
    10. CONTENT SCHEDULE
    ================================================================ */

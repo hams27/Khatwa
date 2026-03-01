@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '../services/auth';
 
 export interface OnboardingData {
   projectStage: string;
@@ -50,11 +51,20 @@ export class Layout implements OnInit {
 
   constructor(
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    // الـ key مرتبط بالـ user — لا حاجة لمسح البيانات يدوياً
     this.loadProgress();
+  }
+
+  /** يرجع مفتاح فريد لكل مستخدم بناءً على user id أو email */
+  private get progressKey(): string {
+    const user = this.authService.currentUserValue;
+    const uid  = user?.id ?? user?.email ?? 'guest';
+    return `onboarding_progress_${uid}`;
   }
 
   // ===== SELECTIONS =====
@@ -209,7 +219,7 @@ export class Layout implements OnInit {
 
   // ===== PROGRESS =====
   saveProgress() {
-    localStorage.setItem('onboarding_progress', JSON.stringify({
+    localStorage.setItem(this.progressKey, JSON.stringify({
       step: this.step,
       selectedStep: this.selectedStep,
       selectedGoal: this.selectedGoal,
@@ -221,19 +231,23 @@ export class Layout implements OnInit {
   }
 
   loadProgress() {
-    const saved = localStorage.getItem('onboarding_progress');
+    const saved = localStorage.getItem(this.progressKey);
     if (!saved) return;
     try {
       const p = JSON.parse(saved);
-      this.step = p.step || 1;
-      this.selectedStep = p.selectedStep || '';
-      this.selectedGoal = p.selectedGoal || '';
-      this.selectedField = p.selectedField || '';
-      this.selectedTeamSize = p.selectedTeamSize || '';
-      this.challenges = p.challenges || [];
-      this.goals = p.goals || [];
+      this.step            = p.step            || 1;
+      this.selectedStep    = p.selectedStep    || '';
+      this.selectedGoal    = p.selectedGoal    || '';
+      this.selectedField   = p.selectedField   || '';
+      this.selectedTeamSize= p.selectedTeamSize|| '';
+      this.challenges      = p.challenges      || [];
+      this.goals           = p.goals           || [];
     } catch { this.clearProgress(); }
   }
 
-  clearProgress() { localStorage.removeItem('onboarding_progress'); }
+  clearProgress() {
+    localStorage.removeItem(this.progressKey);
+    // امسح أي keys قديمة غير مرتبطة بـ user (من الإصدار السابق)
+    localStorage.removeItem('onboarding_progress');
+  }
 }

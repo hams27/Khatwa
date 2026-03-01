@@ -36,7 +36,7 @@ html, body {
 .header {
   position: fixed; top: 0; right: 0; left: 0; z-index: 1000;
   padding: 0 32px; height: 80px;
-  display: flex; align-items: center; flex-wrap: wrap;
+  display: flex; align-items: center;
   transition: all 0.4s ease;
 }
 .header.scrolled {
@@ -46,7 +46,7 @@ html, body {
   box-shadow: 0 4px 30px rgba(37,99,235,0.10);
 }
 .header-inner {
-  width: 100%; max-width: 1280px; margin: 0 auto;
+  width: 100%;  margin: 0 auto;
   display: flex; align-items: center; gap: 40px;
 }
 .logo img{ height: 100px; width: 100px; filter: none; }
@@ -254,13 +254,13 @@ html, body {
   display: inline-block; padding: 7px 18px;
   background: rgba(37,99,235,0.10); border: 1px solid rgba(37,99,235,0.30);
   color: #2563EB; font-size: 13px; font-weight: 700; border-radius: 100px;
-  margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5em;
   font-family: "Ht Moshreq Pro", sans-serif !important;
 }
 .section-title {
   font-family: "Ht Moshreq Pro", sans-serif !important;
   font-size: clamp(32px, 5vw, 56px);
-  font-weight: 900; color: var(--blue-dark); line-height: 1.7; margin-bottom: 18px;
+  font-weight: 900; color: var(--blue-dark); line-height: 1.9; margin-bottom: 18px;
 }
 .section-title .accent { color: #2563EB; }
 .section-desc { font-size: 18px; color: rgba(26,35,64,0.55); margin-bottom: 64px; font-family: "Ht Moshreq Pro", sans-serif !important; }
@@ -719,6 +719,7 @@ text-align: right;
 }
 
 .footer-logo {
+  margin-left: 350px;
   height: 44px;
   margin-bottom: 20px;
 }
@@ -895,12 +896,14 @@ text-align: right;
 
 /* ── 1280px+ : كبير جداً ── */
 @media (min-width: 1280px) {
-  .header-inner { max-width: 1400px; }
-  .section-wrap { max-width: 1300px; }
+  .header-inner { max-width: 90%; }
+  .section-wrap { max-width: 90%; }
 }
 
 /* ── Tablet Landscape : 1024px ── */
 @media (max-width: 1024px) {
+  .header-inner { max-width: 90%; }
+  .section-wrap { max-width: 90%; }
   .needs-grid { grid-template-columns: repeat(2,1fr); }
   .features-bento { grid-template-columns: repeat(2,1fr); grid-auto-rows: auto; }
   .bento-wide { grid-column: span 2; }
@@ -913,13 +916,14 @@ text-align: right;
 
 /* ── Tablet Portrait : 768px ── */
 @media (max-width: 768px) {
+  .header-inner { max-width: 85%; }
+  .section-wrap { max-width: 85%; }
   /* Navbar */
-  .header { padding: 0 16px; position: relative; }
   .logo img { width: 70px; height: 70px; }
   .nav-links { display: none; }
   .btn-cta-nav { display: none; }
   .mobile-menu-btn { display: flex; }
-  /* mobile-menu: لا نعمله display:flex هنا عشان الـ max-height animation تشتغل صح */
+  .mobile-menu { display: flex; }
 
   /* Hero */
   .hero-content { padding: 110px 20px 70px; }
@@ -973,94 +977,6 @@ text-align: right;
   .footer-logo { padding-left: 0 !important; }
   .footer-bottom { flex-direction: column; align-items: center; text-align: center; gap: 16px; }
   .footer-bottom-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
-}
-
-/* ── Mobile : 480px ── */
-@media (max-width: 480px) {
-  /* Navbar */
-  .logo img { width: 56px; height: 56px; }
-
-  /* Hero */
-  .hero-content { padding: 100px 16px 60px; }
-  .hero-title { font-size: 30px; line-height: 1.3; }
-  .hero-badge { font-size: 12px; padding: 7px 14px; gap: 6px; }
-  .hero-sub { font-size: 14px; }
-  .hero-stats { gap: 16px; }
-  .h-stat-val { font-size: 24px; }
-  .h-stat-lbl { font-size: 12px; }
-  .btn-hero-primary, .btn-hero-secondary { font-size: 16px; padding: 14px 24px; }
-
-  /* Sections */
-  .section-wrap { padding: 60px 14px; }
-  .section-title { font-size: 24px; }
-  .section-tag { font-size: 11px; padding: 6px 14px; }
-
-  /* Cards */
-  .need-card { padding: 22px; }
-  .need-card h3 { font-size: 17px; }
-  .step-card { padding: 18px; }
-  .bento-card { padding: 18px; }
-  .bento-card h3 { font-size: 16px; }
-
-  /* Testimonials */
-  .t-card { width: 260px; padding: 18px; }
-  .t-text { font-size: 13px; }
-  .t-name { font-size: 14px; }
-
-  /* FAQ */
-  .faq-q { font-size: 14px; padding: 16px 16px; }
-  .faq-a p { padding: 0 16px 16px; font-size: 13px; }
-
-  /* Contact */
-  .contact-methods { flex-direction: column; align-items: center; gap: 20px; }
-  .contact-method span:first-child { width: 70px; height: 70px; font-size: 24px; }
-
-  /* Footer */
-  .footer-social { flex-wrap: wrap; gap: 8px; }
-  .footer-bottom-links { flex-direction: column; align-items: center; gap: 8px; }
-  .footer-bottom-links a { font-size: 12px; }
-}
-
-/* ── Small Mobile : 360px ── */
-@media (max-width: 360px) {
-  .hero-title { font-size: 26px; }
-  .hero-stats { flex-direction: column; gap: 12px; }
-  .h-stat { display: flex; align-items: center; gap: 12px; }
-  .h-stat-val { font-size: 22px; }
-  .btn-cta-nav { font-size: 14px; padding: 10px 18px; }
-  .t-card { width: 240px; }
-}
-
-/* ── 524px ── */
-@media (max-width: 524px) {
-  .header { padding: 0 14px; height: 64px; }
-  .logo img { width: 58px; height: 58px; }
-  .mobile-menu { top: 64px; }
-  .mobile-menu-btn span { width: 22px; }
-  .mobile-link { font-size: 16px; padding: 12px 16px; }
-  .btn-cta-nav { font-size: 15px; padding: 10px 18px; border-radius: 12px; }
-}
-
-/* ── 375px ── */
-@media (max-width: 375px) {
-  .header { padding: 0 12px; height: 60px; }
-  .header-inner { gap: 8px; }
-  .logo img { width: 52px; height: 52px; }
-  .mobile-menu { top: 60px; padding: 0 16px; }
-  .mobile-menu.open { padding: 16px; }
-  .mobile-menu-btn span { width: 20px; }
-  .mobile-link { font-size: 15px; padding: 11px 14px; }
-  .btn-cta-nav { font-size: 14px; padding: 9px 16px; border-radius: 10px; width: 100%; justify-content: center; }
-}
-
-/* ── 320px ── */
-@media (max-width: 320px) {
-  .header { padding: 0 10px; height: 56px; }
-  .logo img { width: 46px; height: 46px; }
-  .mobile-menu { top: 56px; }
-  .mobile-menu.open { padding: 14px 12px; }
-  .mobile-link { font-size: 14px; padding: 10px 12px; }
-  .btn-cta-nav { font-size: 13px; padding: 8px 14px; }
 }
 
 /* ===== FAB — SCROLL TO TOP ===== */

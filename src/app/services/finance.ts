@@ -25,7 +25,7 @@ export interface FinancialSummary {
   providedIn: 'root'
 })
 export class FinanceService {
-  private apiUrl = 'http://localhost:5000/api/v1';
+  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
 
   constructor(private http: HttpClient) {}
 

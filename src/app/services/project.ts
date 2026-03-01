@@ -16,7 +16,7 @@ export interface Project {
   providedIn: 'root'
 })
 export class ProjectService {
-  private apiUrl = 'http://localhost:5000/api/v1/projects';
+  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1/projects';
 
   constructor(private http: HttpClient) {}
 

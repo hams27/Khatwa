@@ -107,6 +107,15 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
 
   // تسجيل الخروج
   logout() {
+    // امسح بيانات الـ onboarding المرتبطة بالـ user الحالي
+    const user = this.currentUserSubject.value;
+    if (user) {
+      const uid = user.id ?? user.email ?? 'guest';
+      localStorage.removeItem(`onboarding_progress_${uid}`);
+    }
+    // امسح الـ key القديم (للتوافق مع الإصدار السابق)
+    localStorage.removeItem('onboarding_progress');
+
     localStorage.removeItem('token');
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);

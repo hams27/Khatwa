@@ -303,6 +303,38 @@ export class Marketing implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * يُبدِّل حالة الخطوة عند النقر عليها:
+   *   pending/active → completed
+   *   completed      → pending
+   * ثم يُعيد حساب completedSteps و planProgress لتحديث الدائرة فوراً
+   * ENDPOINT (عند الربط): PATCH /api/v1/marketing/plan-progress
+   *   Body: { project_id, stepIndex: i, status }
+   */
+  toggleStep(index: number): void {
+    const step = this.marketingSteps[index];
+
+    // Toggle: مكتمل → قادم | قادم/جارٍ → مكتمل
+    if (step.status === 'completed') {
+      step.status = 'pending';
+    } else {
+      step.status = 'completed';
+    }
+
+    // أعد حساب عدد الخطوات المكتملة
+    this.completedSteps = this.marketingSteps.filter(s => s.status === 'completed').length;
+
+    // تحديث planProgress → يُحرّك الدائرة فوراً
+    this.planProgress = this.totalSteps > 0
+      ? Math.round((this.completedSteps / this.totalSteps) * 100)
+      : 0;
+
+    // TODO: أرسل التحديث للـ API
+    // this.marketingService.updateStepStatus(this.currentProjectId, index, step.status)
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe();
+  }
+
   // ─────────────────────────────────────────────
   // ENGAGEMENT STATS HELPERS
   // ─────────────────────────────────────────────
