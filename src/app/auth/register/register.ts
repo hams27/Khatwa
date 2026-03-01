@@ -154,9 +154,7 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
     }).subscribe({
       next: (response: any) => {
         console.log('✅ تم التسجيل:', response);
-
-        // ✅ احفظ الـ token
-        localStorage.setItem('token', response.token);
+        // الـ token والـ user بيتحفظوا تلقائياً في AuthService
 
         this.registerSuccess = true;
         this.isLoading = false;
