@@ -1,11 +1,11 @@
 import { Component, HostListener, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { RouterLink, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { Colors } from 'chart.js';
+import { CommonModule, AsyncPipe } from '@angular/common';
+import { ThemeService } from '../services/theme';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, CommonModule, RouterModule],
+  imports: [RouterLink, CommonModule, RouterModule, AsyncPipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
   standalone: true
@@ -16,6 +16,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isSticky = false;
   mobileMenuOpen = false;
+
+  public themeService = inject(ThemeService);
 
   navLinks = [
     { name: 'الرئيسية', sectionId: 'hero', active: true },
