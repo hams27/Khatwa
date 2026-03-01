@@ -14,9 +14,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('testimonialsTrack') trackRef!: ElementRef;
 
-  isSticky = false;
-  mobileMenuOpen = false;
-
   public themeService = inject(ThemeService);
 
   navLinks = [
@@ -195,7 +192,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @HostListener('window:scroll')
   onScroll() {
-    this.isSticky = window.scrollY > 80;
     this.navLinks.forEach(link => {
       const el = document.getElementById(link.sectionId);
       if (el) {
@@ -219,10 +215,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       const top = el.offsetTop - 72;
       window.scrollTo({ top, behavior: 'smooth' });
     }
-  }
-
-  toggleMobileMenu() {
-    this.mobileMenuOpen = !this.mobileMenuOpen;
   }
 
   toggleFaq(faq: any) {
