@@ -80,7 +80,10 @@ export class TasksAndTeam implements OnInit {
     status: 'todo',
     priority: 'medium',
     dueDate: '',
-    tags: []
+    tags: [],
+    assignedTo: undefined,
+    user: undefined,
+    avatar: undefined
   };
 
   // Available Tags
@@ -116,7 +119,7 @@ export class TasksAndTeam implements OnInit {
 
   ngOnInit(): void {
     console.log('📋 Tasks & Team Component Initialized');
-    this.loadMockData();
+    this.loadCurrentProject();
   }
 
   onSidebarToggle(collapsed: boolean) {
@@ -130,44 +133,6 @@ export class TasksAndTeam implements OnInit {
 
   openGuide() { this.showGuide = true; }
   closeGuide() { this.showGuide = false; }
-
-  loadMockData() {
-    this.isLoading = false;
-
-    this.teamMembers = [
-      { id: 1, name: 'أحمد محمد',   avatar: 'أ', role: 'مطوّر واجهات',    tasks: 5, email: 'ahmed@khatwa.sa',  memberRole: 'owner' },
-      { id: 2, name: 'سارة علي',    avatar: 'س', role: 'مصممة جرافيك',    tasks: 3, email: 'sara@khatwa.sa',   memberRole: 'admin' },
-      { id: 3, name: 'خالد عمر',    avatar: 'خ', role: 'مدير تسويق',      tasks: 4, email: 'khaled@khatwa.sa', memberRole: 'member' },
-      { id: 4, name: 'نورة ناصر',   avatar: 'ن', role: 'محلل بيانات',     tasks: 2, email: 'noura@khatwa.sa',  memberRole: 'member' },
-      { id: 5, name: 'فهد السلمي',  avatar: 'ف', role: 'مطوّر backend',   tasks: 6, email: 'fahad@khatwa.sa',  memberRole: 'member' },
-    ];
-
-    this.todoTasks = [
-      { projectId: 1, id: 1,  title: 'تصميم الهوية البصرية الجديدة',    description: 'إنشاء شعار وألوان وخطوط العلامة التجارية',       status: 'todo',        priority: 'high',   tags: ['تصميم'], date: '20 فبراير 2025',   dueDate: '' },
-      { projectId: 1, id: 2,  title: 'كتابة محتوى صفحة الهبوط',          description: 'نصوص تسويقية جذابة مع مراعاة SEO',              status: 'todo',        priority: 'medium', tags: ['محتوى'], date: '22 فبراير 2025',   dueDate: '' },
-      { projectId: 1, id: 3,  title: 'إعداد خطة التسويق الرقمي',          description: 'وضع استراتيجية التواصل الاجتماعي للربع الأول',   status: 'todo',        priority: 'urgent', tags: ['تسويق','إدارة'], date: '25 فبراير 2025', dueDate: '' },
-    ];
-
-    this.inProgressTasks = [
-      { projectId: 1, id: 4,  title: 'تطوير لوحة تحكم المشرف',            description: 'بناء واجهة إدارة المستخدمين والإحصاءات',          status: 'in-progress', priority: 'high',   tags: ['تطوير'], date: '18 فبراير 2025',   dueDate: '' },
-      { projectId: 1, id: 5,  title: 'تكامل بوابة الدفع الإلكتروني',      description: 'ربط Stripe وإعداد webhooks',                     status: 'in-progress', priority: 'urgent', tags: ['تطوير','مبيعات'], date: '19 فبراير 2025', dueDate: '' },
-      { projectId: 1, id: 6,  title: 'تحليل بيانات العملاء',               description: 'استخراج تقارير سلوك المستخدم من آخر 3 أشهر',     status: 'in-progress', priority: 'medium', tags: ['إدارة'], date: '21 فبراير 2025',   dueDate: '' },
-    ];
-
-    this.reviewTasks = [
-      { projectId: 1, id: 7,  title: 'مراجعة تقرير الأداء الشهري',         description: 'مراجعة KPIs وإعداد التوصيات للإدارة',             status: 'in-progress', priority: 'medium', tags: ['إدارة'], date: '15 فبراير 2025',   dueDate: '' },
-      { projectId: 1, id: 8,  title: 'اختبار تجربة المستخدم',              description: 'User testing لنماذج التسجيل والدفع',              status: 'in-progress', priority: 'high',   tags: ['تطوير','تصميم'], date: '16 فبراير 2025', dueDate: '' },
-    ];
-
-    this.completedTasks = [
-      { projectId: 1, id: 9,  title: 'إعداد بيئة السيرفر',                 description: 'تكوين AWS EC2 وقاعدة البيانات',                   status: 'done',        priority: 'high',   tags: ['تطوير'], date: '10 فبراير 2025',   dueDate: '' },
-      { projectId: 1, id: 10, title: 'اجتماع التخطيط الربعي',               description: 'تحديد أهداف الفريق للربع الأول',                  status: 'done',        priority: 'medium', tags: ['إدارة'], date: '8 فبراير 2025',    dueDate: '' },
-      { projectId: 1, id: 11, title: 'توثيق API للمطورين',                  description: 'كتابة Swagger docs لجميع endpoints',              status: 'done',        priority: 'low',    tags: ['تطوير'], date: '5 فبراير 2025',    dueDate: '' },
-      { projectId: 1, id: 12, title: 'تصميم نماذج UX الأولية',              description: 'Wireframes لصفحات الرئيسية والتسجيل والملف',     status: 'done',        priority: 'high',   tags: ['تصميم'], date: '1 فبراير 2025',    dueDate: '' },
-    ];
-
-    this.allTasks = [...this.todoTasks, ...this.inProgressTasks, ...this.reviewTasks, ...this.completedTasks];
-  }
 
   // Load Current Project
   loadCurrentProject() {
@@ -223,9 +188,6 @@ export class TasksAndTeam implements OnInit {
         console.error('❌ Error loading tasks:', error);
         this.errorMessage = 'حدث خطأ في تحميل المهام';
         this.isLoading = false;
-
-        // Use mock data if API fails
-        this.loadMockTasks();
       }
     });
   }
@@ -262,26 +224,20 @@ export class TasksAndTeam implements OnInit {
 
   // Organize Tasks by Status
   organizeTasks() {
-    this.todoTasks = this.allTasks.filter(t => t.status === 'todo');
+    this.todoTasks       = this.allTasks.filter(t => t.status === 'todo');
     this.inProgressTasks = this.allTasks.filter(t => t.status === 'in-progress');
-    this.reviewTasks = this.allTasks.filter(t => t.status === 'review' || t.status === 'in-progress');
-    this.completedTasks = this.allTasks.filter(t => t.status === 'done');
+    this.reviewTasks     = this.allTasks.filter(t => t.status === 'review');
+    this.completedTasks  = this.allTasks.filter(t => t.status === 'done');
   }
 
-  // 🎯 Drag & Drop Handler (THE MAGIC!)
+  // 🎯 Drag & Drop Handler
   drop(event: CdkDragDrop<TaskWithDetails[]>, newStatus: Task['status']) {
-    console.log('🎯 Drop event:', event);
-
     const task = event.item.data as TaskWithDetails;
     const previousStatus = task.status;
 
     if (event.previousContainer === event.container) {
       // Same container - just reorder
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
       // Different container - transfer item
       transferArrayItem(
@@ -291,8 +247,10 @@ export class TasksAndTeam implements OnInit {
         event.currentIndex
       );
 
-      // Update task status
+      // Update status on the task object and in allTasks
       task.status = newStatus;
+      const taskInAll = this.allTasks.find(t => t.id === task.id);
+      if (taskInAll) taskInAll.status = newStatus;
 
       // Update in backend
       if (task.id) {
@@ -343,7 +301,10 @@ export class TasksAndTeam implements OnInit {
       status: 'todo',
       priority: 'medium',
       dueDate: '',
-      tags: []
+      tags: [],
+      assignedTo: undefined,
+      user: undefined,
+      avatar: undefined
     };
   }
 
@@ -374,122 +335,84 @@ export class TasksAndTeam implements OnInit {
       return;
     }
 
-    const taskData: Task = {
+    // Build the new task object to add locally
+    const assignedMember = this.teamMembers.find(m => m.name === this.newTask.user);
+    const localTask: TaskWithDetails = {
       projectId: this.currentProjectId,
       title: this.newTask.title.trim(),
       description: this.newTask.description?.trim() || '',
       status: this.newTask.status,
-      dueDate: this.newTask.dueDate || undefined
+      dueDate: this.newTask.dueDate || undefined,
+      priority: this.newTask.priority,
+      tags: [...(this.newTask.tags || [])],
+      date: 'الآن',
+      avatar: assignedMember?.avatar || 'أ',
+      user: this.newTask.user || undefined,
+      id: Date.now()
+    };
+
+    // If no project loaded yet, add locally immediately
+    if (!this.currentProjectId) {
+      this.allTasks.unshift(localTask);
+      this.organizeTasks();
+      this.updateMemberTaskCount(localTask.user, 1);
+      this.showSuccess('تم إنشاء المهمة بنجاح');
+      this.closeNewTaskModal();
+      return;
+    }
+
+    const taskData: Task = {
+      projectId: this.currentProjectId,
+      title: localTask.title,
+      description: localTask.description,
+      status: localTask.status,
+      dueDate: localTask.dueDate
     };
 
     this.taskService.createTask(this.currentProjectId, taskData).subscribe({
       next: (response: any) => {
         console.log('✅ Task created:', response);
-
-        // Add to list
-        const newTask: TaskWithDetails = {
-          ...taskData,
-          id: response.data?.id,
-          priority: this.newTask.priority,
-          tags: this.newTask.tags,
-          date: 'الآن',
-          avatar: 'أ'
-        };
-
-        this.allTasks.unshift(newTask);
+        localTask.id = response.data?.id || localTask.id;
+        this.allTasks.unshift(localTask);
         this.organizeTasks();
-
+        this.updateMemberTaskCount(localTask.user, 1);
         this.showSuccess('تم إنشاء المهمة بنجاح');
         this.closeNewTaskModal();
       },
       error: (error: HttpErrorResponse) => {
-        console.error('❌ Error creating task:', error);
-        this.showError('حدث خطأ في إنشاء المهمة');
+        console.error('❌ Error creating task via API, adding locally:', error);
+        // Add locally even if API fails
+        this.allTasks.unshift(localTask);
+        this.organizeTasks();
+        this.updateMemberTaskCount(localTask.user, 1);
+        this.showSuccess('تم إنشاء المهمة بنجاح');
+        this.closeNewTaskModal();
       }
     });
+  }
+
+  // Update member task count
+  updateMemberTaskCount(memberName: string | undefined, delta: number) {
+    if (!memberName) return;
+    const member = this.teamMembers.find(m => m.name === memberName);
+    if (member) member.tasks = Math.max(0, member.tasks + delta);
   }
 
   // Delete Task
   deleteTask(task: TaskWithDetails) {
     if (!task.id) return;
 
-    if (!confirm(`هل أنت متأكد من حذف المهمة "${task.title}"؟`)) {
-      return;
-    }
-
-    this.taskService.deleteTask(task.id).subscribe({
-      next: (response: any) => {
-        console.log('🗑️ Task deleted:', response);
-
-        // Remove from all lists
-        this.allTasks = this.allTasks.filter(t => t.id !== task.id);
-        this.organizeTasks();
-
-        this.showSuccess('تم حذف المهمة بنجاح');
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('❌ Error deleting task:', error);
-        this.showError('حدث خطأ في حذف المهمة');
-      }
-    });
-  }
-
-  // Load Mock Tasks (fallback)
-  loadMockTasks() {
-    this.allTasks = [
-      {
-        id: 1,
-        projectId: this.currentProjectId,
-        title: 'إطلاق الحملة الإعلانية',
-        description: 'حملة إعلانات جوجل',
-        tags: ['تسويق', 'إعلانات'],
-        user: 'علي',
-        date: 'أمس',
-        priority: 'medium',
-        status: 'done',
-        avatar: 'ع'
-      },
-      {
-        id: 2,
-        projectId: this.currentProjectId,
-        title: 'مراجعة العقد مع المورد',
-        description: 'مراجعة شروط التعاقد الجديد',
-        tags: ['قانوني'],
-        user: 'فاطمة',
-        date: 'اليوم',
-        priority: 'urgent',
-        status: 'in-progress',
-        avatar: 'ف'
-      },
-      {
-        id: 3,
-        projectId: this.currentProjectId,
-        title: 'تحديث الموقع الإلكتروني',
-        description: 'إضافة صفحة المنتجات الجديدة',
-        tags: ['تطوير', 'موقع'],
-        user: 'خالد',
-        date: 'بعد يومين',
-        priority: 'high',
-        status: 'in-progress',
-        avatar: 'خ'
-      },
-      {
-        id: 4,
-        projectId: this.currentProjectId,
-        title: 'تدريب الفريق الجديد',
-        description: 'جلسة تدريبية للموظفين الجدد',
-        tags: [],
-        user: 'نورا',
-        date: 'منذ 3 أيام',
-        priority: 'medium',
-        status: 'todo',
-        avatar: 'ن'
-      }
-    ];
-
+    // Remove locally immediately
+    this.allTasks = this.allTasks.filter(t => t.id !== task.id);
     this.organizeTasks();
-    this.loadTeamMembers();
-    this.isLoading = false;
+    this.updateMemberTaskCount(task.user, -1);
+    this.showSuccess('تم حذف المهمة');
+
+    // Try API delete in background
+    this.taskService.deleteTask(task.id).subscribe({
+      next: () => console.log('🗑️ Task deleted from server'),
+      error: (error: HttpErrorResponse) => console.error('❌ API delete failed (removed locally):', error)
+    });
   }
 
   // Utility Functions

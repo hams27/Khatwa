@@ -187,6 +187,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
+                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
                 <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)" title="حذف">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
@@ -230,6 +231,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
+                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
                 <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
@@ -258,7 +260,7 @@
         cdkDropList #reviewList="cdkDropList"
         [cdkDropListData]="reviewTasks"
         [cdkDropListConnectedTo]="[todoList, inProgressList, completedList]"
-        (cdkDropListDropped)="drop($event, 'in-progress')">
+        (cdkDropListDropped)="drop($event, 'review')">
         <div class="task-card" *ngFor="let task of reviewTasks"
           cdkDrag [cdkDragData]="task">
           <div class="task-drag" cdkDragHandle>
@@ -273,6 +275,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
+                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
                 <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
@@ -316,6 +319,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
+                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
                 <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
@@ -363,6 +367,7 @@
           <select [(ngModel)]="newTask.status" class="form-input">
             <option value="todo">قائمة المهام</option>
             <option value="in-progress">قيد التنفيذ</option>
+            <option value="review">المراجعة</option>
             <option value="done">مكتملة</option>
           </select>
         </div>
@@ -376,6 +381,15 @@
       <div class="form-group">
         <label class="form-label">تاريخ الاستحقاق</label>
         <input type="date" [(ngModel)]="newTask.dueDate" class="form-input">
+      </div>
+      <div class="form-group" *ngIf="teamMembers.length > 0">
+        <label class="form-label">تعيين لعضو</label>
+        <select [(ngModel)]="newTask.user" class="form-input">
+          <option [ngValue]="undefined">— بدون تعيين —</option>
+          <option *ngFor="let m of teamMembers" [value]="m.name">
+            {{ m.avatar }} {{ m.name }} · {{ m.role || 'عضو' }}
+          </option>
+        </select>
       </div>
       <div class="form-group">
         <label class="form-label">الوسوم</label>
