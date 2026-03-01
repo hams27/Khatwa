@@ -716,14 +716,12 @@
   background: #2563EB; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 8px 32px rgba(37,99,235,0.45);
-  opacity: 0; transform: translateY(20px) scale(0.8); pointer-events: none;
-  transition: opacity 0.35s cubic-bezier(0.16,1,0.3,1),
-              transform 0.35s cubic-bezier(0.16,1,0.3,1),
-              box-shadow 0.3s, background 0.3s;
+  opacity: 1; transform: translateY(0);
+  transition: box-shadow 0.3s, background 0.3s, transform 0.3s;
 }
 .fab-top .bi { color: #f0f4ff !important; }
 .fab-top svg { fill: #ffffff !important; transition: transform 0.3s; }
-.fab-top.fab-visible { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; }
+
 .fab-top:hover { background: #1d4ed8; box-shadow: 0 12px 40px rgba(37,99,235,0.65); transform: translateY(-4px) scale(1.08); }
 .fab-top:hover svg { transform: translateY(-2px); }
 .fab-top:active { transform: scale(0.94); }
