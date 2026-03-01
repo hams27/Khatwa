@@ -1,1 +1,214 @@
-<p>chat works!</p>
+<app-side-bar #sidebarRef (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
+
+<!-- ===== TOP NAV ===== -->
+<nav class="top-nav" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="nav-content">
+    <div class="nav-left">
+      <div>
+        <div class="nav-page-title">مساعد الذكاء الاصطناعي</div>
+        <div class="nav-page-sub">تحدّث مع مساعدك الذكي واحصل على إجابات فورية</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <!-- زر محادثة جديدة -->
+      <button class="btn-add" (click)="clearConversation()">
+        <i class="bi bi-plus-lg"></i>
+        <span class="btn-text">محادثة جديدة</span>
+      </button>
+      <!-- زر الهامبرجر — يظهر فقط على موبايل/تابلت -->
+      <button class="topnav-hamburger" (click)="openSidebar()" aria-label="فتح القائمة">
+        <i class="bi bi-list"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="chat-main" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <div class="chat-layout">
+
+    <!-- ===== HISTORY SIDEBAR ===== -->
+    <aside class="history-sidebar">
+      <div class="history-header">
+        <div class="history-title"><i class="bi bi-clock-history"></i> المحادثات السابقة</div>
+      </div>
+
+      <!-- قائمة المحادثات
+           تأتي من conversationHistory المُحمَّلة عبر loadHistory()
+           API: GET /api/v1/chat/history
+      -->
+      <div class="history-list" *ngIf="conversationHistory.length > 0; else noHistory">
+        <div class="history-item"
+          *ngFor="let conv of conversationHistory"
+          [class.active]="activeConvId === conv.id"
+          (click)="loadConversation(conv)">
+          <div class="history-item-icon">
+            <i class="bi bi-chat-left-text"></i>
+          </div>
+          <div class="history-item-info">
+            <div class="history-item-title">{{ conv.title }}</div>
+            <div class="history-item-date">{{ conv.date }}</div>
+          </div>
+          <!-- حذف محادثة — API: DELETE /api/v1/chat/history/:id -->
+          <button class="history-del-btn" (click)="deleteConversation(conv.id, $event)">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+      </div>
+      <ng-template #noHistory>
+        <div class="history-empty">
+          <i class="bi bi-chat-square-dots"></i>
+          <p>لا توجد محادثات سابقة</p>
+        </div>
+      </ng-template>
+
+      <!-- اقتراحات سريعة -->
+      <div class="suggestions-block">
+        <div class="suggestions-title"><i class="bi bi-lightning-charge"></i> اقتراحات</div>
+        <div class="suggestions-list">
+          <button class="suggestion-btn" *ngFor="let s of suggestions" (click)="sendQuickMessage(s.text)">
+            <i class="bi bi-{{ s.icon }}"></i>
+            <span>{{ s.text }}</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== CHAT AREA ===== -->
+    <div class="chat-area">
+
+      <!-- رأس المحادثة الحالية -->
+      <div class="chat-area-header">
+        <div class="chat-bot-info">
+          <div class="bot-avatar">
+            <i class="bi bi-robot"></i>
+            <div class="bot-online"></div>
+          </div>
+          <div>
+            <div class="bot-name">مساعد خطوة</div>
+            <div class="bot-status">
+              <span class="status-dot" [class.typing]="isTyping"></span>
+              {{ isTyping ? 'يكتب...' : 'متاح الآن' }}
+            </div>
+          </div>
+        </div>
+        <div class="chat-area-actions">
+          <button class="area-action-btn" title="نسخ المحادثة" (click)="copyConversation()">
+            <i class="bi bi-clipboard"></i>
+          </button>
+          <button class="area-action-btn" title="حذف المحادثة" (click)="clearConversation()">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- منطقة الرسائل
+           messages[] تُحمَّل عند loadConversation() ← API: GET /api/v1/chat/history/:id
+           وتُضاف إليها رسائل جديدة بعد sendMessage() ← API: POST /api/v1/chat/send
+      -->
+      <div class="messages-area" #messagesContainer>
+
+        <!-- شاشة الترحيب عند بداية محادثة جديدة -->
+        <div class="welcome-screen" *ngIf="messages.length === 0">
+          <div class="welcome-bot-icon">
+            <i class="bi bi-robot"></i>
+          </div>
+          <h2 class="welcome-title">مرحباً! أنا مساعد خطوة</h2>
+          <p class="welcome-desc">يمكنني مساعدتك في إدارة مشروعك، تحليل البيانات، والإجابة على أسئلتك</p>
+
+          <!-- بطاقات الاقتراحات -->
+          <div class="welcome-cards">
+            <div class="welcome-card" *ngFor="let card of welcomeCards" (click)="sendQuickMessage(card.prompt)">
+              <div class="wc-icon"><i class="bi bi-{{ card.icon }}"></i></div>
+              <div class="wc-title">{{ card.title }}</div>
+              <div class="wc-desc">{{ card.desc }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- الرسائل -->
+        <div class="message-group" *ngFor="let msg of messages" [class.user-group]="msg.isUser">
+          <div class="msg-avatar-wrap" *ngIf="!msg.isUser">
+            <div class="msg-bot-avatar"><i class="bi bi-robot"></i></div>
+          </div>
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble" [class.user-bubble]="msg.isUser" [class.bot-bubble]="!msg.isUser">
+              <p>{{ msg.text }}</p>
+            </div>
+            <div class="msg-meta">
+              <span class="msg-time">{{ msg.time }}</span>
+              <!-- أزرار الرسالة — تظهر عند الـ hover -->
+              <div class="msg-actions" *ngIf="!msg.isUser">
+                <button class="msg-act-btn" title="نسخ" (click)="copyMessage(msg.text)">
+                  <i class="bi bi-clipboard"></i>
+                </button>
+                <button class="msg-act-btn" title="إعجاب" (click)="rateMessage(msg, 'up')">
+                  <i class="bi bi-hand-thumbs-up" [class.active]="msg.rating === 'up'"></i>
+                </button>
+                <button class="msg-act-btn" title="لا أحب" (click)="rateMessage(msg, 'down')">
+                  <i class="bi bi-hand-thumbs-down" [class.active]="msg.rating === 'down'"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="msg-user-avatar" *ngIf="msg.isUser">{{ userInitial }}</div>
+        </div>
+
+        <!-- مؤشر الكتابة -->
+        <div class="message-group" *ngIf="isTyping">
+          <div class="msg-avatar-wrap">
+            <div class="msg-bot-avatar"><i class="bi bi-robot"></i></div>
+          </div>
+          <div class="msg-bubble bot-bubble typing-bubble">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- حقل الإدخال
+           sendMessage() → API: POST /api/v1/chat/send  { message: inputText, conversationId }
+           الرد يُضاف لـ messages[] و conversationHistory
+      -->
+      <div class="input-area">
+        <div class="input-wrap" [class.focused]="inputFocused">
+          <textarea
+            #messageInput
+            class="msg-input"
+            [(ngModel)]="inputText"
+            (keydown)="onKeyDown($event)"
+            (focus)="inputFocused = true"
+            (blur)="inputFocused = false"
+            (input)="autoResize($event)"
+            placeholder="اكتب رسالتك هنا... (Enter للإرسال، Shift+Enter لسطر جديد)"
+            [disabled]="isTyping"
+            rows="1"
+          ></textarea>
+          <div class="input-actions">
+            <button class="input-action-btn" title="إرفاق ملف">
+              <i class="bi bi-paperclip"></i>
+            </button>
+            <!-- زر الإرسال — يستدعي sendMessage() -->
+            <button class="send-btn" (click)="sendMessage()"
+              [disabled]="!inputText.trim() || isTyping"
+              [class.ready]="inputText.trim()">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+        </div>
+        <p class="input-note">
+          <i class="bi bi-info-circle"></i>
+          مدعوم بالذكاء الاصطناعي · خطوة — الردود قد لا تكون دقيقة دائماً
+        </p>
+      </div>
+
+    </div><!-- end chat-area -->
+
+  </div><!-- end chat-layout -->
+</main>
+
+<!-- Toast للنجاح -->
+<div class="toast-msg" *ngIf="toastMessage">
+  <i class="bi bi-check-circle-fill"></i>
+  {{ toastMessage }}
+</div>

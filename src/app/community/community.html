@@ -11,26 +11,25 @@
       </div>
     </div>
     <div class="nav-right">
+      <!-- Search — يظهر فقط على ديسكتوب -->
       <div class="search-wrap desktop-only-flex">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11"/></svg>
+        <i class="bi bi-search search-icon"></i>
         <input type="text" [(ngModel)]="searchQuery" (input)="searchPosts()"
           placeholder="ابحث في المنشورات..." class="search-input">
       </div>
+      <!-- زر منشور جديد -->
       <button class="btn-add" (click)="openNewPostModal()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+        <i class="bi bi-plus-lg"></i>
         <span class="btn-text">منشور جديد</span>
       </button>
+      <!-- زر دليل الاستخدام -->
       <button class="guide-btn" (click)="openGuide()">
-        <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+        <i class="bi bi-info-circle"></i>
         <span class="btn-text">دليل الاستخدام</span>
       </button>
       <!-- زر الهامبرجر — يظهر فقط على موبايل/تابلت -->
       <button class="topnav-hamburger" (click)="openSidebar()" aria-label="فتح القائمة">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <i class="bi bi-list"></i>
       </button>
     </div>
   </div>
@@ -40,18 +39,30 @@
 <div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>💬 دليل استخدام المجتمع</h3>
+      <h3><i class="bi bi-chat-dots"></i> دليل استخدام المجتمع</h3>
       <button class="close-btn" (click)="closeGuide()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
       <p class="guide-intro">انضم لمجتمع رواد الأعمال وشارك خبراتك واستفد من تجارب الآخرين.</p>
       <div class="guide-features">
-        <div class="guide-item"><span class="guide-icon">✍️</span><div><h4>النشر والمشاركة</h4><p>شارك أفكارك وتجاربك مع المجتمع</p></div></div>
-        <div class="guide-item"><span class="guide-icon">❤️</span><div><h4>التفاعل</h4><p>أعجب بالمنشورات وعلق على ما يهمك</p></div></div>
-        <div class="guide-item"><span class="guide-icon">🏷️</span><div><h4>الوسوم</h4><p>استخدم الوسوم للوصول للمحتوى المناسب</p></div></div>
-        <div class="guide-item"><span class="guide-icon">🔍</span><div><h4>البحث</h4><p>ابحث عن منشورات بكلمات مفتاحية أو وسوم</p></div></div>
+        <div class="guide-item">
+          <i class="bi bi-pencil-square guide-icon"></i>
+          <div><h4>النشر والمشاركة</h4><p>شارك أفكارك وتجاربك مع المجتمع</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-heart guide-icon"></i>
+          <div><h4>التفاعل</h4><p>أعجب بالمنشورات وعلق على ما يهمك</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-tags guide-icon"></i>
+          <div><h4>الوسوم</h4><p>استخدم الوسوم للوصول للمحتوى المناسب</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-search guide-icon"></i>
+          <div><h4>البحث</h4><p>ابحث عن منشورات بكلمات مفتاحية أو وسوم</p></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -65,36 +76,44 @@
 
   <!-- Loading -->
   <div class="loading-overlay" *ngIf="isLoading">
-    <div class="loading-spinner"><div class="spinner"></div><p>جاري تحميل المجتمع...</p></div>
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>جاري تحميل المجتمع...</p>
+    </div>
   </div>
 
-  <!-- Messages -->
+  <!-- رسائل النجاح والخطأ -->
   <div class="success-banner" *ngIf="successMessage">
-    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
+    <i class="bi bi-check-circle-fill"></i>
     {{ successMessage }}
   </div>
   <div class="error-banner" *ngIf="errorMessage">
-    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    <i class="bi bi-exclamation-triangle-fill"></i>
     {{ errorMessage }}
   </div>
 
-  <!-- ===== WELCOME ===== -->
+  <!-- ===== WELCOME
+       يعرض summaryCards[0].value (إجمالي المنشورات) و summaryCards[1].value (الأعضاء النشطون)
+       تُحدَّث هذه القيم من API عبر loadCommunityStats() في ngOnInit
+  ===== -->
   <section class="welcome-section">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1 class="welcome-title">مجتمع خطوة <span>💬</span></h1>
+        <h1 class="welcome-title">مجتمع خطوة <i class="bi bi-chat-fill"></i></h1>
         <p class="welcome-sub">تواصل مع رواد الأعمال وشارك الخبرات والأفكار</p>
       </div>
       <div class="welcome-badges">
+        <!-- القيمة مشتركة مع بطاقة summaryCards[0] في قسم METRICS أدناه -->
         <div class="w-badge">
-          <span class="w-badge-icon">📝</span>
+          <i class="bi bi-file-text w-badge-icon"></i>
           <div>
             <span class="w-badge-lbl">إجمالي المنشورات</span>
             <span class="w-badge-val">{{ summaryCards[0]?.value || 0 }}</span>
           </div>
         </div>
+        <!-- القيمة مشتركة مع بطاقة summaryCards[1] في قسم METRICS أدناه -->
         <div class="w-badge">
-          <span class="w-badge-icon">👥</span>
+          <i class="bi bi-people w-badge-icon"></i>
           <div>
             <span class="w-badge-lbl">أعضاء نشطون</span>
             <span class="w-badge-val">{{ summaryCards[1]?.value || 0 }}</span>
@@ -104,17 +123,21 @@
     </div>
   </section>
 
-  <!-- ===== METRICS ===== -->
+  <!-- ===== METRICS
+       كل بطاقة تأخذ بياناتها من summaryCards[] المُحمَّلة عبر loadCommunityStats()
+       الكارد الأخير (منشورات اليوم) يعتمد على posts.length بعد تطبيق الفلتر
+  ===== -->
   <section class="metrics-grid">
     <div class="mc" *ngFor="let card of summaryCards">
-      <div class="mc-icon">{{ card.icon }}</div>
+      <div class="mc-icon"><i class="bi bi-{{ card.biIcon }}"></i></div>
       <div class="mc-lbl">{{ card.title }}</div>
       <div class="mc-val" *ngIf="!card.loading">{{ card.value }}</div>
       <div class="mc-skeleton" *ngIf="card.loading"></div>
       <div class="mini-prog"><div class="mini-prog-fill g" style="width:65%"></div></div>
     </div>
+    <!-- منشورات اليوم — يعتمد على posts.length المشتقة من applyFilters() -->
     <div class="mc">
-      <div class="mc-icon">🔥</div>
+      <div class="mc-icon"><i class="bi bi-fire"></i></div>
       <div class="mc-lbl">منشورات اليوم</div>
       <div class="mc-val">{{ posts.length }}</div>
       <div class="mini-prog"><div class="mini-prog-fill o" style="width:80%"></div></div>
@@ -127,23 +150,23 @@
     <!-- ===== POSTS COLUMN ===== -->
     <div class="posts-col">
 
-      <!-- Filters -->
+      <!-- Filters — يُغيّر selectedFilter ويعيد تصفية posts عبر applyFilters() -->
       <div class="filters-bar">
         <div class="filter-tabs">
           <button *ngFor="let f of availableFilters"
             (click)="changeFilter(f.value)"
             [class.active]="selectedFilter === f.value"
             class="ftab">
-            {{ f.icon }} {{ f.label }}
+            <i class="bi bi-{{ f.biIcon }}"></i> {{ f.label }}
           </button>
         </div>
       </div>
 
-      <!-- Posts -->
+      <!-- قائمة المنشورات — تأتي من allPosts بعد الفلترة عبر applyFilters() -->
       <div class="posts-list" *ngIf="posts.length > 0; else noPosts">
         <div class="post-card" *ngFor="let post of posts">
 
-          <!-- Post Header -->
+          <!-- رأس المنشور -->
           <div class="post-head">
             <div class="author-wrap">
               <div class="author-avatar">{{ post.author?.charAt(0) || 'م' }}</div>
@@ -156,42 +179,49 @@
                 </div>
               </div>
             </div>
+            <!-- زر الحذف — يظهر عبر isMyPost() الذي يتحقق من currentUser.id -->
             <button class="del-btn" *ngIf="isMyPost(post)" (click)="deletePost(post)">
-              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+              <i class="bi bi-trash3"></i>
             </button>
           </div>
 
-          <!-- Post Body -->
+          <!-- محتوى المنشور -->
           <div class="post-body">
             <div class="post-title" *ngIf="post.title">{{ post.title }}</div>
             <p class="post-content">{{ post.content }}</p>
+            <!-- الوسوم — النقر يستدعي filterByTag() الذي يُحدّث searchQuery و applyFilters() -->
             <div class="post-tags" *ngIf="post.tags && post.tags.length">
               <span class="ptag" *ngFor="let tag of post.tags" (click)="filterByTag(tag)">#{{ tag }}</span>
             </div>
           </div>
 
-          <!-- Post Footer -->
+          <!-- تذييل المنشور -->
           <div class="post-foot">
+            <!-- الإعجاب — يُحدّث post.isLiked و post.likesCount و summaryCards[2].value عبر toggleLike() -->
             <button class="act-btn" [class.liked]="post.isLiked" (click)="toggleLike(post)">
-              <svg viewBox="0 0 16 16" fill="currentColor">
-                <path *ngIf="!post.isLiked" d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01z"/>
-                <path *ngIf="post.isLiked" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
-              </svg>
+              <i class="bi" [class.bi-heart]="!post.isLiked" [class.bi-heart-fill]="post.isLiked"></i>
               {{ post.likesCount || 0 }}
             </button>
+            <!-- التعليقات — تُحمَّل عبر loadComments() (API: GET /posts/:id/comments) -->
             <button class="act-btn" (click)="toggleComments(post)">
-              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/></svg>
+              <i class="bi bi-chat"></i>
               {{ post.commentsCount || 0 }}
             </button>
             <button class="act-btn share-btn">
-              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/></svg>
+              <i class="bi bi-share"></i>
               مشاركة
             </button>
           </div>
 
-          <!-- Comments -->
+          <!-- قسم التعليقات
+               التعليقات تأتي من API: GET /community/posts/:id/comments
+               الإرسال عبر addComment() إلى: POST /community/posts/:id/comments
+               post.commentsCount (في تذييل المنشور أعلاه) يُحدَّث بعد الإرسال الناجح
+          -->
           <div class="comments-section" *ngIf="post.showComments">
-            <div class="comment-loading" *ngIf="post.loadingComments">جاري التحميل...</div>
+            <div class="comment-loading" *ngIf="post.loadingComments">
+              <i class="bi bi-arrow-repeat spin-icon"></i> جاري التحميل...
+            </div>
             <div class="comments-list" *ngIf="!post.loadingComments">
               <div class="comment-item" *ngFor="let comment of post.comments">
                 <div class="comment-avatar">{{ comment.User?.name?.charAt(0) || 'م' }}</div>
@@ -207,7 +237,7 @@
                 (keyup.enter)="addComment(post)"
                 placeholder="أضف تعليقاً..." class="comment-input">
               <button class="send-btn" (click)="addComment(post)">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11z"/></svg>
+                <i class="bi bi-send-fill"></i>
               </button>
             </div>
           </div>
@@ -217,7 +247,7 @@
 
       <ng-template #noPosts>
         <div class="empty-state">
-          <div class="empty-icon">📝</div>
+          <i class="bi bi-file-earmark-text empty-icon"></i>
           <p>لا توجد منشورات حالياً. كن أول من ينشر!</p>
           <button class="btn-primary" (click)="openNewPostModal()">إنشاء منشور</button>
         </div>
@@ -228,10 +258,13 @@
     <!-- ===== SIDEBAR ===== -->
     <aside class="comm-sidebar">
 
-      <!-- Top Topics -->
+      <!-- المواضيع الشائعة
+           مشتقة من allPosts عبر computeTopics() — تحسب تكرار كل وسم
+           النقر على موضوع يستدعي filterByTag() الذي يُحدّث posts في قسم POSTS أعلاه
+      -->
       <div class="side-card">
         <div class="side-head">
-          <div class="side-title">🏷️ المواضيع الشائعة</div>
+          <div class="side-title"><i class="bi bi-tags"></i> المواضيع الشائعة</div>
         </div>
         <div class="topics-list" *ngIf="topTopics.length > 0; else noTopics">
           <div class="topic-item" *ngFor="let topic of topTopics; let i = index"
@@ -251,10 +284,13 @@
         </ng-template>
       </div>
 
-      <!-- Active Members -->
+      <!-- الأعضاء النشطون
+           يأتون من activeMembers المُحمَّلة عبر loadActiveMembers() (API: GET /community/stats)
+           member.posts يأخذ قيمته من استجابة الـ API
+      -->
       <div class="side-card">
         <div class="side-head">
-          <div class="side-title">👥 الأعضاء النشطون</div>
+          <div class="side-title"><i class="bi bi-people"></i> الأعضاء النشطون</div>
         </div>
         <div class="members-list">
           <div class="member-row" *ngFor="let member of activeMembers">
@@ -264,20 +300,20 @@
               <div class="mem-posts">{{ member.posts }} منشور</div>
             </div>
             <div class="mem-badge">
-              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.5.5A.5.5 0 0 1 3 0h10a.5.5 0 0 1 .5.5q0 .807-.034 1.536a3 3 0 1 1-1.133 5.89c-.79 1.865-1.878 2.777-2.833 3.011v2.173l1.425.356c.194.048.377.135.537.255L13.3 15.1a.5.5 0 0 1-.3.9H3a.5.5 0 0 1-.3-.9l1.838-1.379c.16-.12.343-.207.537-.255L6.5 13.11v-2.173c-.955-.234-2.043-1.146-2.833-3.012a3 3 0 1 1-1.132-5.89A33 33 0 0 1 2.5.5"/></svg>
+              <i class="bi bi-trophy-fill"></i>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Quick Post -->
+      <!-- شارك الآن — يفتح موديل الإنشاء -->
       <div class="side-card">
         <div class="side-head">
-          <div class="side-title">✍️ شارك الآن</div>
+          <div class="side-title"><i class="bi bi-pencil-square"></i> شارك الآن</div>
         </div>
         <p class="quick-desc">لديك فكرة أو سؤال؟ شاركه مع المجتمع!</p>
         <button class="btn-post-now" (click)="openNewPostModal()">
-          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+          <i class="bi bi-plus-circle"></i>
           إنشاء منشور جديد
         </button>
       </div>
@@ -288,13 +324,17 @@
 
 </main>
 
-<!-- ===== NEW POST MODAL ===== -->
+<!-- ===== NEW POST MODAL
+     يُرسل البيانات عبر createPost() إلى API: POST /community/posts
+     newPost.title، newPost.content، newPost.tags تُضاف لـ allPosts بعد النجاح
+     ويُحدَّث summaryCards[0].value و topTopics عبر computeTopics()
+===== -->
 <div class="modal-overlay" *ngIf="showNewPostModal" (click)="closeNewPostModal()">
   <div class="modal-container modal-lg" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>✍️ منشور جديد</h3>
+      <h3><i class="bi bi-pencil-square"></i> منشور جديد</h3>
       <button class="close-btn" (click)="closeNewPostModal()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
@@ -309,6 +349,7 @@
           placeholder="شارك أفكارك، خبراتك، أو أسئلتك..."
           rows="5" class="form-input"></textarea>
       </div>
+      <!-- الوسوم المختارة تُحفظ في newPost.tags وتُرسَل مع المنشور للـ API -->
       <div class="form-group">
         <label class="form-label">الوسوم</label>
         <div class="tags-grid">
@@ -323,6 +364,8 @@
     <div class="modal-footer">
       <button class="btn-cancel" (click)="closeNewPostModal()" [disabled]="isCreatingPost">إلغاء</button>
       <button class="btn-primary" (click)="createPost()" [disabled]="isCreatingPost">
+        <i class="bi bi-send" *ngIf="!isCreatingPost"></i>
+        <i class="bi bi-arrow-repeat spin-icon" *ngIf="isCreatingPost"></i>
         {{ isCreatingPost ? 'جاري النشر...' : 'نشر المنشور' }}
       </button>
     </div>

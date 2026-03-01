@@ -12,20 +12,16 @@
     </div>
     <div class="nav-right">
       <button class="btn-add" (click)="createNewReport()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+        <i class="bi bi-plus-lg"></i>
         <span class="btn-text">تقرير جديد</span>
       </button>
       <button class="guide-btn" (click)="openGuide()">
-        <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+        <i class="bi bi-info-circle"></i>
         <span class="btn-text">دليل الاستخدام</span>
       </button>
       <!-- زر الهامبرجر — يظهر فقط على موبايل/تابلت -->
       <button class="topnav-hamburger" (click)="openSidebar()" aria-label="فتح القائمة">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <i class="bi bi-list"></i>
       </button>
     </div>
   </div>
@@ -35,18 +31,30 @@
 <div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>📄 دليل استخدام التقارير</h3>
+      <h3><i class="bi bi-file-earmark-text"></i> دليل استخدام التقارير</h3>
       <button class="close-btn" (click)="closeGuide()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
       <p class="guide-intro">أنشئ تقارير احترافية لمشروعك بضغطة زر واحدة.</p>
       <div class="guide-features">
-        <div class="guide-item"><span class="guide-icon">📊</span><div><h4>قوالب جاهزة</h4><p>اختر من بين ٦ قوالب تقارير متخصصة</p></div></div>
-        <div class="guide-item"><span class="guide-icon">📥</span><div><h4>تحميل فوري</h4><p>حمّل تقاريرك بصيغة PDF أو Excel</p></div></div>
-        <div class="guide-item"><span class="guide-icon">⚙️</span><div><h4>تقارير مخصصة</h4><p>اختر الأقسام التي تريد تضمينها بحرية</p></div></div>
-        <div class="guide-item"><span class="guide-icon">📤</span><div><h4>مشاركة سهلة</h4><p>شارك تقاريرك مع فريقك بنقرة واحدة</p></div></div>
+        <div class="guide-item">
+          <i class="bi bi-grid guide-icon"></i>
+          <div><h4>قوالب جاهزة</h4><p>اختر من بين ٦ قوالب تقارير متخصصة</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-download guide-icon"></i>
+          <div><h4>تحميل فوري</h4><p>حمّل تقاريرك بصيغة PDF أو Excel</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-sliders guide-icon"></i>
+          <div><h4>تقارير مخصصة</h4><p>اختر الأقسام التي تريد تضمينها بحرية</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-share guide-icon"></i>
+          <div><h4>مشاركة سهلة</h4><p>شارك تقاريرك مع فريقك بنقرة واحدة</p></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -55,13 +63,16 @@
   </div>
 </div>
 
-<!-- ===== CREATE REPORT MODAL ===== -->
+<!-- ===== CREATE REPORT MODAL
+     يُرسَل عبر generateReport() إلى API: POST /api/v1/reports/generate
+     reportOptions.type و startDate و endDate و format تُرسَل في الـ body
+===== -->
 <div class="modal-overlay" *ngIf="showCreateModal" (click)="cancelReportGeneration()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>📊 إنشاء تقرير جديد</h3>
+      <h3><i class="bi bi-bar-chart"></i> إنشاء تقرير جديد</h3>
       <button class="close-btn" (click)="cancelReportGeneration()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
@@ -89,10 +100,10 @@
         <label class="form-label">صيغة التقرير</label>
         <div class="format-btns">
           <button class="format-btn" [class.active]="reportOptions.format === 'pdf'" (click)="reportOptions.format = 'pdf'">
-            📄 PDF
+            <i class="bi bi-file-earmark-pdf"></i> PDF
           </button>
           <button class="format-btn" [class.active]="reportOptions.format === 'excel'" (click)="reportOptions.format = 'excel'">
-            📊 Excel
+            <i class="bi bi-file-earmark-excel"></i> Excel
           </button>
         </div>
       </div>
@@ -100,28 +111,38 @@
     <div class="modal-footer">
       <button class="btn-cancel" (click)="cancelReportGeneration()" [disabled]="isGenerating">إلغاء</button>
       <button class="btn-primary" (click)="generateReport()" [disabled]="isGenerating">
+        <i class="bi bi-arrow-repeat spin-icon" *ngIf="isGenerating"></i>
+        <i class="bi bi-file-earmark-plus" *ngIf="!isGenerating"></i>
         {{ isGenerating ? 'جاري الإنشاء...' : 'إنشاء التقرير' }}
       </button>
     </div>
   </div>
 </div>
 
-<!-- ===== CUSTOM REPORT MODAL ===== -->
+<!-- ===== CUSTOM REPORT MODAL
+     customSections المختارة تُرسَل مع reportOptions عبر generateReport()
+     API: POST /api/v1/reports/generate  { sections: [...], ...reportOptions }
+===== -->
 <div class="modal-overlay" *ngIf="showCustomModal" (click)="cancelReportGeneration()">
   <div class="modal-container modal-lg" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>⚙️ تقرير مخصص</h3>
+      <h3><i class="bi bi-sliders"></i> تقرير مخصص</h3>
       <button class="close-btn" (click)="cancelReportGeneration()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">اختر الأقسام المطلوبة</label>
+        <!-- section.selected يُحدَّث عبر toggleCustomSection() -->
         <div class="sections-grid">
-          <label *ngFor="let section of customSections" class="section-item" [class.selected]="section.selected" (click)="toggleCustomSection(section)">
+          <label *ngFor="let section of customSections"
+            class="section-item" [class.selected]="section.selected"
+            (click)="toggleCustomSection(section)">
             <input type="checkbox" [checked]="section.selected" style="display:none">
-            <span class="section-check">{{ section.selected ? '✓' : '' }}</span>
+            <i class="bi section-check-icon"
+               [class.bi-check-square-fill]="section.selected"
+               [class.bi-square]="!section.selected"></i>
             <span>{{ section.label }}</span>
           </label>
         </div>
@@ -139,14 +160,20 @@
       <div class="form-group">
         <label class="form-label">صيغة التقرير</label>
         <div class="format-btns">
-          <button class="format-btn" [class.active]="reportOptions.format === 'pdf'" (click)="reportOptions.format = 'pdf'">📄 PDF</button>
-          <button class="format-btn" [class.active]="reportOptions.format === 'excel'" (click)="reportOptions.format = 'excel'">📊 Excel</button>
+          <button class="format-btn" [class.active]="reportOptions.format === 'pdf'" (click)="reportOptions.format = 'pdf'">
+            <i class="bi bi-file-earmark-pdf"></i> PDF
+          </button>
+          <button class="format-btn" [class.active]="reportOptions.format === 'excel'" (click)="reportOptions.format = 'excel'">
+            <i class="bi bi-file-earmark-excel"></i> Excel
+          </button>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" (click)="cancelReportGeneration()" [disabled]="isGenerating">إلغاء</button>
       <button class="btn-primary" (click)="generateReport()" [disabled]="isGenerating">
+        <i class="bi bi-arrow-repeat spin-icon" *ngIf="isGenerating"></i>
+        <i class="bi bi-file-earmark-plus" *ngIf="!isGenerating"></i>
         {{ isGenerating ? 'جاري الإنشاء...' : 'إنشاء التقرير' }}
       </button>
     </div>
@@ -156,83 +183,107 @@
 <!-- ===== MAIN ===== -->
 <main class="reports-main" [class.sidebar-collapsed]="isSidebarCollapsed">
 
-  <!-- Messages -->
+  <!-- رسائل النجاح والخطأ -->
   <div class="success-banner" *ngIf="successMessage">
-    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
+    <i class="bi bi-check-circle-fill"></i>
     {{ successMessage }}
   </div>
   <div class="error-banner" *ngIf="errorMessage">
-    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    <i class="bi bi-exclamation-triangle-fill"></i>
     {{ errorMessage }}
   </div>
 
-  <!-- ===== WELCOME ===== -->
+  <!-- ===== WELCOME
+       totalReports ← API: GET /reports/stats  →  stats.totalReports
+       totalDownloads ← stats.totalDownloads
+       totalViews ← stats.totalViews
+  ===== -->
   <section class="welcome-section">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1 class="welcome-title">مركز التقارير 📄</h1>
+        <h1 class="welcome-title">مركز التقارير <i class="bi bi-file-earmark-bar-graph"></i></h1>
         <p class="welcome-sub">أنشئ تقارير احترافية وتتبع أداء مشروعك بدقة</p>
       </div>
       <div class="welcome-stats">
+        <!-- يستقبل بياناته من loadStats() → totalReports -->
         <div class="w-stat">
-          <span class="w-stat-icon">📋</span>
-          <div><span class="w-stat-lbl">إجمالي التقارير</span><span class="w-stat-val">{{ totalReports }}</span></div>
+          <i class="bi bi-clipboard-data w-stat-icon"></i>
+          <div>
+            <span class="w-stat-lbl">إجمالي التقارير</span>
+            <span class="w-stat-val">{{ totalReports }}</span>
+          </div>
         </div>
+        <!-- يستقبل بياناته من loadStats() → totalDownloads -->
         <div class="w-stat">
-          <span class="w-stat-icon">📥</span>
-          <div><span class="w-stat-lbl">عمليات التحميل</span><span class="w-stat-val">{{ totalDownloads }}</span></div>
+          <i class="bi bi-download w-stat-icon"></i>
+          <div>
+            <span class="w-stat-lbl">عمليات التحميل</span>
+            <span class="w-stat-val">{{ totalDownloads }}</span>
+          </div>
         </div>
+        <!-- يستقبل بياناته من loadStats() → totalViews -->
         <div class="w-stat">
-          <span class="w-stat-icon">👁️</span>
-          <div><span class="w-stat-lbl">المشاهدات</span><span class="w-stat-val">{{ totalViews }}</span></div>
+          <i class="bi bi-eye w-stat-icon"></i>
+          <div>
+            <span class="w-stat-lbl">المشاهدات</span>
+            <span class="w-stat-val">{{ totalViews }}</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== METRICS ===== -->
+  <!-- ===== METRICS
+       كل قيمة مشتركة مع WELCOME: totalReports / totalDownloads / totalShares / totalViews
+       جميعها من loadStats() ← API: GET /api/v1/reports/stats
+  ===== -->
   <section class="metrics-grid">
     <div class="mc">
-      <div class="mc-icon">📋</div>
+      <div class="mc-icon"><i class="bi bi-clipboard-data"></i></div>
       <div class="mc-lbl">إجمالي التقارير</div>
       <div class="mc-val">{{ totalReports }}</div>
       <div class="mini-prog"><div class="mini-prog-fill g" style="width:72%"></div></div>
     </div>
     <div class="mc">
-      <div class="mc-icon">📥</div>
+      <div class="mc-icon"><i class="bi bi-download"></i></div>
       <div class="mc-lbl">التحميلات</div>
       <div class="mc-val">{{ totalDownloads }}</div>
       <div class="mini-prog"><div class="mini-prog-fill o" style="width:85%"></div></div>
     </div>
     <div class="mc">
-      <div class="mc-icon">📤</div>
+      <div class="mc-icon"><i class="bi bi-share"></i></div>
       <div class="mc-lbl">المشاركات</div>
       <div class="mc-val">{{ totalShares }}</div>
       <div class="mini-prog"><div class="mini-prog-fill b" style="width:55%"></div></div>
     </div>
     <div class="mc">
-      <div class="mc-icon">👁️</div>
+      <div class="mc-icon"><i class="bi bi-eye"></i></div>
       <div class="mc-lbl">المشاهدات الكلية</div>
       <div class="mc-val">{{ totalViews }}</div>
       <div class="mini-prog"><div class="mini-prog-fill p" style="width:90%"></div></div>
     </div>
   </section>
 
-  <!-- ===== TEMPLATES ===== -->
+  <!-- ===== TEMPLATES
+       reportTemplates مصدرها loadTemplates() — يمكن أن تكون ثابتة أو من API
+       النقر على بطاقة يستدعي createReport(t) الذي يفتح الموديل المناسب
+  ===== -->
   <section class="section-block">
     <div class="section-head">
-      <div class="section-title">📑 قوالب التقارير</div>
+      <div class="section-title"><i class="bi bi-layout-text-window-reverse"></i> قوالب التقارير</div>
       <div class="section-sub">اختر نوع التقرير الذي تريد إنشاءه</div>
     </div>
     <div class="templates-grid">
       <div class="template-card" *ngFor="let t of reportTemplates" (click)="createReport(t)">
-        <div class="template-icon" [style.background]="t.color + '18'" [style.color]="t.color">{{ t.icon }}</div>
+        <div class="template-icon" [style.background]="t.color + '18'" [style.color]="t.color">
+          <i class="bi bi-{{ t.biIcon }}"></i>
+        </div>
         <div class="template-info">
           <div class="template-title">{{ t.title }}</div>
           <div class="template-desc">{{ t.description }}</div>
         </div>
         <button class="template-btn" [style.background]="t.color">
-          <svg viewBox="0 0 16 16" fill="white" width="12" height="12"><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/></svg>
+          <i class="bi bi-plus-lg"></i>
           إنشاء
         </button>
       </div>
@@ -242,19 +293,26 @@
   <!-- ===== CONTENT ROW ===== -->
   <div class="content-row">
 
-    <!-- Saved Reports -->
+    <!-- التقارير المحفوظة
+         filteredReports مشتقة من savedReportsList عبر filterReports()
+         savedReportsList تُحمَّل عبر loadReports() ← API: GET /api/v1/reports
+    -->
     <div class="reports-col">
       <div class="section-block">
         <div class="section-head-row">
           <div>
-            <div class="section-title">📂 التقارير المحفوظة</div>
+            <div class="section-title"><i class="bi bi-folder2-open"></i> التقارير المحفوظة</div>
+            <!-- filteredReports.length يتغير عند filterReports() -->
             <div class="section-sub">{{ filteredReports.length }} تقرير</div>
           </div>
           <div class="filters-row">
+            <!-- البحث النصي — يستدعي filterReports() عند الكتابة -->
             <div class="search-wrap">
-              <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11"/></svg>
-              <input type="text" [(ngModel)]="searchQuery" (input)="filterReports()" placeholder="بحث في التقارير..." class="search-input">
+              <i class="bi bi-search search-icon"></i>
+              <input type="text" [(ngModel)]="searchQuery" (input)="filterReports()"
+                placeholder="بحث في التقارير..." class="search-input">
             </div>
+            <!-- فلتر النوع — يستدعي filterReports() عند التغيير -->
             <select [(ngModel)]="selectedTypeFilter" (change)="filterReports()" class="type-select">
               <option value="all">كل الأنواع</option>
               <option value="financial">مالي</option>
@@ -269,8 +327,9 @@
         <div class="reports-list">
           <div class="report-card" *ngFor="let report of filteredReports">
             <div class="report-left">
+              <!-- الأيقونة تُحدَّد بناءً على report.type عبر getTypeIcon() -->
               <div class="report-icon" [ngClass]="'rt-' + report.type">
-                {{ report.type === 'financial' ? '💰' : report.type === 'marketing' ? '📈' : report.type === 'tasks' ? '✅' : report.type === 'team' ? '👥' : report.type === 'comprehensive' ? '📊' : '⚙️' }}
+                <i class="bi bi-{{ getTypeIcon(report.type) }}"></i>
               </div>
               <div class="report-info">
                 <div class="report-title">{{ report.title }}</div>
@@ -279,31 +338,38 @@
                   <span class="dot">·</span>
                   <span class="report-date">{{ report.date }}</span>
                   <span class="dot">·</span>
-                  <span class="report-views">👁️ {{ report.views }}</span>
+                  <!-- report.views يُحدَّث عند viewReport() -->
+                  <span class="report-views"><i class="bi bi-eye"></i> {{ report.views }}</span>
                   <span class="dot">·</span>
-                  <span class="report-format" [class.pdf]="report.format === 'pdf'" [class.excel]="report.format === 'excel'">{{ report.format.toUpperCase() }}</span>
+                  <span class="report-format" [class.pdf]="report.format === 'pdf'" [class.excel]="report.format === 'excel'">
+                    {{ report.format.toUpperCase() }}
+                  </span>
                 </div>
               </div>
             </div>
             <div class="report-right">
               <span class="status-badge" [class]="'status-' + report.status">{{ getStatusText(report.status) }}</span>
+              <!-- عرض — يُحدّث report.views و totalViews -->
               <button class="act-btn" (click)="viewReport(report)" title="عرض">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/><path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/></svg>
+                <i class="bi bi-eye"></i>
               </button>
+              <!-- تحميل — API: GET /api/v1/reports/:id/download -->
               <button class="act-btn" (click)="downloadReport(report)" title="تحميل">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg>
+                <i class="bi bi-download"></i>
               </button>
+              <!-- مشاركة — يُحدّث totalShares -->
               <button class="act-btn" (click)="shareReport(report)" title="مشاركة">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/></svg>
+                <i class="bi bi-share"></i>
               </button>
+              <!-- حذف — API: DELETE /api/v1/reports/:id -->
               <button class="act-btn act-del" (click)="deleteReport(report)" title="حذف">
-                <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
+                <i class="bi bi-trash3"></i>
               </button>
             </div>
           </div>
 
           <div class="empty-state" *ngIf="filteredReports.length === 0">
-            <div class="empty-icon">📂</div>
+            <i class="bi bi-folder2 empty-icon"></i>
             <p>لا توجد تقارير. أنشئ أول تقرير لك!</p>
             <button class="btn-primary" (click)="createNewReport()">إنشاء تقرير</button>
           </div>
@@ -311,11 +377,13 @@
       </div>
     </div>
 
-    <!-- Chart Sidebar -->
+    <!-- العمود الجانبي -->
     <aside class="chart-col">
+
+      <!-- الرسم البياني — بياناته من loadChartData() ← API: GET /api/v1/reports/activity -->
       <div class="section-block">
         <div class="section-head">
-          <div class="section-title">📈 نشاط التقارير</div>
+          <div class="section-title"><i class="bi bi-bar-chart-line"></i> نشاط التقارير</div>
           <div class="section-sub">آخر ٧ أشهر</div>
         </div>
         <div class="chart-wrap">
@@ -323,35 +391,40 @@
         </div>
       </div>
 
-      <!-- Quick Actions -->
+      <!-- الإجراءات السريعة — كل زر يفتح الموديل بإعدادات محددة مسبقاً -->
       <div class="section-block">
         <div class="section-head">
-          <div class="section-title">⚡ إجراءات سريعة</div>
+          <div class="section-title"><i class="bi bi-lightning-charge"></i> إجراءات سريعة</div>
         </div>
         <div class="quick-actions">
+          <!-- تقرير شامل PDF — يضبط reportOptions مباشرةً ثم يفتح الموديل -->
           <button class="qa-btn" (click)="reportOptions.format='pdf'; reportOptions.type='comprehensive'; showCreateModal=true">
-            <span class="qa-icon">📊</span>
+            <i class="bi bi-bar-chart qa-icon"></i>
             <span>تقرير شامل PDF</span>
-            <svg viewBox="0 0 16 16" fill="currentColor" width="12"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>
+            <i class="bi bi-chevron-left qa-arrow"></i>
           </button>
+          <!-- تقرير مالي Excel -->
           <button class="qa-btn" (click)="reportOptions.format='excel'; reportOptions.type='financial'; showCreateModal=true">
-            <span class="qa-icon">💰</span>
+            <i class="bi bi-currency-dollar qa-icon"></i>
             <span>تقرير مالي Excel</span>
-            <svg viewBox="0 0 16 16" fill="currentColor" width="12"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>
+            <i class="bi bi-chevron-left qa-arrow"></i>
           </button>
+          <!-- تقرير الفريق -->
           <button class="qa-btn" (click)="reportOptions.format='pdf'; reportOptions.type='team'; showCreateModal=true">
-            <span class="qa-icon">👥</span>
+            <i class="bi bi-people qa-icon"></i>
             <span>تقرير الفريق</span>
-            <svg viewBox="0 0 16 16" fill="currentColor" width="12"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>
+            <i class="bi bi-chevron-left qa-arrow"></i>
           </button>
+          <!-- تقرير مخصص — يفتح موديل الأقسام -->
           <button class="qa-btn" (click)="showCustomModal=true; reportOptions.type='custom'">
-            <span class="qa-icon">⚙️</span>
+            <i class="bi bi-sliders qa-icon"></i>
             <span>تقرير مخصص</span>
-            <svg viewBox="0 0 16 16" fill="currentColor" width="12"><path d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg>
+            <i class="bi bi-chevron-left qa-arrow"></i>
           </button>
         </div>
       </div>
-    </aside>
 
+    </aside>
   </div>
+
 </main>

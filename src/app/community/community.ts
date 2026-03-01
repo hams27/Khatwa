@@ -3,8 +3,13 @@ import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AiChatComponent } from '../ai-chat/ai-chat';
+import { CommunityService } from '../services/community';
 
-interface PostWithDetails {
+// ─────────────────────────────────────────────
+// INTERFACES
+// ─────────────────────────────────────────────
+
+export interface PostWithDetails {
   id?: number;
   userId?: number;
   title?: string;
@@ -22,118 +27,39 @@ interface PostWithDetails {
   loadingComments?: boolean;
 }
 
-interface CommentItem {
+export interface CommentItem {
   id?: number;
   postId: number;
   content: string;
   createdAt?: string;
-  User?: { id: number; name: string; };
+  User?: { id: number; name: string };
 }
 
-interface SummaryCard {
+export interface SummaryCard {
   title: string;
   value: number;
-  icon: string;
+  biIcon: string;   // اسم أيقونة Bootstrap Icons (بدون bi-)
   color: string;
   loading?: boolean;
 }
 
-interface TopicItem {
+export interface TopicItem {
   name: string;
   posts: number;
 }
 
-const MOCK_POSTS: PostWithDetails[] = [
-  {
-    id: 1, userId: 2,
-    title: 'كيف تبني علامة تجارية قوية من الصفر؟',
-    content: 'بعد سنتين من العمل على مشروعي، تعلمت أن العلامة التجارية ليست مجرد لوجو وألوان — هي القصة التي تحكيها لعملائك. ابدأ بتحديد قيمك الأساسية، ثم اسأل: لماذا أنت مختلف؟ ما المشكلة التي تحلها بشكل أفضل من غيرك؟ شاركوني تجاربكم!',
-    tags: ['تسويق', 'استراتيجية'],
-    likesCount: 47,
-    createdAt: new Date(Date.now() - 2 * 3600000).toISOString(),
-    author: 'أحمد الشمري', authorRole: 'مؤسس شركة ناشئة', timeAgo: 'قبل ساعتين',
-    commentsCount: 8, isLiked: false, showComments: false, comments: [], loadingComments: false
-  },
-  {
-    id: 2, userId: 3,
-    title: 'نصيحة ذهبية: لا تبدأ بالمنتج، ابدأ بالعميل',
-    content: 'أكبر خطأ ارتكبته في مشروعي الأول أنني صممت المنتج كاملاً قبل أن أكلم عميلاً واحداً. أضعت ٦ أشهر و٥٠ ألف ريال. المشروع الثاني بدأت بـ٢٠ مقابلة مع عملاء محتملين قبل كتابة سطر كود واحد. النتيجة؟ وصلنا للـ product-market fit في أقل من ٣ أشهر.',
-    tags: ['نصائح', 'إدارة'],
-    likesCount: 93,
-    createdAt: new Date(Date.now() - 5 * 3600000).toISOString(),
-    author: 'سارة المنصوري', authorRole: 'رائدة أعمال', timeAgo: 'قبل ٥ ساعات',
-    commentsCount: 21, isLiked: true, showComments: false, comments: [], loadingComments: false
-  },
-  {
-    id: 3, userId: 4,
-    title: 'تجربتي مع تمويل المشاريع في السعودية',
-    content: 'تقدمت لأكثر من ١٥ صندوق استثمار العام الماضي. معظمهم يريدون رؤية: ١) نمو واضح في الإيرادات ٢) فريق متكامل ٣) حصة سوقية قابلة للدفاع. الحل الأسهل للمبتدئين: ابدأ بـ bootstrapping حتى تصل لـ١٠٠ ألف ريال ARR، ثم اذهب للمستثمرين وأنت في موضع قوة.',
-    tags: ['تمويل', 'استراتيجية'],
-    likesCount: 61,
-    createdAt: new Date(Date.now() - 86400000).toISOString(),
-    author: 'خالد الحربي', authorRole: 'مستثمر ملاك', timeAgo: 'أمس',
-    commentsCount: 14, isLiked: false, showComments: false, comments: [], loadingComments: false
-  },
-  {
-    id: 4, userId: 5,
-    title: 'كيف وظفت أول موظف ووفرت ٤٠٪ من وقتي؟',
-    content: 'قضيت ٨ أشهر أعمل وحدي ١٤ ساعة يومياً. القرار الأصعب كان الثقة بشخص آخر على مشروعي. لكن الوظيفة الأولى غيرت كل شيء — شاركت المهام الإدارية، ركزت على المبيعات والمنتج، وضاعفت الإيرادات خلال ٣ أشهر. الدرس: تعلم كيف تتخلى عن السيطرة بذكاء.',
-    tags: ['إدارة', 'نصائح'],
-    likesCount: 38,
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    author: 'نورة القحطاني', authorRole: 'مديرة تنفيذية', timeAgo: 'قبل يومين',
-    commentsCount: 6, isLiked: false, showComments: false, comments: [], loadingComments: false
-  },
-  {
-    id: 5, userId: 6,
-    title: 'سؤال: ما أفضل أداة CRM للشركات الصغيرة؟',
-    content: 'مشروعنا ناشئ ولدينا حوالي ١٢٠ عميل. نستخدم الإكسل حالياً وبدأ يصبح مرهقاً. هل تنصحون بـ HubSpot للبداية أم Notion أم شيء آخر؟ الميزانية محدودة تقريباً ٥٠٠ ريال شهرياً.',
-    tags: ['تقنية', 'أسئلة'],
-    likesCount: 15,
-    createdAt: new Date(Date.now() - 3 * 3600000).toISOString(),
-    author: 'فيصل العتيبي', authorRole: 'رائد أعمال', timeAgo: 'قبل ٣ ساعات',
-    commentsCount: 11, isLiked: false, showComments: false, comments: [], loadingComments: false
-  },
-  {
-    id: 6, userId: 7,
-    title: 'قصة نجاح: من ٠ إلى ١٠٠ عميل في ٦٠ يوماً',
-    content: 'لما أطلقنا خدمتنا لإدارة السوشيال ميديا للمطاعم، استخدمنا تكتيك بسيط جداً: تواصلنا مع ٢٠٠ مطعم يومياً عبر الإنستجرام وقدمنا أسبوع مجاني. ٥٪ منهم وافقوا، ٤٠٪ من المجانيين تحولوا لعملاء مدفوعين. الدرس: Volume + Value = Growth.',
-    tags: ['مبيعات', 'تسويق', 'نصائح'],
-    likesCount: 124,
-    createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
-    author: 'منال الزهراني', authorRole: 'مؤسسة وكالة رقمية', timeAgo: 'قبل ٤ أيام',
-    commentsCount: 33, isLiked: true, showComments: false, comments: [], loadingComments: false
-  }
-];
+export interface ActiveMember {
+  name: string;
+  posts: number;
+}
 
-const MOCK_COMMENTS: { [k: number]: CommentItem[] } = {
-  1: [
-    { id: 1, postId: 1, content: 'رائع جداً! أنا أيضاً مررت بنفس التجربة. تحديد القيم هو الأساس.', User: { id: 10, name: 'عمر السالم' } },
-    { id: 2, postId: 1, content: 'ممتاز، ما رأيك في الهوية البصرية؟ هل تبدأ بها قبل أو بعد تحديد القيم؟', User: { id: 11, name: 'ريم العلي' } },
-    { id: 3, postId: 1, content: 'شكراً على المشاركة! هل يمكنك التوسع في نقطة التمايز؟', User: { id: 12, name: 'محمد الجابر' } }
-  ],
-  2: [
-    { id: 4, postId: 2, content: 'هذا تماماً ما كنت أحتاج سماعه. شكراً على الصراحة!', User: { id: 13, name: 'حمد الدوسري' } },
-    { id: 5, postId: 2, content: '٢٠ مقابلة قبل البناء، هذا الدرس الأهم في ريادة الأعمال.', User: { id: 14, name: 'لطيفة الكعبي' } }
-  ],
-  5: [
-    { id: 6, postId: 5, content: 'جرب HubSpot Free أولاً، مجاني وكافي لـ١٢٠ عميل.', User: { id: 15, name: 'عبدالله الرشيدي' } },
-    { id: 7, postId: 5, content: 'Notion CRM ممتاز لو تحب المرونة، لكن يحتاج إعداد.', User: { id: 16, name: 'دلال المطيري' } },
-    { id: 8, postId: 5, content: 'Zoho CRM خيار ممتاز بالسعر المناسب!', User: { id: 17, name: 'وليد الشهري' } }
-  ]
-};
-
-const ACTIVE_MEMBERS = [
-  { name: 'منال الزهراني', posts: 34 },
-  { name: 'سارة المنصوري', posts: 27 },
-  { name: 'خالد الحربي', posts: 19 },
-  { name: 'أحمد الشمري', posts: 15 },
-  { name: 'نورة القحطاني', posts: 12 }
-];
+// ─────────────────────────────────────────────
+// COMPONENT
+// ─────────────────────────────────────────────
 
 @Component({
   selector: 'app-community',
-  imports: [CommonModule, SideBar, FormsModule ,AiChatComponent],
+  imports: [CommonModule, SideBar, FormsModule, AiChatComponent],
   templateUrl: './community.html',
   styleUrl: './community.css',
   standalone: true
@@ -143,206 +69,440 @@ export class Community implements OnInit, OnDestroy {
   // ── Sidebar Reference ──
   @ViewChild('sidebarRef') sidebarComponent?: SideBar;
 
-  isLoading = false;
-  isCreatingPost = false;
-  errorMessage = '';
-  successMessage = '';
+  // ── حالة الصفحة ──
+  isLoading       = false;
+  isCreatingPost  = false;
+  errorMessage    = '';
+  successMessage  = '';
 
-  currentUser: any = { id: 1, name: 'أنت' };
+  // ── بيانات المستخدم الحالي (تأتي من AuthService أو LocalStorage) ──
+  currentUser: { id: number; name: string } | null = null;
 
+  // ── بطاقات الإحصائيات العلوية
+  //    تُعبّأ من API عبر loadCommunityStats()
+  //    summaryCards[0] → إجمالي المنشورات   (يُعرض في WELCOME + METRICS)
+  //    summaryCards[1] → الأعضاء النشطون     (يُعرض في WELCOME + METRICS)
+  //    summaryCards[2] → إجمالي التفاعلات   (يُعرض في METRICS)
   summaryCards: SummaryCard[] = [
-    { title: 'المشاركات', value: 0, icon: '📝', color: 'blue', loading: false },
-    { title: 'الأعضاء النشطين', value: 0, icon: '👥', color: 'green', loading: false },
-    { title: 'التفاعلات', value: 0, icon: '❤️', color: 'orange', loading: false }
+    { title: 'المشاركات',       value: 0, biIcon: 'file-text',   color: 'blue' },
+    { title: 'الأعضاء النشطين', value: 0, biIcon: 'people',      color: 'green' },
+    { title: 'التفاعلات',       value: 0, biIcon: 'heart',        color: 'orange' }
   ];
 
-  allPosts: PostWithDetails[] = [];
-  posts: PostWithDetails[] = [];
-  topTopics: TopicItem[] = [];
-  activeMembers = ACTIVE_MEMBERS;
+  // ── المنشورات ──
+  allPosts: PostWithDetails[] = [];   // جميع المنشورات كما أتت من API
+  posts:    PostWithDetails[] = [];   // المنشورات بعد الفلترة / البحث
 
-  selectedFilter: string = 'all';
-  searchQuery: string = '';
-  availableFilters = [
-    { value: 'all', label: 'الكل', icon: '📋' },
-    { value: 'popular', label: 'الأكثر شعبية', icon: '🔥' },
-    { value: 'recent', label: 'الأحدث', icon: '🆕' },
-    { value: 'my-posts', label: 'منشوراتي', icon: '👤' }
+  // ── الشريط الجانبي ──
+  topTopics:    TopicItem[]   = [];   // مشتقة من allPosts.tags عبر computeTopics()
+  activeMembers: ActiveMember[] = []; // تأتي من API عبر loadActiveMembers()
+
+  // ── الفلترة ──
+  selectedFilter = 'all';
+  searchQuery    = '';
+
+  // قائمة الفلاتر — biIcon هو اسم أيقونة Bootstrap Icons
+  availableFilters: { value: string; label: string; biIcon: string }[] = [
+    { value: 'all',      label: 'الكل',              biIcon: 'list-ul' },
+    { value: 'popular',  label: 'الأكثر شعبية',     biIcon: 'fire' },
+    { value: 'recent',   label: 'الأحدث',            biIcon: 'clock-history' },
+    { value: 'my-posts', label: 'منشوراتي',          biIcon: 'person' }
   ];
 
+  // قائمة الوسوم المتاحة للاختيار عند إنشاء منشور جديد
   availableTags = ['تسويق', 'مبيعات', 'إدارة', 'تقنية', 'تمويل', 'استراتيجية', 'نصائح', 'أسئلة'];
 
+  // ── موديل المنشور الجديد ──
   newPost = { title: '', content: '', tags: [] as string[] };
   showNewPostModal = false;
+
+  // ── التعليقات — يحفظ محتوى حقل الإدخال لكل منشور بمعرّفه ──
   newCommentContent: { [postId: number]: string } = {};
-  showGuide = false;
+
+  // ── حالات الـ UI ──
+  showGuide          = false;
   isSidebarCollapsed = false;
 
+  constructor(private communityService: CommunityService) {}
+
+  // ─────────────────────────────────────────────
+  // LIFECYCLE
+  // ─────────────────────────────────────────────
+
   ngOnInit(): void {
-    this.loadMockData();
+    this.loadCurrentUser();
+    this.loadPosts();
+    this.loadActiveMembers();
   }
 
   ngOnDestroy(): void {}
 
-  onSidebarToggle(collapsed: boolean) {
+  // ─────────────────────────────────────────────
+  // AUTH / USER
+  // ─────────────────────────────────────────────
+
+  /** يستخرج بيانات المستخدم الحالي من localStorage */
+  private loadCurrentUser(): void {
+    try {
+      const raw = localStorage.getItem('user');
+      this.currentUser = raw ? JSON.parse(raw) : null;
+    } catch {
+      this.currentUser = null;
+    }
+  }
+
+  // ─────────────────────────────────────────────
+  // SIDEBAR
+  // ─────────────────────────────────────────────
+
+  onSidebarToggle(collapsed: boolean): void {
     this.isSidebarCollapsed = collapsed;
   }
 
   /** يفتح الـ sidebar على موبايل/تابلت */
-  openSidebar() {
+  openSidebar(): void {
     this.sidebarComponent?.openMobile();
   }
 
-  loadMockData() {
-    this.allPosts = JSON.parse(JSON.stringify(MOCK_POSTS));
-    this.posts = [...this.allPosts];
-    const totalLikes = this.allPosts.reduce((s, p) => s + (p.likesCount || 0), 0);
-    this.summaryCards[0].value = this.allPosts.length;
-    this.summaryCards[1].value = ACTIVE_MEMBERS.length;
-    this.summaryCards[2].value = totalLikes;
-    this.computeTopics();
+  // ─────────────────────────────────────────────
+  // DATA LOADING
+  // ─────────────────────────────────────────────
+
+  /**
+   * ENDPOINT: GET /api/v1/community/posts
+   * يجلب جميع المنشورات ثم يُحدّث:
+   *   - allPosts / posts
+   *   - summaryCards[0].value (إجمالي المنشورات)
+   *   - summaryCards[2].value (إجمالي التفاعلات)
+   *   - topTopics (عبر computeTopics)
+   */
+  loadPosts(tag?: string): void {
+    this.isLoading = true;
+    this.communityService.getPosts(tag).subscribe({
+      next: (res: any) => {
+        const data: any[] = Array.isArray(res) ? res : res?.posts ?? res?.data ?? [];
+        this.allPosts = data.map(p => this.mapPost(p));
+        this.summaryCards[0].value = this.allPosts.length;
+        this.summaryCards[2].value = this.allPosts.reduce((s, p) => s + (p.likesCount || 0), 0);
+        this.computeTopics();
+        this.applyFilters();
+        this.isLoading = false;
+      },
+      error: () => {
+        this.showError('تعذّر تحميل المنشورات، يرجى المحاولة مجدداً');
+        this.isLoading = false;
+      }
+    });
   }
 
-  computeTopics() {
+  /**
+   * ENDPOINT: GET /api/v1/community/stats  (أو نقطة نهاية مناسبة)
+   * يجلب قائمة الأعضاء النشطين ويُحدّث:
+   *   - activeMembers
+   *   - summaryCards[1].value (عدد الأعضاء)
+   */
+  loadActiveMembers(): void {
+    // TODO: استبدل بـ endpoint حقيقي بعد أن يتوفر من الباك
+    // مثال: this.communityService.getActiveMembers().subscribe(...)
+    this.activeMembers = [];
+    this.summaryCards[1].value = 0;
+  }
+
+  /**
+   * ENDPOINT: GET /api/v1/community/posts/:id/comments
+   * يُحمَّل عند أول ضغطة على زر التعليقات (toggleComments)
+   * يُحدّث post.comments و post.loadingComments
+   */
+  private loadComments(post: PostWithDetails): void {
+    if (!post.id) return;
+    post.loadingComments = true;
+    this.communityService.getComments(post.id).subscribe({
+      next: (res: any) => {
+        post.comments = Array.isArray(res) ? res : res?.comments ?? res?.data ?? [];
+        post.loadingComments = false;
+      },
+      error: () => {
+        post.comments = [];
+        post.loadingComments = false;
+      }
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // POSTS — الفلترة والبحث
+  // ─────────────────────────────────────────────
+
+  /**
+   * تُطبّق الفلتر الحالي والبحث على allPosts وتُحدّث posts[]
+   * posts[] هي المصدر الذي يعرضه قسم POSTS في HTML
+   */
+  applyFilters(): void {
+    let filtered = [...this.allPosts];
+
+    if (this.selectedFilter === 'popular') {
+      filtered.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
+    } else if (this.selectedFilter === 'recent') {
+      filtered.sort((a, b) =>
+        new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+      );
+    } else if (this.selectedFilter === 'my-posts') {
+      filtered = filtered.filter(p => p.userId === this.currentUser?.id);
+    }
+
+    if (this.searchQuery.trim()) {
+      const q = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.title?.toLowerCase().includes(q) ||
+        p.content?.toLowerCase().includes(q) ||
+        p.author?.toLowerCase().includes(q) ||
+        p.tags?.some(t => t.toLowerCase().includes(q))
+      );
+    }
+
+    this.posts = filtered;
+  }
+
+  /** يُغيّر الفلتر النشط ويُعيد تطبيق الفلترة */
+  changeFilter(filter: string): void {
+    this.selectedFilter = filter;
+    this.applyFilters();
+  }
+
+  /**
+   * النقر على وسم في المنشور أو في قائمة المواضيع الشائعة
+   * يُحدّث searchQuery ثم يُعيد الفلترة
+   */
+  filterByTag(tag: string): void {
+    this.searchQuery = tag;
+    this.selectedFilter = 'all';
+    this.applyFilters();
+  }
+
+  /** يُستدعى من حقل البحث عند الكتابة */
+  searchPosts(): void {
+    this.applyFilters();
+  }
+
+  // ─────────────────────────────────────────────
+  // POSTS — العمليات الرئيسية
+  // ─────────────────────────────────────────────
+
+  /**
+   * ENDPOINT: POST /api/v1/community/posts
+   * يُنشئ منشوراً جديداً ويُضيفه لأول allPosts
+   * يُحدّث: summaryCards[0].value، topTopics، posts[]
+   */
+  createPost(): void {
+    if (!this.newPost.title.trim()) { this.showError('الرجاء إدخال عنوان المنشور'); return; }
+    if (!this.newPost.content.trim()) { this.showError('الرجاء إدخال محتوى المنشور'); return; }
+
+    this.isCreatingPost = true;
+    this.communityService.createPost({
+      title:   this.newPost.title.trim(),
+      content: this.newPost.content.trim(),
+      tags:    [...this.newPost.tags]
+    }).subscribe({
+      next: (res: any) => {
+        const created = this.mapPost(res?.post ?? res);
+        this.allPosts.unshift(created);
+        this.summaryCards[0].value = this.allPosts.length;
+        this.computeTopics();
+        this.applyFilters();
+        this.isCreatingPost = false;
+        this.closeNewPostModal();
+        this.showSuccess('تم نشر المنشور بنجاح!');
+      },
+      error: () => {
+        this.showError('تعذّر نشر المنشور، يرجى المحاولة مجدداً');
+        this.isCreatingPost = false;
+      }
+    });
+  }
+
+  /**
+   * ENDPOINT: DELETE /api/v1/community/posts/:id
+   * يحذف المنشور ويُزيله من allPosts ثم يُعيد الفلترة
+   * يُحدّث: summaryCards[0].value، topTopics
+   */
+  deletePost(post: PostWithDetails): void {
+    if (!post.id) return;
+    if (!confirm('هل أنت متأكد من حذف هذا المنشور؟')) return;
+
+    this.communityService.deletePost(post.id).subscribe({
+      next: () => {
+        this.allPosts = this.allPosts.filter(p => p.id !== post.id);
+        this.summaryCards[0].value = this.allPosts.length;
+        this.computeTopics();
+        this.applyFilters();
+        this.showSuccess('تم حذف المنشور بنجاح');
+      },
+      error: () => this.showError('تعذّر حذف المنشور')
+    });
+  }
+
+  /**
+   * ENDPOINT: PUT /api/v1/community/posts/:id/like
+   * يُبدّل حالة الإعجاب ويُحدّث:
+   *   - post.isLiked، post.likesCount
+   *   - summaryCards[2].value (إجمالي التفاعلات)
+   */
+  toggleLike(post: PostWithDetails): void {
+    if (!post.id) return;
+    this.communityService.toggleLike(post.id).subscribe({
+      next: (res: any) => {
+        post.isLiked    = res?.isLiked ?? !post.isLiked;
+        post.likesCount = res?.likesCount ?? (post.likesCount || 0) + (post.isLiked ? 1 : -1);
+        this.summaryCards[2].value = this.allPosts.reduce((s, p) => s + (p.likesCount || 0), 0);
+      },
+      error: () => this.showError('تعذّر تسجيل الإعجاب')
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // COMMENTS
+  // ─────────────────────────────────────────────
+
+  /**
+   * يُبدّل ظهور التعليقات
+   * إذا كانت المرة الأولى يستدعي loadComments() (GET /posts/:id/comments)
+   */
+  toggleComments(post: PostWithDetails): void {
+    post.showComments = !post.showComments;
+    if (post.showComments && (!post.comments || post.comments.length === 0)) {
+      this.loadComments(post);
+    }
+  }
+
+  /**
+   * ENDPOINT: POST /api/v1/community/posts/:id/comments
+   * يُضيف التعليق في أعلى قائمة post.comments
+   * يُحدّث post.commentsCount (المعروض في تذييل المنشور)
+   */
+  addComment(post: PostWithDetails): void {
+    if (!post.id) return;
+    const content = this.newCommentContent[post.id];
+    if (!content?.trim()) { this.showError('الرجاء كتابة تعليق'); return; }
+
+    this.communityService.addComment(post.id, content.trim()).subscribe({
+      next: (res: any) => {
+        const comment: CommentItem = res?.comment ?? {
+          id:        Date.now(),
+          postId:    post.id!,
+          content:   content.trim(),
+          createdAt: new Date().toISOString(),
+          User:      { id: this.currentUser?.id || 0, name: this.currentUser?.name || 'أنت' }
+        };
+        if (!post.comments) post.comments = [];
+        post.comments.unshift(comment);
+        post.commentsCount = (post.commentsCount || 0) + 1;
+        this.newCommentContent[post.id!] = '';
+        this.showSuccess('تم إضافة التعليق بنجاح');
+      },
+      error: () => this.showError('تعذّر إضافة التعليق')
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // HELPERS
+  // ─────────────────────────────────────────────
+
+  /**
+   * يحسب المواضيع الشائعة من allPosts.tags
+   * يُستدعى بعد loadPosts() وبعد createPost() وبعد deletePost()
+   * النتيجة (topTopics) تُعرض في sidebar قسم "المواضيع الشائعة"
+   */
+  computeTopics(): void {
     const counts: { [k: string]: number } = {};
-    this.allPosts.forEach(p => (p.tags || []).forEach(t => counts[t] = (counts[t] || 0) + 1));
+    this.allPosts.forEach(p => (p.tags || []).forEach(t => {
+      counts[t] = (counts[t] || 0) + 1;
+    }));
     this.topTopics = Object.entries(counts)
       .map(([name, posts]) => ({ name, posts }))
       .sort((a, b) => b.posts - a.posts)
       .slice(0, 5);
   }
 
-  applyFilters() {
-    let filtered = [...this.allPosts];
-    if (this.selectedFilter === 'popular') {
-      filtered.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
-    } else if (this.selectedFilter === 'recent') {
-      filtered.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-    } else if (this.selectedFilter === 'my-posts') {
-      filtered = filtered.filter(p => p.userId === this.currentUser?.id);
-    }
-    if (this.searchQuery.trim()) {
-      const q = this.searchQuery.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.title?.toLowerCase().includes(q) || p.content?.toLowerCase().includes(q) || p.author?.toLowerCase().includes(q)
-      );
-    }
-    this.posts = filtered;
+  /**
+   * يُحوّل الكائن القادم من API إلى PostWithDetails
+   * يُستخدم في loadPosts() و createPost()
+   */
+  private mapPost(p: any): PostWithDetails {
+    return {
+      id:            p.id,
+      userId:        p.userId ?? p.User?.id,
+      title:         p.title,
+      content:       p.content,
+      tags:          Array.isArray(p.tags) ? p.tags : [],
+      likesCount:    p.likesCount ?? 0,
+      createdAt:     p.createdAt,
+      author:        p.User?.name ?? p.author ?? 'مجهول',
+      authorRole:    p.User?.role ?? p.authorRole ?? 'رائد أعمال',
+      timeAgo:       this.toTimeAgo(p.createdAt),
+      commentsCount: p.commentsCount ?? 0,
+      isLiked:       p.isLiked ?? false,
+      showComments:  false,
+      comments:      [],
+      loadingComments: false
+    };
   }
 
-  changeFilter(filter: string) {
-    this.selectedFilter = filter;
-    this.applyFilters();
+  /** يحوّل تاريخ ISO إلى نص "قبل X ساعة" */
+  private toTimeAgo(iso?: string): string {
+    if (!iso) return '';
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins  = Math.floor(diff / 60000);
+    const hours = Math.floor(mins / 60);
+    const days  = Math.floor(hours / 24);
+    if (days  > 0) return `قبل ${days} ${days === 1 ? 'يوم' : 'أيام'}`;
+    if (hours > 0) return `قبل ${hours} ${hours === 1 ? 'ساعة' : 'ساعات'}`;
+    if (mins  > 0) return `قبل ${mins} ${mins === 1 ? 'دقيقة' : 'دقائق'}`;
+    return 'الآن';
   }
 
-  filterByTag(tag: string) {
-    this.searchQuery = tag;
-    this.selectedFilter = 'all';
-    this.applyFilters();
-  }
-
-  searchPosts() {
-    this.applyFilters();
-  }
-
-  toggleLike(post: PostWithDetails) {
-    post.isLiked = !post.isLiked;
-    post.likesCount = (post.likesCount || 0) + (post.isLiked ? 1 : -1);
-    const totalLikes = this.allPosts.reduce((s, p) => s + (p.likesCount || 0), 0);
-    this.summaryCards[2].value = totalLikes;
-  }
-
-  toggleComments(post: PostWithDetails) {
-    post.showComments = !post.showComments;
-    if (post.showComments && (!post.comments || post.comments.length === 0)) {
-      post.loadingComments = true;
-      setTimeout(() => {
-        post.comments = MOCK_COMMENTS[post.id!] || [];
-        post.loadingComments = false;
-      }, 400);
-    }
-  }
-
-  addComment(post: PostWithDetails) {
-    if (!post.id) return;
-    const content = this.newCommentContent[post.id];
-    if (!content?.trim()) { this.showError('الرجاء كتابة تعليق'); return; }
-    if (!post.comments) post.comments = [];
-    post.comments.unshift({
-      id: Date.now(), postId: post.id!,
-      content: content.trim(),
-      createdAt: new Date().toISOString(),
-      User: { id: 1, name: 'أنت' }
-    });
-    post.commentsCount = (post.commentsCount || 0) + 1;
-    this.newCommentContent[post.id!] = '';
-    this.showSuccess('تم إضافة التعليق بنجاح');
-  }
-
-  openNewPostModal() {
-    this.showNewPostModal = true;
-    this.newPost = { title: '', content: '', tags: [] };
-  }
-
-  closeNewPostModal() {
-    this.showNewPostModal = false;
-    this.newPost = { title: '', content: '', tags: [] };
-  }
-
-  toggleTag(tag: string) {
-    const i = this.newPost.tags.indexOf(tag);
-    if (i > -1) this.newPost.tags.splice(i, 1); else this.newPost.tags.push(tag);
-  }
-
-  createPost() {
-    if (!this.newPost.title.trim()) { this.showError('الرجاء إدخال عنوان المنشور'); return; }
-    if (!this.newPost.content.trim()) { this.showError('الرجاء إدخال محتوى المنشور'); return; }
-    this.isCreatingPost = true;
-    setTimeout(() => {
-      const newPost: PostWithDetails = {
-        id: Date.now(), userId: 1,
-        title: this.newPost.title.trim(),
-        content: this.newPost.content.trim(),
-        tags: [...this.newPost.tags],
-        likesCount: 0,
-        createdAt: new Date().toISOString(),
-        author: 'أنت', authorRole: 'عضو جديد', timeAgo: 'الآن',
-        commentsCount: 0, isLiked: false, showComments: false, comments: [], loadingComments: false
-      };
-      this.allPosts.unshift(newPost);
-      this.summaryCards[0].value = this.allPosts.length;
-      this.computeTopics();
-      this.applyFilters();
-      this.isCreatingPost = false;
-      this.closeNewPostModal();
-      this.showSuccess('تم نشر المنشور بنجاح!');
-    }, 600);
-  }
-
-  deletePost(post: PostWithDetails) {
-    if (!post.id) return;
-    if (!confirm('هل أنت متأكد من حذف هذا المنشور؟')) return;
-    this.allPosts = this.allPosts.filter(p => p.id !== post.id);
-    this.summaryCards[0].value = this.allPosts.length;
-    this.computeTopics();
-    this.applyFilters();
-    this.showSuccess('تم حذف المنشور بنجاح');
-  }
-
+  /** يتحقق إذا كان المنشور للمستخدم الحالي لإظهار زر الحذف */
   isMyPost(post: PostWithDetails): boolean {
     return post.userId === this.currentUser?.id;
   }
 
-  openGuide() { this.showGuide = true; }
-  closeGuide() { this.showGuide = false; }
+  // ─────────────────────────────────────────────
+  // MODAL — منشور جديد
+  // ─────────────────────────────────────────────
 
-  showSuccess(message: string) {
+  openNewPostModal(): void {
+    this.newPost = { title: '', content: '', tags: [] };
+    this.showNewPostModal = true;
+  }
+
+  closeNewPostModal(): void {
+    this.showNewPostModal = false;
+    this.newPost = { title: '', content: '', tags: [] };
+  }
+
+  /** يُضيف/يُزيل وسماً من newPost.tags */
+  toggleTag(tag: string): void {
+    const i = this.newPost.tags.indexOf(tag);
+    if (i > -1) this.newPost.tags.splice(i, 1);
+    else        this.newPost.tags.push(tag);
+  }
+
+  // ─────────────────────────────────────────────
+  // GUIDE MODAL
+  // ─────────────────────────────────────────────
+
+  openGuide():  void { this.showGuide = true; }
+  closeGuide(): void { this.showGuide = false; }
+
+  // ─────────────────────────────────────────────
+  // NOTIFICATIONS
+  // ─────────────────────────────────────────────
+
+  showSuccess(message: string): void {
     this.successMessage = message;
     setTimeout(() => this.successMessage = '', 3000);
   }
 
-  showError(message: string) {
+  showError(message: string): void {
     this.errorMessage = message;
-    setTimeout(() => this.errorMessage = '', 3000);
+    setTimeout(() => this.errorMessage = '', 4000);
   }
 }

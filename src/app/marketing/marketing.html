@@ -11,18 +11,12 @@
       </div>
     </div>
     <div class="nav-right">
-
       <button class="guide-btn" (click)="openGuide()">
-        <svg viewBox="0 0 16 16" fill="white"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+        <i class="bi bi-info-circle"></i>
         <span class="btn-text">دليل الاستخدام</span>
       </button>
-      <!-- زر الهامبرجر — يظهر فقط على موبايل/تابلت -->
       <button class="topnav-hamburger" (click)="openSidebar()" aria-label="فتح القائمة">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <i class="bi bi-list"></i>
       </button>
     </div>
   </div>
@@ -32,17 +26,26 @@
 <div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>📣 دليل استخدام الخطة التسويقية</h3>
+      <h3><i class="bi bi-megaphone"></i> دليل استخدام الخطة التسويقية</h3>
       <button class="close-btn" (click)="closeGuide()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
       <p class="guide-intro">الخطة التسويقية تساعدك على بناء حضور قوي وزيادة التفاعل مع عملائك.</p>
       <div class="guide-features">
-        <div class="guide-item"><span class="guide-icon">📊</span><div><h4>متابعة التقدم</h4><p>تابع خطتك بشكل مرئي وواضح</p></div></div>
-        <div class="guide-item"><span class="guide-icon">💡</span><div><h4>أفكار محتوى ذكية</h4><p>اقتراحات بالذكاء الاصطناعي</p></div></div>
-        <div class="guide-item"><span class="guide-icon">📅</span><div><h4>جدولة المحتوى</h4><p>نظم ونشر المحتوى على جميع المنصات</p></div></div>
+        <div class="guide-item">
+          <i class="bi bi-bar-chart-line guide-icon"></i>
+          <div><h4>متابعة التقدم</h4><p>تابع خطتك بشكل مرئي وواضح</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-lightbulb guide-icon"></i>
+          <div><h4>أفكار محتوى ذكية</h4><p>اقتراحات بالذكاء الاصطناعي</p></div>
+        </div>
+        <div class="guide-item">
+          <i class="bi bi-calendar3 guide-icon"></i>
+          <div><h4>جدولة المحتوى</h4><p>نظم ونشر المحتوى على جميع المنصات</p></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -54,71 +57,91 @@
 <!-- ===== MAIN ===== -->
 <main class="marketing-main" [class.sidebar-collapsed]="isSidebarCollapsed">
 
-  <!-- Welcome Banner -->
+  <!-- ===== WELCOME
+       totalEngagement ← METRICS: نفس قيمة totalEngagement المحسوبة في loadStats()
+       API: GET /api/v1/marketing/stats
+  ===== -->
   <section class="welcome-section">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1 class="welcome-title">خطتك التسويقية <span>🚀</span></h1>
+        <h1 class="welcome-title">خطتك التسويقية <i class="bi bi-rocket-takeoff"></i></h1>
         <p class="welcome-sub">إدارة حضورك الرقمي وتنمية جمهورك باحترافية</p>
       </div>
       <div class="welcome-badges">
+        <!-- يأخذ totalEngagement من نفس متغير قسم METRICS -->
         <div class="w-badge">
-          <span class="w-badge-icon">❤️</span>
-          <div><span class="w-badge-lbl">إجمالي التفاعل</span><span class="w-badge-val">{{ totalEngagement }}</span></div>
+          <i class="bi bi-heart-fill w-badge-icon"></i>
+          <div>
+            <span class="w-badge-lbl">إجمالي التفاعل</span>
+            <span class="w-badge-val">{{ totalEngagement }}</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Metrics -->
+  <!-- ===== METRICS
+       publishedContent  ← loadStats() → API: GET /api/v1/marketing/stats
+       scheduledContent  ← loadStats()
+       totalEngagement   ← loadStats() — نفس القيمة المعروضة في WELCOME
+       contentGrowth     ← loadStats()
+       engagementProgress← loadStats()
+  ===== -->
   <section class="metrics-grid">
 
     <div class="mc published">
-      <div class="mc-icon">✅</div>
+      <div class="mc-icon"><i class="bi bi-check-circle"></i></div>
       <div class="mc-lbl">محتوى منشور</div>
       <div class="mc-val">{{ publishedContent }}</div>
-      <div class="mc-trend up" *ngIf="contentGrowth > 0">↑ {{ contentGrowth }}%</div>
+      <div class="mc-trend up" *ngIf="contentGrowth > 0">
+        <i class="bi bi-arrow-up"></i> {{ contentGrowth }}%
+      </div>
       <div class="mini-prog"><div class="mini-prog-fill g"></div></div>
     </div>
 
     <div class="mc scheduled">
-      <div class="mc-icon">📅</div>
+      <div class="mc-icon"><i class="bi bi-calendar-check"></i></div>
       <div class="mc-lbl">محتوى مجدول</div>
       <div class="mc-val">{{ scheduledContent }}</div>
       <div class="mc-sub">للأسبوع القادم</div>
+      <!-- scheduledContent يتغير أيضاً عند confirmUseIdea() و confirmSchedulePost() في قسم IDEA MODAL و SCHEDULE MODAL -->
       <div class="mini-prog"><div class="mini-prog-fill b" style="width:60%"></div></div>
     </div>
 
     <div class="mc engagement">
-      <div class="mc-icon">❤️</div>
+      <div class="mc-icon"><i class="bi bi-heart"></i></div>
       <div class="mc-lbl">إجمالي التفاعل</div>
+      <!-- totalEngagement يُعرض أيضاً في WELCOME -->
       <div class="mc-val">{{ totalEngagement }}</div>
       <div class="mini-prog"><div class="mini-prog-fill p" [style.width.%]="engagementProgress"></div></div>
     </div>
 
-
   </section>
 
-  <!-- Charts Row -->
+  <!-- ===== CHARTS ROW
+       monthlyContentData ← loadChartData() → API: GET /api/v1/marketing/chart-data
+       channelsPerformance← loadChartData()
+       كلا الشارتين تُبنى في createAllCharts() بعد تحميل البيانات
+  ===== -->
   <div class="charts-row">
 
-    <!-- Content Performance Chart (wide) -->
+    <!-- أداء المحتوى: يستخدم monthlyContentData.months و .posts و .engagement -->
     <div class="chart-card wide">
       <div class="chart-head">
         <div>
-          <div class="chart-title">📊 أداء المحتوى</div>
+          <div class="chart-title"><i class="bi bi-bar-chart"></i> أداء المحتوى</div>
           <div class="chart-sub">المنشورات والتفاعل خلال 6 أشهر</div>
         </div>
-        <span class="chip chip-g">↑ 23%</span>
+        <span class="chip chip-g"><i class="bi bi-arrow-up"></i> {{ contentGrowth }}%</span>
       </div>
       <div style="height:240px"><canvas #contentChart></canvas></div>
     </div>
 
-    <!-- Channels Radar -->
+    <!-- أداء القنوات: يستخدم channelsPerformance.labels و .data -->
     <div class="chart-card">
       <div class="chart-head">
         <div>
-          <div class="chart-title">📡 أداء القنوات</div>
+          <div class="chart-title"><i class="bi bi-reception-4"></i> أداء القنوات</div>
           <div class="chart-sub">مقارنة المنصات</div>
         </div>
       </div>
@@ -127,43 +150,52 @@
 
   </div>
 
-  <!-- Engagement Timeline -->
+  <!-- ===== ENGAGEMENT TIMELINE
+       dailyEngagement ← loadEngagementData() → API: GET /api/v1/marketing/engagement?days=30
+       avgDailyEngagement و maxDailyEngagement محسوبتان من dailyEngagement[]
+  ===== -->
   <div class="chart-card full-width" style="margin-bottom:24px">
     <div class="chart-head">
       <div>
-        <div class="chart-title">📈 التفاعل اليومي</div>
+        <div class="chart-title"><i class="bi bi-graph-up"></i> التفاعل اليومي</div>
         <div class="chart-sub">آخر 30 يوم</div>
       </div>
       <span class="chip chip-b">30 يوم</span>
     </div>
     <div style="height:200px"><canvas #engagementChart></canvas></div>
     <div class="chart-foot">
+      <!-- avgDailyEngagement محسوبة من dailyEngagement[] في computeEngagementStats() -->
       <div><span class="cs-lbl">متوسط يومي</span><span class="cs-val s">{{ avgDailyEngagement }}</span></div>
+      <!-- maxDailyEngagement محسوبة من dailyEngagement[] في computeEngagementStats() -->
       <div><span class="cs-lbl">أعلى يوم</span><span class="cs-val i">{{ maxDailyEngagement }}</span></div>
     </div>
   </div>
 
-  <!-- Bottom Grid -->
+  <!-- ===== BOTTOM GRID ===== -->
   <div class="bottom-grid">
 
-    <!-- Plan Progress -->
+    <!-- ===== PLAN PROGRESS
+         planProgress   ← loadPlanProgress() → API: GET /api/v1/marketing/plan-progress
+         completedSteps ← loadPlanProgress()
+         marketingSteps ← loadPlanProgress() — حالة كل خطوة (completed/active/pending)
+    ===== -->
     <div class="card">
       <div class="card-head">
-        <div class="card-title">📊 تقدم الخطة التسويقية</div>
+        <div class="card-title"><i class="bi bi-bar-chart-steps"></i> تقدم الخطة التسويقية</div>
+        <!-- planProgress يُعرض هنا وداخل الدائرة المتحركة -->
         <span class="prog-pct">{{ planProgress }}%</span>
       </div>
 
-      <!-- Circular Progress -->
       <div class="circ-wrap">
         <div class="circ-container">
           <svg class="circ-svg" viewBox="0 0 120 120">
             <defs>
               <linearGradient id="mktGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style="stop-color:#1f9950"/>
-                <stop offset="100%" style="stop-color:#00e676"/>
+                <stop offset="0%"   style="stop-color:#1d4ed8"/>
+                <stop offset="100%" style="stop-color:#60a5fa"/>
               </linearGradient>
             </defs>
-            <circle class="c-bg" cx="60" cy="60" r="50"/>
+            <circle class="c-bg"   cx="60" cy="60" r="50"/>
             <circle class="c-fill" cx="60" cy="60" r="50"
               [style.stroke-dasharray]="314"
               [style.stroke-dashoffset]="314 - (314 * planProgress / 100)"/>
@@ -175,15 +207,20 @@
         </div>
       </div>
 
-      <!-- Steps -->
+      <!-- marketingSteps تُحمَّل من loadPlanProgress() -->
       <div class="steps-list">
-        <div class="step-row" *ngFor="let step of marketingSteps; let i = index"
+        <div class="step-row"
+          *ngFor="let step of marketingSteps; let i = index"
           [class.done]="step.status === 'completed'"
           [class.active]="step.status === 'active'"
           [class.pending]="step.status === 'pending'">
           <div class="step-num">
-            <svg *ngIf="step.status === 'completed'" viewBox="0 0 16 16" fill="white"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
-            <span *ngIf="step.status !== 'completed'">{{ i + 1 }}</span>
+            <!-- أيقونة مكتمل -->
+            <i class="bi bi-check-lg" *ngIf="step.status === 'completed'"></i>
+            <!-- أيقونة جارٍ -->
+            <i class="bi bi-arrow-repeat" *ngIf="step.status === 'active'"></i>
+            <!-- رقم الخطوة لو pending -->
+            <span *ngIf="step.status === 'pending'">{{ i + 1 }}</span>
           </div>
           <div class="step-info">
             <div class="step-name">{{ step.title }}</div>
@@ -196,13 +233,17 @@
       </div>
     </div>
 
-    <!-- Schedule + Actions -->
+    <!-- ===== MID COLUMN ===== -->
     <div class="mid-col">
 
-      <!-- Content Schedule -->
+      <!-- ===== CONTENT SCHEDULE
+           scheduledPosts ← loadScheduledPosts() → API: GET /api/v1/marketing/scheduled-posts
+           عند confirmUseIdea() أو confirmSchedulePost() يُضاف منشور جديد هنا
+           scheduledContent في METRICS يرتفع بنفس العملية
+      ===== -->
       <div class="card">
         <div class="card-head">
-          <div class="card-title">📅 جدول المحتوى</div>
+          <div class="card-title"><i class="bi bi-calendar3"></i> جدول المحتوى</div>
           <button class="see-all" (click)="viewSchedule()">عرض الكل ›</button>
         </div>
         <div class="schedule-list" *ngIf="scheduledPosts.length > 0; else noSched">
@@ -211,7 +252,9 @@
             <div class="sched-info">
               <div class="sched-title">{{ post.title }}</div>
               <div class="sched-meta">
-                <span class="sched-time">🕐 {{ post.scheduledTime }}</span>
+                <span class="sched-time">
+                  <i class="bi bi-clock"></i> {{ post.scheduledTime }}
+                </span>
                 <span class="sched-plat" [class]="post.platform">{{ getPlatformLabel(post.platform) }}</span>
               </div>
             </div>
@@ -220,51 +263,68 @@
         </div>
         <ng-template #noSched>
           <div class="empty-state">
-            <div class="empty-icon">📅</div>
+            <i class="bi bi-calendar-x empty-icon"></i>
             <p>لا توجد منشورات مجدولة</p>
             <button class="btn btn-secondary" (click)="createContent()">جدولة محتوى</button>
           </div>
         </ng-template>
       </div>
 
-      <!-- Quick Actions -->
+      <!-- ===== QUICK ACTIONS ===== -->
       <div class="card">
         <div class="card-head">
-          <div class="card-title">⚡ إجراءات سريعة</div>
+          <div class="card-title"><i class="bi bi-lightning-charge"></i> إجراءات سريعة</div>
         </div>
         <div class="actions-grid">
           <button class="act-btn analytics" (click)="viewAnalytics()">
-            <div class="act-icon">📊</div><span>تحليل الأداء</span>
+            <i class="bi bi-bar-chart-line act-icon"></i>
+            <span>تحليل الأداء</span>
           </button>
           <button class="act-btn schedule" (click)="viewSchedule()">
-            <div class="act-icon">📅</div><span>جدولة المنشورات</span>
+            <i class="bi bi-calendar-plus act-icon"></i>
+            <span>جدولة المنشورات</span>
           </button>
           <button class="act-btn community" routerLink="/community">
-            <div class="act-icon">💬</div><span>المجتمع</span>
+            <i class="bi bi-people act-icon"></i>
+            <span>المجتمع</span>
           </button>
         </div>
       </div>
 
     </div>
 
-    <!-- AI Content Ideas -->
+    <!-- ===== AI CONTENT IDEAS
+         contentIdeas  ← loadContentIdeas() → API: GET /api/v1/marketing/content-ideas
+         filteredIdeas ← مشتقة من contentIdeas عبر filterPlatform()
+         عند generateAIContent() → API: POST /api/v1/marketing/generate-ideas
+           تُضاف أفكار جديدة إلى contentIdeas ثم تُحدَّث filteredIdeas
+    ===== -->
     <div class="card ideas-card">
       <div class="card-head">
-        <div class="card-title">💡 أفكار محتوى ذكية</div>
+        <div class="card-title"><i class="bi bi-lightbulb"></i> أفكار محتوى ذكية</div>
         <span class="ai-badge">AI</span>
       </div>
 
-      <!-- Platform Filter -->
+      <!-- تصفية المنصة — تُحدّث filteredIdeas من contentIdeas -->
       <div class="platform-tabs">
-        <button class="ptab" [class.active]="activePlatformFilter === 'all'" (click)="filterPlatform('all')">الكل</button>
-        <button class="ptab" [class.active]="activePlatformFilter === 'instagram'" (click)="filterPlatform('instagram')">📷 انستجرام</button>
-        <button class="ptab" [class.active]="activePlatformFilter === 'facebook'" (click)="filterPlatform('facebook')">👍 فيسبوك</button>
-        <button class="ptab" [class.active]="activePlatformFilter === 'linkedin'" (click)="filterPlatform('linkedin')">💼 لينكد إن</button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'all'"       (click)="filterPlatform('all')">الكل</button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'instagram'" (click)="filterPlatform('instagram')">
+          <i class="bi bi-instagram"></i> انستجرام
+        </button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'facebook'"  (click)="filterPlatform('facebook')">
+          <i class="bi bi-facebook"></i> فيسبوك
+        </button>
+        <button class="ptab" [class.active]="activePlatformFilter === 'linkedin'"  (click)="filterPlatform('linkedin')">
+          <i class="bi bi-linkedin"></i> لينكد إن
+        </button>
       </div>
 
+      <!-- filteredIdeas مشتقة من contentIdeas بعد filterPlatform() -->
       <div class="ideas-list" *ngIf="filteredIdeas.length > 0; else noIdeas">
         <div class="idea-item" *ngFor="let idea of filteredIdeas" [class]="idea.priority">
-          <div class="idea-plat">{{ getPlatformIcon(idea.platform) }}</div>
+          <div class="idea-plat">
+            <i class="bi bi-{{ getPlatformBiIcon(idea.platform) }}"></i>
+          </div>
           <div class="idea-body">
             <div class="idea-title">{{ idea.title }}</div>
             <div class="idea-desc">{{ idea.description }}</div>
@@ -273,21 +333,23 @@
               <span class="itag type">{{ idea.type }}</span>
             </div>
           </div>
+          <!-- useIdea() تفتح IDEA MODAL مع الفكرة المختارة -->
           <button class="idea-use" (click)="useIdea(idea)">
-            <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg>
+            <i class="bi bi-arrow-left"></i>
           </button>
         </div>
       </div>
 
       <ng-template #noIdeas>
         <div class="empty-state">
-          <div class="empty-icon">💡</div>
-          <p>جاري توليد أفكار...</p>
+          <i class="bi bi-lightbulb empty-icon"></i>
+          <p>لا توجد أفكار — اضغط توليد</p>
         </div>
       </ng-template>
 
+      <!-- يستدعي generateAIContent() → API: POST /api/v1/marketing/generate-ideas -->
       <button class="btn-generate" (click)="generateAIContent()" [class.spin]="isGeneratingAI">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>
+        <i class="bi bi-arrow-repeat" [class.spin-icon]="isGeneratingAI"></i>
         {{ isGeneratingAI ? 'جاري التوليد...' : 'توليد أفكار جديدة' }}
       </button>
     </div>
@@ -296,18 +358,25 @@
 
 </main>
 
-<!-- ===== IDEA MODAL ===== -->
+<!-- ===== IDEA MODAL
+     selectedIdea ← من useIdea(idea) في قسم AI CONTENT IDEAS
+     confirmUseIdea() يُضيف منشوراً جديداً لـ scheduledPosts في قسم CONTENT SCHEDULE
+     ويرفع scheduledContent في قسم METRICS
+===== -->
 <div class="modal-overlay" *ngIf="showIdeaModal" (click)="closeIdeaModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>💡 استخدام فكرة المحتوى</h3>
+      <h3><i class="bi bi-lightbulb"></i> استخدام فكرة المحتوى</h3>
       <button class="close-btn" (click)="closeIdeaModal()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body" *ngIf="selectedIdea">
       <div class="idea-preview-card">
-        <div class="idea-preview-plat">{{ getPlatformIcon(selectedIdea.platform) }} {{ getPlatformLabel(selectedIdea.platform) }}</div>
+        <div class="idea-preview-plat">
+          <i class="bi bi-{{ getPlatformBiIcon(selectedIdea.platform) }}"></i>
+          {{ getPlatformLabel(selectedIdea.platform) }}
+        </div>
         <div class="idea-preview-title">{{ selectedIdea.title }}</div>
         <div class="idea-preview-desc">{{ selectedIdea.description }}</div>
         <div class="idea-tags" style="margin-top:8px">
@@ -319,18 +388,25 @@
     </div>
     <div class="modal-footer" style="gap:10px; display:flex; justify-content:flex-end;">
       <button class="btn btn-secondary" (click)="closeIdeaModal()">إلغاء</button>
-      <button class="btn btn-primary" (click)="confirmUseIdea()">✅ إضافة للجدول</button>
+      <!-- يُحدّث scheduledPosts (CONTENT SCHEDULE) و scheduledContent (METRICS) -->
+      <button class="btn btn-primary" (click)="confirmUseIdea()">
+        <i class="bi bi-calendar-plus"></i> إضافة للجدول
+      </button>
     </div>
   </div>
 </div>
 
-<!-- ===== SCHEDULE MODAL ===== -->
+<!-- ===== SCHEDULE MODAL
+     newPostTitle / newPostPlatform / newPostTime ← حقول الإدخال
+     confirmSchedulePost() يُضيف منشوراً جديداً لـ scheduledPosts في CONTENT SCHEDULE
+     ويرفع scheduledContent في METRICS
+===== -->
 <div class="modal-overlay" *ngIf="showScheduleModal" (click)="closeScheduleModal()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>📅 جدولة منشور جديد</h3>
+      <h3><i class="bi bi-calendar-plus"></i> جدولة منشور جديد</h3>
       <button class="close-btn" (click)="closeScheduleModal()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
@@ -341,10 +417,10 @@
       <div class="form-group">
         <label class="form-label">المنصة</label>
         <select class="form-input" [(ngModel)]="newPostPlatform">
-          <option value="instagram">📷 إنستجرام</option>
-          <option value="facebook">👍 فيسبوك</option>
-          <option value="twitter">🐦 تويتر</option>
-          <option value="linkedin">💼 لينكد إن</option>
+          <option value="instagram">إنستجرام</option>
+          <option value="facebook">فيسبوك</option>
+          <option value="twitter">تويتر</option>
+          <option value="linkedin">لينكد إن</option>
         </select>
       </div>
       <div class="form-group">
@@ -354,7 +430,10 @@
     </div>
     <div class="modal-footer" style="gap:10px; display:flex; justify-content:flex-end;">
       <button class="btn btn-secondary" (click)="closeScheduleModal()">إلغاء</button>
-      <button class="btn btn-primary" (click)="confirmSchedulePost()" [disabled]="!newPostTitle.trim()">📅 جدولة المنشور</button>
+      <!-- يُحدّث scheduledPosts (CONTENT SCHEDULE) و scheduledContent (METRICS) -->
+      <button class="btn btn-primary" (click)="confirmSchedulePost()" [disabled]="!newPostTitle.trim()">
+        <i class="bi bi-calendar-check"></i> جدولة المنشور
+      </button>
     </div>
   </div>
 </div>

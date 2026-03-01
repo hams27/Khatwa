@@ -1,90 +1,114 @@
-/* ===== LAYOUT ===== */
+/* ================================================================
+   MARKETING COMPONENT — CSS
+   الترتيب يتبع ترتيب HTML:
+   1.  TOP NAV
+   2.  GUIDE MODAL
+   3.  MAIN
+   4.  WELCOME
+   5.  METRICS
+   6.  CHARTS ROW
+   7.  ENGAGEMENT TIMELINE
+   8.  BOTTOM GRID
+   9.  PLAN PROGRESS (circular + steps)
+   10. CONTENT SCHEDULE
+   11. QUICK ACTIONS
+   12. AI CONTENT IDEAS
+   13. EMPTY STATE
+   14. MODALS (idea + schedule)
+   15. ANIMATIONS
+   16. RESPONSIVE
+   ================================================================ */
+
+:host * { font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+/* ================================================================
+   1. TOP NAV
+   ================================================================ */
 .top-nav {
   position: sticky; top: 0; z-index: 1001;
-  background: rgba(255,255,255,.97);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid #bfcfef;
-  padding: 0 32px; height: 64px;
+  background: rgba(255,255,255,.97); backdrop-filter: blur(16px);
+  border-bottom: 1px solid #bfcfef; padding: 0 32px; height: 64px;
   display: flex; align-items: center;
-  margin-right: 260px;
-  width: calc(100% - 260px);
-  box-sizing: border-box;
+  margin-right: 260px; width: calc(100% - 260px); box-sizing: border-box;
   box-shadow: 0 1px 12px rgba(37,99,235,.07);
   transition: margin-right .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
-  font-family: "Ht Moshreq Pro", sans-serif !important;
 }
-.top-nav.sidebar-collapsed {
-  margin-right: 72px;
-  width: calc(100% - 72px);
-}
+.top-nav.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
 
-.nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-.nav-left { display: flex; align-items: center; gap: 12px; }
-.nav-page-title { font-size: 16px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.nav-page-sub { font-size: 12px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.nav-content    { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.nav-left       { display: flex; align-items: center; gap: 12px; }
+.nav-page-title { font-size: 16px; font-weight: 700; color: #1a2e5e; }
+.nav-page-sub   { font-size: 12px; color: #2563EB; margin-top: 1px; }
+.nav-right      { display: flex; align-items: center; gap: 10px; }
 
-.nav-right { display: flex; align-items: center; gap: 10px; }
-
-/* ===== HAMBURGER — مخفي على ديسكتوب ===== */
 .topnav-hamburger {
   display: none; align-items: center; justify-content: center;
   width: 40px; height: 40px; background: #1a2e5e;
-  border: none; border-radius: 10px; cursor: pointer;
-  transition: background .2s; flex-shrink: 0;
+  border: none; border-radius: 10px; cursor: pointer; transition: background .2s; flex-shrink: 0;
 }
 .topnav-hamburger:hover { background: #2563EB; }
-.topnav-hamburger svg { width: 20px; height: 20px; color: #fff; }
-
-/* ===== DESKTOP-ONLY HELPERS ===== */
-.desktop-only     { display: block; }
-.desktop-only-flex { display: flex; }
-
-.nav-date-chip {
-  font-size: 12px; color: #1a2e5e;
-  background: #dbeafe; padding: 6px 14px;
-  border-radius: 20px; border: 1px solid #bfcfef;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-
-.btn-create {
-  display: flex; align-items: center; gap: 7px;
-  padding: 8px 16px; background: #2563EB; color: #fff;
-  border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 700;
-  cursor: pointer; transition: all .2s;
-  box-shadow: 0 4px 14px rgba(37,99,235,.30);
-}
-.btn-create:hover { background: #1d4ed8; transform: translateY(-1px); }
-.btn-create svg { width: 14px; height: 14px; }
+.topnav-hamburger .bi   { font-size: 20px; color: #fff; }
 
 .guide-btn {
   display: flex; align-items: center; gap: 7px;
   padding: 8px 16px; background: #1a2e5e; color: #fff;
-  border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600;
+  border: none; border-radius: 10px; font-size: 13px; font-weight: 600;
   cursor: pointer; transition: all .2s;
 }
 .guide-btn:hover { background: #1e3a8a; transform: translateY(-1px); }
-.guide-btn svg { width: 14px; height: 14px; }
+.guide-btn .bi   { font-size: 14px; }
 
-/* ===== MAIN ===== */
+/* ================================================================
+   2. GUIDE MODAL
+   ================================================================ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(26,46,94,.45);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 300;
+}
+.modal-container {
+  background: #fff; border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(37,99,235,.15); width: 90%; max-width: 480px;
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px 16px; border-bottom: 1px solid #bfcfef;
+}
+.modal-header h3  { font-size: 16px; font-weight: 700; color: #1a2e5e; margin: 0; }
+.modal-header .bi { margin-left: 6px; color: #2563EB; }
+.close-btn {
+  width: 32px; height: 32px; border: none; background: #f5f7ff;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background .2s;
+}
+.close-btn:hover { background: #dbeafe; }
+.close-btn .bi   { font-size: 13px; color: #2563EB; }
+.modal-body   { padding: 20px 24px; }
+.modal-footer { padding: 16px 24px 20px; border-top: 1px solid #bfcfef; display: flex; justify-content: flex-end; }
+
+.guide-intro    { font-size: 13px; color: #2563EB; line-height: 1.6; margin-bottom: 16px; }
+.guide-features { display: flex; flex-direction: column; gap: 12px; }
+.guide-item {
+  display: flex; gap: 12px; padding: 12px;
+  background: #eff6ff; border-radius: 10px; border: 1px solid #bfcfef;
+}
+.guide-icon     { font-size: 20px; color: #2563EB; flex-shrink: 0; margin-top: 2px; }
+.guide-item h4  { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 2px; }
+.guide-item p   { font-size: 12px; color: #2563EB; margin: 0; }
+
+/* ================================================================
+   3. MAIN
+   ================================================================ */
 .marketing-main {
-  margin-right: 260px;
-  padding: 28px 32px;
-  background: #f5f7ff;
-  min-height: 100vh;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
+  margin-right: 260px; padding: 28px 32px;
+  background: #f5f7ff; min-height: 100vh;
   transition: margin-right .3s cubic-bezier(.4,0,.2,1);
-  width: calc(100% - 260px);
-  box-sizing: border-box;
-  overflow-x: hidden;
+  width: calc(100% - 260px); box-sizing: border-box; overflow-x: hidden;
 }
-.marketing-main.sidebar-collapsed {
-  margin-right: 72px;
-  width: calc(100% - 72px);
-}
+.marketing-main.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
 
-/* ===== WELCOME ===== */
+/* ================================================================
+   4. WELCOME
+   ================================================================ */
 .welcome-section { margin-bottom: 24px; }
 .welcome-content {
   background: linear-gradient(135deg, #1a2e5e 0%, #2563EB 100%);
@@ -93,123 +117,130 @@
   position: relative; overflow: hidden;
 }
 .welcome-content::before {
-  content: ''; position: absolute;
-  left: -60px; top: -60px; width: 240px; height: 240px;
-  background: rgba(255,255,255,.04); border-radius: 50%;
+  content: ''; position: absolute; left: -60px; top: -60px;
+  width: 240px; height: 240px; background: rgba(255,255,255,.04); border-radius: 50%;
 }
 .welcome-content::after {
-  content: ''; position: absolute;
-  left: 60px; bottom: -80px; width: 180px; height: 180px;
-  background: rgba(255,255,255,.06); border-radius: 50%;
+  content: ''; position: absolute; left: 60px; bottom: -80px;
+  width: 180px; height: 180px; background: rgba(255,255,255,.06); border-radius: 50%;
 }
-.welcome-text { position: relative; z-index: 1; }
-.welcome-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.welcome-sub { font-size: 13px; color: #bfcfef; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.welcome-badges { display: flex; gap: 12px; position: relative; z-index: 1; }
+.welcome-text        { position: relative; z-index: 1; }
+.welcome-title       { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.welcome-title .bi   { font-size: 20px; color: #93c5fd; margin-right: 6px; }
+.welcome-sub         { font-size: 13px; color: #bfcfef; }
+.welcome-badges      { display: flex; gap: 12px; position: relative; z-index: 1; }
 .w-badge {
   background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-  border-radius: 12px; padding: 10px 16px;
-  display: flex; align-items: center; gap: 10px;
+  border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 10px;
 }
-.w-badge-icon { font-size: 22px; }
-.w-badge-lbl { font-size: 11px; color: #bfcfef; display: block; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.w-badge-val { font-size: 20px; font-weight: 800; color: #fff; display: block; line-height: 1.1; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.w-badge-icon { font-size: 22px; color: #fca5a5; }
+.w-badge-lbl  { font-size: 11px; color: #bfcfef; display: block; }
+.w-badge-val  { font-size: 20px; font-weight: 800; color: #fff; display: block; line-height: 1.1; }
 
-/* ===== METRICS ===== */
+/* ================================================================
+   5. METRICS
+   ================================================================ */
 .metrics-grid {
-  display: grid; grid-template-columns: repeat(4,1fr);
+  display: grid; grid-template-columns: repeat(4, 1fr);
   gap: 16px; margin-bottom: 24px;
 }
 .mc {
-  background: #fff; border-radius: 16px;
-  padding: 20px; box-shadow: 0 2px 16px rgba(37,99,235,.07);
-  border: 1.5px solid #bfcfef; transition: all .25s;
-  animation: fadeUp .4s ease both;
+  background: #fff; border-radius: 16px; padding: 20px;
+  box-shadow: 0 2px 16px rgba(37,99,235,.07); border: 1.5px solid #bfcfef;
+  transition: all .25s; animation: fadeUp .4s ease both;
 }
-.mc:nth-child(1){animation-delay:.05s}
-.mc:nth-child(2){animation-delay:.1s}
-.mc:nth-child(3){animation-delay:.15s}
-.mc:nth-child(4){animation-delay:.2s}
+.mc:nth-child(1){animation-delay:.05s} .mc:nth-child(2){animation-delay:.10s}
+.mc:nth-child(3){animation-delay:.15s} .mc:nth-child(4){animation-delay:.20s}
 .mc:hover { transform: translateY(-3px); box-shadow: 0 6px 28px rgba(37,99,235,.13); border-color: #2563EB; }
 
-.mc-icon { font-size: 22px; margin-bottom: 12px; }
-.mc-lbl { font-size: 12px; color: #2563EB; font-weight: 500; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.mc-val { font-size: 22px; font-weight: 800; color: #1a2e5e; line-height: 1.2; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.mc-sub { font-size: 11px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.mc-icon  { font-size: 22px; color: #2563EB; margin-bottom: 12px; }
+.mc-lbl   { font-size: 12px; color: #2563EB; font-weight: 500; margin-bottom: 4px; }
+.mc-val   { font-size: 22px; font-weight: 800; color: #1a2e5e; line-height: 1.2; }
+.mc-sub   { font-size: 11px; color: #2563EB; margin-top: 3px; }
 .mc-trend {
   display: inline-flex; align-items: center; gap: 3px;
-  font-size: 11px; font-weight: 600;
-  padding: 3px 8px; border-radius: 20px; margin-top: 6px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; margin-top: 6px;
 }
 .mc-trend.up { background: rgba(37,99,235,.10); color: #2563EB; }
+.mc-trend .bi { font-size: 10px; }
 
-.mini-prog { height: 4px; background: #bfcfef; border-radius: 4px; margin-top: 12px; overflow: hidden; }
+.mini-prog      { height: 4px; background: #bfcfef; border-radius: 4px; margin-top: 12px; overflow: hidden; }
 .mini-prog-fill { height: 100%; border-radius: 4px; }
 .mini-prog-fill.g { width: 72%; background: linear-gradient(90deg,#1d4ed8,#2563EB); }
 .mini-prog-fill.b { background: linear-gradient(90deg,#2563EB,#60a5fa); }
 .mini-prog-fill.p { background: linear-gradient(90deg,#1a2e5e,#2563EB); }
 .mini-prog-fill.o { background: linear-gradient(90deg,#1d4ed8,#93c5fd); }
 
-/* ===== CHARTS ===== */
+/* ================================================================
+   6. CHARTS ROW (content performance + channels radar)
+   ================================================================ */
 .charts-row {
   display: grid; grid-template-columns: 1.8fr 1fr;
   gap: 16px; margin-bottom: 16px;
 }
 .chart-card {
-  background: #fff; border-radius: 16px;
-  padding: 20px; box-shadow: 0 2px 16px rgba(37,99,235,.07);
-  border: 1.5px solid #bfcfef;
+  background: #fff; border-radius: 16px; padding: 20px;
+  box-shadow: 0 2px 16px rgba(37,99,235,.07); border: 1.5px solid #bfcfef;
   animation: fadeUp .5s ease both; animation-delay: .25s;
 }
-.chart-card { width: 95%; }
-.chart-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-.chart-title { font-size: 14px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.chart-sub { font-size: 11px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.chip { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.chip-g { background: #dbeafe; color: #1d4ed8; }
-.chip-b { background: rgba(37,99,235,.10); color: #2563EB; }
-.chart-foot { display: flex; gap: 20px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e0eaff; }
-.cs-lbl { font-size: 11px; color: #2563EB; display: block; margin-bottom: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.cs-val { font-size: 14px; font-weight: 700; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.cs-val.s { color: #2563EB; }
-.cs-val.i { color: #1d4ed8; }
+.chart-head {
+  display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px;
+}
+.chart-title     { font-size: 14px; font-weight: 700; color: #1a2e5e; }
+.chart-title .bi { margin-left: 6px; color: #2563EB; }
+.chart-sub       { font-size: 11px; color: #2563EB; margin-top: 2px; }
+.chip            { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; display: inline-flex; align-items: center; gap: 4px; }
+.chip .bi        { font-size: 10px; }
+.chip-g          { background: #dbeafe; color: #1d4ed8; }
+.chip-b          { background: rgba(37,99,235,.10); color: #2563EB; }
 
-/* ===== BOTTOM GRID ===== */
+/* ================================================================
+   7. ENGAGEMENT TIMELINE
+   ================================================================ */
+.full-width  { width: 100%; }
+.chart-foot  { display: flex; gap: 20px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e0eaff; }
+.cs-lbl      { font-size: 11px; color: #2563EB; display: block; margin-bottom: 2px; }
+.cs-val      { font-size: 14px; font-weight: 700; }
+.cs-val.s    { color: #2563EB; }
+.cs-val.i    { color: #1d4ed8; }
+
+/* ================================================================
+   8. BOTTOM GRID
+   ================================================================ */
 .bottom-grid {
   display: grid; grid-template-columns: 1.2fr 1fr 1fr;
   gap: 16px;
 }
-
 .card {
-  background: #fff; border-radius: 16px;
-  padding: 20px; box-shadow: 0 2px 16px rgba(37,99,235,.07);
-  border: 1.5px solid #bfcfef;
+  background: #fff; border-radius: 16px; padding: 20px;
+  box-shadow: 0 2px 16px rgba(37,99,235,.07); border: 1.5px solid #bfcfef;
   animation: fadeUp .5s ease both; animation-delay: .3s;
 }
-.card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.card-title { font-size: 14px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.prog-pct { font-size: 18px; font-weight: 800; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.see-all { font-size: 12px; color: #2563EB; font-weight: 600; background: none; border: none; cursor: pointer; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.card-head   { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.card-title  { font-size: 14px; font-weight: 700; color: #1a2e5e; }
+.card-title .bi { margin-left: 6px; color: #2563EB; }
+.prog-pct    { font-size: 18px; font-weight: 800; color: #2563EB; }
+.see-all     { font-size: 12px; color: #2563EB; font-weight: 600; background: none; border: none; cursor: pointer; }
 
-/* circular progress */
-.circ-wrap { display: flex; justify-content: center; padding: 8px 0 16px; }
+/* ================================================================
+   9. PLAN PROGRESS — circular + steps
+   ================================================================ */
+.circ-wrap      { display: flex; justify-content: center; padding: 8px 0 16px; }
 .circ-container { position: relative; display: inline-flex; }
-.circ-svg { width: 130px; height: 130px; transform: rotate(-90deg); }
-.c-bg { fill: none; stroke: #bfcfef; stroke-width: 14; }
-.c-fill { fill: none; stroke: url(#mktGrad); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
-.circ-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
-.circ-pct { font-size: 22px; font-weight: 800; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.circ-lbl { font-size: 11px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.circ-svg       { width: 130px; height: 130px; transform: rotate(-90deg); }
+.c-bg           { fill: none; stroke: #bfcfef; stroke-width: 14; }
+.c-fill         { fill: none; stroke: url(#mktGrad); stroke-width: 14; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+.circ-center    { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+.circ-pct       { font-size: 22px; font-weight: 800; color: #1a2e5e; }
+.circ-lbl       { font-size: 11px; color: #2563EB; }
 
-/* steps */
 .steps-list { display: flex; flex-direction: column; gap: 7px; }
 .step-row {
   display: flex; align-items: center; gap: 10px;
   padding: 9px 12px; border-radius: 8px;
 }
-.step-row.done   { background: #dbeafe; }
-.step-row.active { background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.2); }
+.step-row.done    { background: #dbeafe; }
+.step-row.active  { background: rgba(37,99,235,.08); border: 1px solid rgba(37,99,235,.2); }
 .step-row.pending { background: #f5f7ff; }
 
 .step-num {
@@ -217,249 +248,205 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 700;
 }
-.step-row.done .step-num    { background: #2563EB; }
-.step-row.done .step-num svg { width: 14px; height: 14px; }
+.step-row.done .step-num    { background: #2563EB; color: #fff; }
+.step-row.done .step-num .bi{ font-size: 12px; }
 .step-row.active .step-num  { background: #2563EB; color: #fff; }
+.step-row.active .step-num .bi { font-size: 12px; }
 .step-row.pending .step-num { background: #bfcfef; color: #1a2e5e; }
 
 .step-info { flex: 1; }
-.step-name { font-size: 12px; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.step-name { font-size: 12px; font-weight: 600; }
 .step-row.done .step-name    { color: #1d4ed8; }
 .step-row.active .step-name  { color: #1a2e5e; }
 .step-row.pending .step-name { color: #2563EB; }
-.step-desc { font-size: 10px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.step-desc { font-size: 10px; color: #2563EB; margin-top: 1px; }
 
-.step-badge {
-  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
+.step-badge   { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
 .step-badge.completed { background: #dbeafe; color: #1d4ed8; }
 .step-badge.active    { background: rgba(37,99,235,.15); color: #1a2e5e; }
 .step-badge.pending   { background: #f5f7ff; color: #2563EB; border: 1px solid #bfcfef; }
 
-/* mid column */
-.mid-col { display: flex; flex-direction: column; gap: 16px; }
-
-/* schedule */
+/* ================================================================
+   10. CONTENT SCHEDULE
+   ================================================================ */
+.mid-col       { display: flex; flex-direction: column; gap: 16px; }
 .schedule-list { display: flex; flex-direction: column; gap: 8px; }
 .sched-item {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 12px; background: #f5f7ff;
-  border-radius: 10px; border: 1.5px solid transparent;
-  transition: all .2s;
+  border-radius: 10px; border: 1.5px solid transparent; transition: all .2s;
 }
-.sched-item:hover { background: #dbeafe; border-color: #93c5fd; }
-.sched-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.sched-dot.instagram { background: #e1306c; box-shadow: 0 0 0 3px rgba(225,48,108,.15); }
-.sched-dot.facebook  { background: #1877f2; box-shadow: 0 0 0 3px rgba(24,119,242,.15); }
-.sched-dot.twitter   { background: #1da1f2; box-shadow: 0 0 0 3px rgba(29,161,242,.15); }
-.sched-dot.linkedin  { background: #0a66c2; box-shadow: 0 0 0 3px rgba(10,102,194,.15); }
-.sched-info { flex: 1; }
-.sched-title { font-size: 12px; font-weight: 600; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.sched-meta { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
-.sched-time { font-size: 10px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.sched-plat { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.sched-item:hover   { background: #dbeafe; border-color: #93c5fd; }
+.sched-dot          { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.sched-dot.instagram{ background: #e1306c; box-shadow: 0 0 0 3px rgba(225,48,108,.15); }
+.sched-dot.facebook { background: #1877f2; box-shadow: 0 0 0 3px rgba(24,119,242,.15); }
+.sched-dot.twitter  { background: #1da1f2; box-shadow: 0 0 0 3px rgba(29,161,242,.15); }
+.sched-dot.linkedin { background: #0a66c2; box-shadow: 0 0 0 3px rgba(10,102,194,.15); }
+.sched-info         { flex: 1; }
+.sched-title  { font-size: 12px; font-weight: 600; color: #1a2e5e; }
+.sched-meta   { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+.sched-time   { font-size: 10px; color: #2563EB; display: flex; align-items: center; gap: 3px; }
+.sched-time .bi { font-size: 10px; }
+.sched-plat   { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
 .sched-plat.instagram { background: rgba(225,48,108,.1); color: #e1306c; }
-.sched-plat.facebook  { background: rgba(24,119,242,.1); color: #1877f2; }
-.sched-plat.twitter   { background: rgba(29,161,242,.1); color: #1da1f2; }
-.sched-plat.linkedin  { background: rgba(10,102,194,.1); color: #0a66c2; }
-.sched-status { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.sched-plat.facebook  { background: rgba(24,119,242,.1);  color: #1877f2; }
+.sched-plat.twitter   { background: rgba(29,161,242,.1);  color: #1da1f2; }
+.sched-plat.linkedin  { background: rgba(10,102,194,.1);  color: #0a66c2; }
+.sched-status { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; }
 .sched-status.scheduled { background: #dbeafe; color: #1d4ed8; }
 .sched-status.draft     { background: #f5f7ff; color: #2563EB; border: 1px solid #bfcfef; }
 
-/* actions */
+/* ================================================================
+   11. QUICK ACTIONS
+   ================================================================ */
 .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .act-btn {
   display: flex; flex-direction: column; align-items: center; gap: 7px;
   padding: 14px 10px; border-radius: 10px;
   border: 1.5px solid #bfcfef; background: #f5f7ff;
-  cursor: pointer; transition: all .2s;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 12px; font-weight: 600; color: #1a2e5e;
+  cursor: pointer; transition: all .2s; font-size: 12px; font-weight: 600; color: #1a2e5e;
 }
 .act-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(37,99,235,.12); }
-.act-icon { font-size: 22px; }
+.act-icon      { font-size: 22px; color: #2563EB; }
 .act-btn.analytics:hover { border-color: #2563EB; background: rgba(37,99,235,.06); }
 .act-btn.schedule:hover  { border-color: #1d4ed8; background: #dbeafe; }
 .act-btn.community:hover { border-color: #f59e0b; background: rgba(245,158,11,.05); }
 
-/* ideas */
-.ideas-card { display: flex; flex-direction: column; }
-.ai-badge { background: linear-gradient(135deg,#1a2e5e,#2563EB); color: #fff; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-
+/* ================================================================
+   12. AI CONTENT IDEAS
+   ================================================================ */
+.ideas-card  { display: flex; flex-direction: column; }
+.ai-badge {
+  background: linear-gradient(135deg,#1a2e5e,#2563EB); color: #fff;
+  font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px;
+}
 .platform-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
 .ptab {
   font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 20px;
   border: 1.5px solid #bfcfef; background: #f5f7ff; color: #2563EB;
-  cursor: pointer; transition: all .2s;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
+  cursor: pointer; transition: all .2s; display: inline-flex; align-items: center; gap: 4px;
 }
-.ptab.active, .ptab:hover { background: #dbeafe; border-color: #2563EB; color: #1d4ed8; }
+.ptab .bi         { font-size: 11px; }
+.ptab.active,
+.ptab:hover       { background: #dbeafe; border-color: #2563EB; color: #1d4ed8; }
 
 .ideas-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; flex: 1; }
 .idea-item {
   display: flex; align-items: flex-start; gap: 10px;
   padding: 12px; border-radius: 10px;
-  border-right: 3px solid transparent;
-  transition: background .2s;
+  border-right: 3px solid transparent; transition: background .2s;
 }
-.idea-item.high   { background: rgba(239,83,80,.04); border-right-color: #ef5350; }
+.idea-item.high   { background: rgba(239,83,80,.04);  border-right-color: #ef5350; }
 .idea-item.medium { background: rgba(245,158,11,.04); border-right-color: #f59e0b; }
-.idea-item.low    { background: rgba(37,99,235,.04); border-right-color: #2563EB; }
-.idea-item:hover { filter: brightness(.97); }
+.idea-item.low    { background: rgba(37,99,235,.04);  border-right-color: #2563EB; }
+.idea-item:hover  { filter: brightness(.97); }
 
-.idea-plat { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-.idea-body { flex: 1; }
-.idea-title { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.idea-desc { font-size: 11px; color: #2563EB; line-height: 1.5; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.idea-tags { display: flex; gap: 6px; }
-.itag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.idea-plat    { font-size: 20px; color: #2563EB; flex-shrink: 0; margin-top: 2px; }
+.idea-plat .bi{ font-size: 18px; }
+.idea-body    { flex: 1; }
+.idea-title   { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 3px; }
+.idea-desc    { font-size: 11px; color: #2563EB; line-height: 1.5; margin-bottom: 6px; }
+.idea-tags    { display: flex; gap: 6px; }
+.itag         { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
 .itag.pri.high   { background: rgba(239,83,80,.10); color: #ef5350; }
 .itag.pri.medium { background: rgba(245,158,11,.10); color: #f59e0b; }
-.itag.pri.low    { background: #dbeafe; color: #1d4ed8; }
+.itag.pri.low    { background: #dbeafe;              color: #1d4ed8; }
 .itag.type       { background: #f5f7ff; color: #2563EB; border: 1px solid #bfcfef; }
 
 .idea-use {
-  width: 30px; height: 30px; min-width: 30px;
-  border-radius: 8px; border: 1.5px solid #bfcfef;
-  background: #fff; display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; min-width: 30px; border-radius: 8px;
+  border: 1.5px solid #bfcfef; background: #fff;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all .2s; flex-shrink: 0;
 }
+.idea-use .bi   { font-size: 13px; color: #2563EB; }
 .idea-use:hover { background: #2563EB; border-color: #2563EB; }
-.idea-use:hover svg { fill: #fff; }
-.idea-use svg { width: 13px; height: 13px; fill: #2563EB; }
+.idea-use:hover .bi { color: #fff; }
 
 .btn-generate {
-  width: 100%; padding: 12px;
-  background: #1a2e5e; color: #fff;
-  border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600;
+  width: 100%; padding: 12px; background: #1a2e5e; color: #fff;
+  border: none; border-radius: 10px; font-size: 13px; font-weight: 600;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
   transition: all .2s; margin-top: auto;
 }
 .btn-generate:hover { background: #1e3a8a; transform: translateY(-1px); }
-.btn-generate svg { width: 15px; height: 15px; }
-.btn-generate.spin svg { animation: spinAnim .8s linear infinite; }
-
-/* ===== EMPTY STATE ===== */
-.empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; text-align: center; }
-.empty-icon { font-size: 32px; opacity: .4; }
-.empty-state p { font-size: 13px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.btn { cursor: pointer; border: none; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.btn-primary { padding: 10px 20px; background: #2563EB; color: #fff; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.btn-secondary { padding: 8px 16px; background: #f5f7ff; color: #1a2e5e; border: 1.5px solid #bfcfef; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: "Ht Moshreq Pro", sans-serif !important; }
-
-/* ===== MODAL ===== */
-.modal-overlay { position: fixed; inset: 0; background: rgba(26,46,94,.45); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 300; }
-.modal-container { background: #fff; border-radius: 16px; box-shadow: 0 20px 60px rgba(37,99,235,.15); width: 90%; max-width: 480px; }
-.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid #bfcfef; }
-.modal-header h3 { font-size: 16px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.close-btn { width: 32px; height: 32px; border: none; background: #f5f7ff; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-.close-btn svg { width: 14px; height: 14px; fill: #2563EB; }
-.modal-body { padding: 20px 24px; }
-.guide-intro { font-size: 13px; color: #2563EB; line-height: 1.6; margin-bottom: 16px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.guide-features { display: flex; flex-direction: column; gap: 12px; }
-.guide-item { display: flex; gap: 12px; padding: 12px; background: #eff6ff; border-radius: 10px; border: 1px solid #bfcfef; }
-.guide-icon { font-size: 22px; }
-.guide-item h4 { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.guide-item p  { font-size: 12px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.modal-footer { padding: 16px 24px 20px; border-top: 1px solid #bfcfef; display: flex; justify-content: flex-end; }
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes spinAnim {
-  to { transform: rotate(360deg); }
-}
+.btn-generate .bi   { font-size: 14px; }
+.spin-icon { animation: spinAnim .8s linear infinite; display: inline-block; }
 
 /* ================================================================
-   RESPONSIVE — تابلت (< 1024px)
+   13. EMPTY STATE
+   ================================================================ */
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; text-align: center; }
+.empty-icon  { font-size: 32px; color: #bfcfef; }
+.empty-state p { font-size: 13px; color: #2563EB; }
+
+.btn          { cursor: pointer; border: none; }
+.btn-primary  { padding: 10px 20px; background: #2563EB; color: #fff; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.btn-secondary{ padding: 8px 16px; background: #f5f7ff; color: #1a2e5e; border: 1.5px solid #bfcfef; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ================================================================
+   14. MODALS — idea preview + schedule form
+   ================================================================ */
+.idea-preview-card  { background: #f5f7ff; border: 1.5px solid #bfcfef; border-radius: 12px; padding: 16px; }
+.idea-preview-plat  { font-size: 13px; font-weight: 600; color: #2563EB; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.idea-preview-plat .bi { font-size: 15px; }
+.idea-preview-title { font-size: 15px; font-weight: 700; color: #1a2e5e; margin-bottom: 4px; }
+.idea-preview-desc  { font-size: 12px; color: #2563EB; line-height: 1.5; }
+
+.btn-primary .bi   { margin-left: 5px; }
+.btn-secondary .bi { margin-left: 4px; }
+
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: #1a2e5e; margin-bottom: 6px; }
+.form-input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid #bfcfef; border-radius: 10px;
+  font-size: 13px; color: #1a2e5e; background: #f5f7ff;
+  outline: none; box-sizing: border-box; transition: border-color .2s;
+}
+.form-input:focus { border-color: #2563EB; background: #fff; }
+
+/* ================================================================
+   15. ANIMATIONS
+   ================================================================ */
+@keyframes fadeUp    { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+@keyframes spinAnim  { to { transform: rotate(360deg); } }
+
+/* ================================================================
+   16. RESPONSIVE — تابلت (< 1024px)
    ================================================================ */
 @media (max-width: 1023px) {
-.chart-card { width: 90%; }
-
-  .top-nav,
-  .top-nav.sidebar-collapsed {
-    margin-right: 0 !important;
-    width: 100% !important;
-    transition: none;
-  }
-  .marketing-main,
-  .marketing-main.sidebar-collapsed {
-    margin-right: 0 !important;
-    width: 100% !important;
-    transition: none;
-  }
-
+  .top-nav, .top-nav.sidebar-collapsed              { margin-right: 0 !important; width: 100% !important; transition: none; }
+  .marketing-main, .marketing-main.sidebar-collapsed { margin-right: 0 !important; width: 100% !important; transition: none; }
   .topnav-hamburger { display: flex !important; }
-
-  .desktop-only      { display: none !important; }
-  .desktop-only-flex { display: none !important; }
-
-  .nav-page-title { font-size: 15px; }
-  .nav-page-sub   { font-size: 11px; }
-
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .charts-row   { grid-template-columns: 1fr; }
-  .bottom-grid  { grid-template-columns: 1fr; }
+  .nav-page-title   { font-size: 15px; }
+  .nav-page-sub     { font-size: 11px; }
+  .metrics-grid     { grid-template-columns: repeat(2, 1fr); }
+  .charts-row       { grid-template-columns: 1fr; }
+  .bottom-grid      { grid-template-columns: 1fr; }
 }
 
 /* ================================================================
    RESPONSIVE — موبايل (< 768px)
    ================================================================ */
 @media (max-width: 768px) {
-.chart-card { width: 90%; }
-
-  .top-nav         { padding: 0 16px; }
-  .marketing-main  { padding: 16px; }
-
-  /* إخفاء نص الأزرار */
-  .btn-text    { display: none; }
-  .btn-create  { padding: 8px 12px; }
-  .guide-btn   { padding: 8px 12px; }
-
-  /* الويلكام */
-  .welcome-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
-  .welcome-badges  { width: 100%; }
-  .w-badge         { flex: 1; }
-  .welcome-title   { font-size: 18px; }
-
-  /* الجريد */
-  .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .top-nav        { padding: 0 16px; }
+  .marketing-main { padding: 16px; }
+  .btn-text       { display: none; }
+  .guide-btn      { padding: 8px 12px; }
+  .welcome-content{ flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
+  .welcome-badges { width: 100%; }
+  .w-badge        { flex: 1; }
+  .welcome-title  { font-size: 18px; }
+  .metrics-grid   { grid-template-columns: 1fr 1fr; gap: 12px; }
 }
 
 /* ================================================================
    RESPONSIVE — موبايل صغير (< 480px)
    ================================================================ */
 @media (max-width: 480px) {
-  .metrics-grid { grid-template-columns: 1fr; }
+  .metrics-grid  { grid-template-columns: 1fr; }
   .welcome-title { font-size: 16px; }
   .platform-tabs { flex-wrap: wrap; gap: 4px; }
   .actions-grid  { grid-template-columns: 1fr 1fr; }
 }
-
-/* ===== FORMS IN MODAL ===== */
-.form-group { margin-bottom: 16px; }
-.form-label { display: block; font-size: 12px; font-weight: 600; color: #1a2e5e; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.form-input {
-  width: 100%; padding: 10px 14px; border: 1.5px solid #bfcfef;
-  border-radius: 10px; font-size: 13px; color: #1a2e5e;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  background: #f5f7ff; outline: none; box-sizing: border-box;
-  transition: border-color .2s;
-}
-.form-input:focus { border-color: #2563EB; background: #fff; }
-.form-input:disabled { opacity: .5; cursor: not-allowed; }
-
-/* ===== IDEA PREVIEW CARD ===== */
-.idea-preview-card {
-  background: #f5f7ff; border: 1.5px solid #bfcfef;
-  border-radius: 12px; padding: 16px;
-}
-.idea-preview-plat { font-size: 13px; font-weight: 600; color: #2563EB; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.idea-preview-title { font-size: 15px; font-weight: 700; color: #1a2e5e; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.idea-preview-desc { font-size: 12px; color: #2563EB; line-height: 1.5; font-family: "Ht Moshreq Pro", sans-serif !important; }
-
-/* btn disabled */
-.btn-primary:disabled { opacity: .5; cursor: not-allowed; }

@@ -29,7 +29,8 @@ export class SideBar {
     { label: 'المهام والفريق', icon: '/list-task.svg', route: '/tasks-and-team' },
     { label: 'التحليلات', icon: '/graph-up-arrow.svg', route: '/analytics' },
     { label: 'المجتمع', icon: '/globe-americas.svg', route: '/community' },
-    { label: 'التقارير', icon: '/file-earmark-arrow-down.svg', route: '/reports' }
+    { label: 'التقارير', icon: '/file-earmark-arrow-down.svg', route: '/reports' },
+    { label: 'مساعد الذكاء الاصطناعي', icon: '/stars.svg', route: '/chat' }
   ];
 
   userInfo = {

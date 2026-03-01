@@ -1,73 +1,77 @@
-/* ===== LAYOUT ===== */
+/* ================================================================
+   REPORTS COMPONENT — CSS
+   الترتيب يتبع ترتيب HTML:
+   1. TOP NAV
+   2. MODALS (guide / create / custom)
+   3. MAIN / MESSAGES
+   4. WELCOME
+   5. METRICS
+   6. TEMPLATES
+   7. CONTENT ROW
+   8. FILTERS & SEARCH
+   9. REPORTS LIST & CARDS
+   10. CHART
+   11. QUICK ACTIONS
+   12. EMPTY STATE
+   13. ANIMATIONS
+   14. RESPONSIVE
+   ================================================================ */
+
+:host * { font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+/* ================================================================
+   1. TOP NAV
+   ================================================================ */
 .top-nav {
   position: sticky; top: 0; z-index: 1001;
   background: rgba(255,255,255,.97); backdrop-filter: blur(16px);
   border-bottom: 1px solid #bfcfef; padding: 0 32px; height: 64px;
   display: flex; align-items: center;
-  margin-right: 260px; box-shadow: 0 1px 12px rgba(37,99,235,.07);
-  transition: margin-right .3s cubic-bezier(.4,0,.2,1); font-family: "Ht Moshreq Pro", sans-serif !important;
+  margin-right: 260px;
+  box-shadow: 0 1px 12px rgba(37,99,235,.07);
+  transition: margin-right .3s cubic-bezier(.4,0,.2,1);
 }
 .top-nav.sidebar-collapsed { margin-right: 72px; }
-.nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-.nav-left { display: flex; align-items: center; gap: 12px; }
-.nav-page-title { font-size: 16px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.nav-page-sub { font-size: 12px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.nav-right { display: flex; align-items: center; gap: 10px; }
 
-/* ===== HAMBURGER — مخفي على ديسكتوب ===== */
+.nav-content   { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.nav-left      { display: flex; align-items: center; gap: 12px; }
+.nav-page-title { font-size: 16px; font-weight: 700; color: #1a2e5e; }
+.nav-page-sub   { font-size: 12px; color: #2563EB; margin-top: 1px; }
+.nav-right      { display: flex; align-items: center; gap: 10px; }
+
 .topnav-hamburger {
   display: none; align-items: center; justify-content: center;
   width: 40px; height: 40px; background: #1a2e5e;
   border: none; border-radius: 10px; cursor: pointer;
   transition: background .2s; flex-shrink: 0;
 }
-.topnav-hamburger:hover { background: #2563EB; }
-.topnav-hamburger svg { width: 20px; height: 20px; color: #fff; }
+.topnav-hamburger:hover    { background: #2563EB; }
+.topnav-hamburger .bi      { font-size: 20px; color: #fff; }
 
 .btn-add {
   display: flex; align-items: center; gap: 7px;
   padding: 8px 16px; background: #2563EB; color: #fff;
   border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 700;
-  cursor: pointer; transition: all .2s; box-shadow: 0 4px 14px rgba(37,99,235,.30);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 14px rgba(37,99,235,.30);
 }
-.btn-add:hover { background: #1d4ed8; transform: translateY(-1px); }
-.btn-add svg { width: 14px; height: 14px; }
+.btn-add:hover  { background: #1d4ed8; transform: translateY(-1px); }
+.btn-add .bi    { font-size: 14px; }
 
 .guide-btn {
   display: flex; align-items: center; gap: 7px;
   padding: 8px 16px; background: #1a2e5e; color: #fff;
   border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600;
+  font-size: 13px; font-weight: 600;
   cursor: pointer; transition: all .2s;
 }
 .guide-btn:hover { background: #1e3a8a; transform: translateY(-1px); }
-.guide-btn svg { width: 14px; height: 14px; }
+.guide-btn .bi   { font-size: 14px; }
 
-/* ===== MAIN ===== */
-.reports-main {
-  margin-right: 260px; padding: 28px 32px;
-  background: #f5f7ff; min-height: 100vh;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  transition: margin-right .3s cubic-bezier(.4,0,.2,1);
-}
-.reports-main.sidebar-collapsed { margin-right: 72px; }
-
-/* Messages */
-.success-banner {
-  display: flex; align-items: center; gap: 10px; background: #dbeafe; color: #1d4ed8;
-  border: 1px solid #bfcfef; border-radius: 12px; padding: 12px 18px; margin-bottom: 16px; font-size: 13px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.success-banner svg { width: 16px; height: 16px; fill: #2563EB; flex-shrink: 0; }
-.error-banner {
-  display: flex; align-items: center; gap: 10px; background: #fff1f0; color: #c0392b;
-  border: 1px solid #ffc9c9; border-radius: 12px; padding: 12px 18px; margin-bottom: 16px; font-size: 13px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.error-banner svg { width: 16px; height: 16px; fill: #c0392b; flex-shrink: 0; }
-
-/* ===== MODAL ===== */
+/* ================================================================
+   2. MODALS
+   ================================================================ */
 .modal-overlay {
   position: fixed; inset: 0; background: rgba(26,46,94,.45);
   backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
@@ -75,88 +79,128 @@
 }
 .modal-container {
   background: #fff; border-radius: 20px; width: 480px; max-width: 92vw;
-  box-shadow: 0 24px 64px rgba(37,99,235,.15); animation: fadeUp .3s ease;
+  box-shadow: 0 24px 64px rgba(37,99,235,.15);
+  animation: fadeUp .3s ease;
   max-height: 90vh; overflow-y: auto;
 }
 .modal-container.modal-lg { width: 560px; }
+
 .modal-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 20px 24px 16px; border-bottom: 1px solid #bfcfef;
   position: sticky; top: 0; background: #fff; z-index: 1;
 }
-.modal-header h3 { font-size: 16px; font-weight: 700; color: #1a2e5e; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.modal-header h3    { font-size: 16px; font-weight: 700; color: #1a2e5e; margin: 0; }
+.modal-header .bi   { margin-left: 6px; color: #2563EB; }
+
 .close-btn {
   width: 32px; height: 32px; border-radius: 8px;
   border: 1px solid #bfcfef; background: #f5f7ff;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
 }
 .close-btn:hover { background: #dbeafe; }
-.close-btn svg { width: 14px; height: 14px; fill: #2563EB; }
-.modal-body { padding: 20px 24px; }
+.close-btn .bi   { font-size: 13px; color: #2563EB; }
+
+.modal-body  { padding: 20px 24px; }
 .modal-footer {
   padding: 16px 24px 20px; border-top: 1px solid #bfcfef;
   display: flex; justify-content: flex-end; gap: 10px;
 }
+
+/* أزرار الموديل */
 .btn-primary {
-  padding: 10px 24px; background: #2563EB; color: #fff; border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 24px; background: #2563EB; color: #fff;
+  border: none; border-radius: 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s;
 }
 .btn-primary:hover:not(:disabled) { background: #1d4ed8; }
 .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary .bi { font-size: 13px; }
+
 .btn-cancel {
   padding: 10px 20px; background: #eff6ff; color: #1a2e5e;
   border: 1.5px solid #bfcfef; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
 }
 .btn-cancel:hover:not(:disabled) { background: #dbeafe; }
 
-.form-group { margin-bottom: 16px; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-label { display: block; font-size: 12px; font-weight: 600; color: #1a2e5e; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+/* حقول الموديل */
+.form-group  { margin-bottom: 16px; }
+.form-row    { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-label  { display: block; font-size: 12px; font-weight: 600; color: #1a2e5e; margin-bottom: 6px; }
 .form-input {
   width: 100%; padding: 10px 14px; border: 1.5px solid #bfcfef; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; color: #1a2e5e;
-  background: #f5f7ff; outline: none; transition: border-color .2s; box-sizing: border-box;
+  font-size: 13px; color: #1a2e5e; background: #f5f7ff;
+  outline: none; transition: border-color .2s; box-sizing: border-box;
 }
 .form-input:focus { border-color: #2563EB; background: #fff; }
 
+/* أزرار الصيغة */
 .format-btns { display: flex; gap: 8px; }
 .format-btn {
   flex: 1; padding: 10px; border: 1.5px solid #bfcfef; border-radius: 10px;
-  background: #f5f7ff; font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600;
-  color: #2563EB; cursor: pointer; transition: all .2s;
+  background: #f5f7ff; font-size: 13px; font-weight: 600; color: #2563EB;
+  cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px;
 }
-.format-btn:hover { border-color: #2563EB; color: #1d4ed8; }
+.format-btn .bi    { font-size: 14px; }
+.format-btn:hover  { border-color: #2563EB; color: #1d4ed8; }
 .format-btn.active { background: #dbeafe; border-color: #2563EB; color: #1a2e5e; }
 
+/* أقسام التقرير المخصص */
 .sections-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .section-item {
   display: flex; align-items: center; gap: 8px; padding: 10px 12px;
   border: 1.5px solid #bfcfef; border-radius: 10px; cursor: pointer;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 12px; font-weight: 600; color: #2563EB;
-  transition: all .2s;
+  font-size: 12px; font-weight: 600; color: #2563EB;
+  transition: all .2s; user-select: none;
 }
-.section-item:hover { border-color: #2563EB; }
-.section-item.selected { background: #dbeafe; border-color: #2563EB; color: #1a2e5e; }
-.section-check {
-  width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid #bfcfef;
-  background: #fff; display: flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 800; color: #2563EB; flex-shrink: 0;
-}
-.section-item.selected .section-check { background: #2563EB; border-color: #2563EB; color: #fff; }
+.section-item:hover       { border-color: #2563EB; }
+.section-item.selected    { background: #dbeafe; border-color: #2563EB; color: #1a2e5e; }
+.section-check-icon       { font-size: 15px; flex-shrink: 0; color: #bfcfef; }
+.section-item.selected .section-check-icon { color: #2563EB; }
 
-/* Guide */
-.guide-intro { font-size: 13px; color: #2563EB; margin-bottom: 16px; line-height: 1.6; font-family: "Ht Moshreq Pro", sans-serif !important; }
+/* دليل الاستخدام */
+.guide-intro    { font-size: 13px; color: #2563EB; margin-bottom: 16px; line-height: 1.6; }
 .guide-features { display: flex; flex-direction: column; gap: 12px; }
 .guide-item {
   display: flex; align-items: flex-start; gap: 12px;
   padding: 12px; background: #eff6ff; border-radius: 10px; border: 1px solid #bfcfef;
 }
-.guide-icon { font-size: 22px; flex-shrink: 0; }
-.guide-item h4 { font-size: 13px; font-weight: 700; color: #1a2e5e; margin: 0 0 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.guide-item p { font-size: 12px; color: #2563EB; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.guide-icon    { font-size: 20px; color: #2563EB; flex-shrink: 0; margin-top: 2px; }
+.guide-item h4 { font-size: 13px; font-weight: 700; color: #1a2e5e; margin: 0 0 2px; }
+.guide-item p  { font-size: 12px; color: #2563EB; margin: 0; }
 
-/* ===== WELCOME ===== */
+/* ================================================================
+   3. MAIN / MESSAGES
+   ================================================================ */
+.reports-main {
+  margin-right: 260px; padding: 28px 32px;
+  background: #f5f7ff; min-height: 100vh;
+  transition: margin-right .3s cubic-bezier(.4,0,.2,1);
+}
+.reports-main.sidebar-collapsed { margin-right: 72px; }
+
+.success-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: #dbeafe; color: #1d4ed8;
+  border: 1px solid #bfcfef; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 16px; font-size: 13px;
+}
+.success-banner .bi { font-size: 16px; color: #2563EB; flex-shrink: 0; }
+
+.error-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff1f0; color: #c0392b;
+  border: 1px solid #ffc9c9; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 16px; font-size: 13px;
+}
+.error-banner .bi { font-size: 16px; color: #c0392b; flex-shrink: 0; }
+
+/* ================================================================
+   4. WELCOME
+   ================================================================ */
 .welcome-section { margin-bottom: 24px; }
 .welcome-content {
   background: linear-gradient(135deg, #1a2e5e 0%, #2563EB 100%);
@@ -165,55 +209,60 @@
   position: relative; overflow: hidden;
 }
 .welcome-content::before {
-  content: ''; position: absolute; left: -60px; top: -60px; width: 240px; height: 240px;
-  background: rgba(255,255,255,.04); border-radius: 50%;
+  content: ''; position: absolute; left: -60px; top: -60px;
+  width: 240px; height: 240px; background: rgba(255,255,255,.04); border-radius: 50%;
 }
-.welcome-text { position: relative; z-index: 1; }
-.welcome-title { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.welcome-sub { font-size: 13px; color: #bfcfef; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.welcome-text      { position: relative; z-index: 1; }
+.welcome-title     { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.welcome-title .bi { font-size: 20px; color: #93c5fd; }
+.welcome-sub       { font-size: 13px; color: #bfcfef; }
+
 .welcome-stats { display: flex; gap: 12px; position: relative; z-index: 1; }
 .w-stat {
   background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-  border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+  border-radius: 12px; padding: 10px 16px;
+  display: flex; align-items: center; gap: 10px;
 }
-.w-stat-icon { font-size: 22px; }
-.w-stat-lbl { font-size: 11px; color: #bfcfef; display: block; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.w-stat-val { font-size: 22px; font-weight: 800; color: #fff; display: block; line-height: 1.1; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.w-stat-icon { font-size: 22px; color: #93c5fd; }
+.w-stat-lbl  { font-size: 11px; color: #bfcfef; display: block; }
+.w-stat-val  { font-size: 22px; font-weight: 800; color: #fff; display: block; line-height: 1.1; }
 
-/* ===== METRICS ===== */
+/* ================================================================
+   5. METRICS
+   ================================================================ */
 .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
 .mc {
   background: #fff; border-radius: 16px; padding: 20px;
   box-shadow: 0 2px 16px rgba(37,99,235,.07); border: 1.5px solid #bfcfef;
   transition: all .25s; animation: fadeUp .4s ease both;
 }
+.mc:nth-child(1){animation-delay:.05s} .mc:nth-child(2){animation-delay:.10s}
+.mc:nth-child(3){animation-delay:.15s} .mc:nth-child(4){animation-delay:.20s}
 .mc:hover { transform: translateY(-3px); box-shadow: 0 6px 28px rgba(37,99,235,.13); border-color: #2563EB; }
-.mc-icon { font-size: 22px; margin-bottom: 12px; }
-.mc-lbl { font-size: 12px; color: #2563EB; font-weight: 500; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.mc-val { font-size: 26px; font-weight: 800; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.mc-icon   { font-size: 22px; color: #2563EB; margin-bottom: 12px; }
+.mc-lbl    { font-size: 12px; color: #2563EB; font-weight: 500; margin-bottom: 4px; }
+.mc-val    { font-size: 26px; font-weight: 800; color: #1a2e5e; }
 .mini-prog { height: 4px; background: #bfcfef; border-radius: 4px; margin-top: 12px; overflow: hidden; }
-.mini-prog-fill { height: 100%; border-radius: 4px; }
+.mini-prog-fill   { height: 100%; border-radius: 4px; }
 .mini-prog-fill.g { background: linear-gradient(90deg,#1d4ed8,#2563EB); }
 .mini-prog-fill.o { background: linear-gradient(90deg,#2563EB,#93c5fd); }
 .mini-prog-fill.b { background: linear-gradient(90deg,#1a2e5e,#2563EB); }
 .mini-prog-fill.p { background: linear-gradient(90deg,#1e3a8a,#60a5fa); }
 
-/* ===== SECTIONS ===== */
+/* ================================================================
+   6. TEMPLATES
+   ================================================================ */
 .section-block {
   background: #fff; border-radius: 16px; padding: 20px;
   box-shadow: 0 2px 16px rgba(37,99,235,.07); border: 1.5px solid #bfcfef;
   margin-bottom: 20px; animation: fadeUp .4s ease both;
 }
-.section-head { margin-bottom: 16px; }
-.section-head-row {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
-}
-.section-title { font-size: 15px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.section-sub { font-size: 12px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.section-head    { margin-bottom: 16px; }
+.section-title   { font-size: 15px; font-weight: 700; color: #1a2e5e; }
+.section-title .bi { margin-left: 6px; color: #2563EB; }
+.section-sub     { font-size: 12px; color: #2563EB; margin-top: 2px; }
 
-/* Templates */
-.templates-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.templates-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
 .template-card {
   display: flex; align-items: center; gap: 12px; padding: 14px 16px;
   border: 1.5px solid #bfcfef; border-radius: 14px; background: #f5f7ff;
@@ -228,41 +277,55 @@
   display: flex; align-items: center; justify-content: center;
   font-size: 20px; flex-shrink: 0;
 }
-.template-info { flex: 1; min-width: 0; }
-.template-title { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.template-desc { font-size: 11px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.template-icon .bi { font-size: 20px; }
+.template-info   { flex: 1; min-width: 0; }
+.template-title  { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 2px; }
+.template-desc   { font-size: 11px; color: #2563EB; }
 .template-btn {
   padding: 6px 12px; border: none; border-radius: 8px; color: #fff;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 11px; font-weight: 700;
-  cursor: pointer; display: flex; align-items: center; gap: 4px;
-  transition: all .2s; white-space: nowrap;
+  font-size: 11px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  transition: all .2s; white-space: nowrap; flex-shrink: 0;
 }
 .template-btn:hover { opacity: .85; }
+.template-btn .bi   { font-size: 12px; }
 
-/* Content Row */
-.content-row { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
-.chart-col { display: flex; flex-direction: column; gap: 20px; }
+/* ================================================================
+   7. CONTENT ROW
+   ================================================================ */
+.content-row  { display: grid; grid-template-columns: 1fr 300px; gap: 20px; align-items: start; }
+.reports-col  {}
+.chart-col    { display: flex; flex-direction: column; gap: 20px; }
 
-/* Filters */
+.section-head-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+}
+
+/* ================================================================
+   8. FILTERS & SEARCH
+   ================================================================ */
 .filters-row { display: flex; gap: 8px; }
 .search-wrap {
   display: flex; align-items: center; gap: 8px;
   background: #eff6ff; border: 1.5px solid #bfcfef; border-radius: 10px;
   padding: 7px 14px;
 }
-.search-wrap svg { width: 13px; height: 13px; fill: #2563EB; flex-shrink: 0; }
+.search-icon   { font-size: 13px; color: #2563EB; flex-shrink: 0; }
 .search-input {
   border: none; background: transparent; outline: none;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 12px; color: #1a2e5e; width: 160px;
+  font-size: 12px; color: #1a2e5e; width: 160px;
 }
 .search-input::placeholder { color: #93b4d4; }
 .type-select {
   padding: 7px 12px; border: 1.5px solid #bfcfef; border-radius: 10px;
-  background: #eff6ff; font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 12px;
-  color: #1a2e5e; outline: none; cursor: pointer;
+  background: #eff6ff; font-size: 12px; color: #1a2e5e;
+  outline: none; cursor: pointer;
 }
 
-/* Reports List */
+/* ================================================================
+   9. REPORTS LIST & CARDS
+   ================================================================ */
 .reports-list { display: flex; flex-direction: column; gap: 10px; }
 .report-card {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
@@ -270,38 +333,36 @@
   transition: all .2s; animation: fadeUp .4s ease both;
 }
 .report-card:hover { border-color: #93c5fd; background: #eff6ff; }
+
 .report-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
 .report-icon {
   width: 40px; height: 40px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; flex-shrink: 0;
 }
-.rt-financial     { background: #dbeafe; }
-.rt-marketing     { background: #eff6ff; }
-.rt-tasks         { background: #e0eaff; }
-.rt-team          { background: #dbeafe; }
-.rt-comprehensive { background: #eff6ff; }
-.rt-custom        { background: #e0f2fe; }
+.report-icon .bi { font-size: 18px; }
+.rt-financial     { background: #dbeafe; color: #1d4ed8; }
+.rt-marketing     { background: #fff7ed; color: #f97316; }
+.rt-tasks         { background: #f3e8ff; color: #8b5cf6; }
+.rt-team          { background: #fce7f3; color: #ec4899; }
+.rt-comprehensive { background: #eff6ff; color: #2563EB; }
+.rt-custom        { background: #e0f2fe; color: #0284c7; }
 
-.report-info { min-width: 0; }
+.report-info  { min-width: 0; }
 .report-title {
   font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 4px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
 }
-.report-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-.report-author, .report-date, .report-views { font-size: 11px; color: #93b4d4; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.dot { color: #bfcfef; font-size: 10px; }
-.report-format { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-meta   { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.report-author, .report-date, .report-views { font-size: 11px; color: #93b4d4; }
+.report-views .bi { font-size: 11px; }
+.dot           { color: #bfcfef; font-size: 10px; }
+.report-format { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px; }
 .report-format.pdf   { background: #fff1f0; color: #e53935; }
 .report-format.excel { background: #dbeafe; color: #1d4ed8; }
 
-.report-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-
-.status-badge {
-  font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
+.report-right  { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.status-badge  { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 .status-ready      { background: #dbeafe; color: #1d4ed8; }
 .status-draft      { background: #eff6ff; color: #2563EB; }
 .status-processing { background: #e0eaff; color: #1a2e5e; }
@@ -311,98 +372,86 @@
   background: #fff; display: flex; align-items: center; justify-content: center;
   cursor: pointer; transition: all .2s;
 }
-.act-btn svg { width: 13px; height: 13px; fill: #2563EB; }
-.act-btn:hover { border-color: #2563EB; background: #eff6ff; }
-.act-btn:hover svg { fill: #1d4ed8; }
-.act-del:hover { border-color: #ffc9c9 !important; background: #fff1f0 !important; }
-.act-del:hover svg { fill: #e53935 !important; }
+.act-btn .bi      { font-size: 13px; color: #2563EB; }
+.act-btn:hover    { border-color: #2563EB; background: #eff6ff; }
+.act-del:hover    { border-color: #ffc9c9 !important; background: #fff1f0 !important; }
+.act-del:hover .bi{ color: #e53935 !important; }
 
-/* Chart */
+/* ================================================================
+   10. CHART
+   ================================================================ */
 .chart-wrap { height: 200px; position: relative; }
 
-/* Quick Actions */
+/* ================================================================
+   11. QUICK ACTIONS
+   ================================================================ */
 .quick-actions { display: flex; flex-direction: column; gap: 8px; }
 .qa-btn {
   display: flex; align-items: center; gap: 10px; padding: 11px 14px;
   border: 1.5px solid #bfcfef; border-radius: 12px; background: #f5f7ff;
-  cursor: pointer; font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 12px; font-weight: 600;
-  color: #1a2e5e; transition: all .2s; text-align: right;
+  cursor: pointer; font-size: 12px; font-weight: 600; color: #1a2e5e;
+  transition: all .2s;
 }
-.qa-btn:hover { border-color: #2563EB; background: #eff6ff; color: #2563EB; }
-.qa-btn svg { margin-right: auto; fill: #bfcfef; }
-.qa-btn:hover svg { fill: #2563EB; }
-.qa-icon { font-size: 16px; flex-shrink: 0; }
+.qa-btn:hover         { border-color: #2563EB; background: #eff6ff; color: #2563EB; }
+.qa-icon              { font-size: 16px; flex-shrink: 0; color: #2563EB; }
+.qa-btn span          { flex: 1; text-align: right; }
+.qa-arrow             { font-size: 12px; color: #bfcfef; }
+.qa-btn:hover .qa-arrow { color: #2563EB; }
 
-/* Empty */
+/* ================================================================
+   12. EMPTY STATE
+   ================================================================ */
 .empty-state {
   display: flex; flex-direction: column; align-items: center;
   gap: 12px; padding: 40px; text-align: center;
 }
-.empty-icon { font-size: 40px; }
-.empty-state p { font-size: 14px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
-
-/* ===== ANIMATION ===== */
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.empty-icon    { font-size: 40px; color: #bfcfef; }
+.empty-state p { font-size: 14px; color: #2563EB; }
 
 /* ================================================================
-   RESPONSIVE — تابلت (< 1024px)
+   13. ANIMATIONS
+   ================================================================ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.spin-icon { animation: spin .7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ================================================================
+   14. RESPONSIVE — تابلت (< 1024px)
    ================================================================ */
 @media (max-width: 1023px) {
-
-  .top-nav,
-  .top-nav.sidebar-collapsed {
-    margin-right: 0 !important;
-    transition: none;
-  }
-  .reports-main,
-  .reports-main.sidebar-collapsed {
-    margin-right: 0 !important;
-    transition: none;
-  }
-
-  /* إظهار الهامبرجر */
+  .top-nav, .top-nav.sidebar-collapsed         { margin-right: 0 !important; transition: none; }
+  .reports-main, .reports-main.sidebar-collapsed { margin-right: 0 !important; transition: none; }
   .topnav-hamburger { display: flex !important; }
-
-  /* تصغير عناصر التوب بار */
-  .nav-page-title { font-size: 15px; }
-  .nav-page-sub   { font-size: 11px; }
-
-  /* الجريدات */
-  .metrics-grid    { grid-template-columns: repeat(2, 1fr); }
-  .templates-grid  { grid-template-columns: repeat(2, 1fr); }
-  .content-row     { grid-template-columns: 1fr; }
+  .nav-page-title   { font-size: 15px; }
+  .nav-page-sub     { font-size: 11px; }
+  .metrics-grid     { grid-template-columns: repeat(2,1fr); }
+  .templates-grid   { grid-template-columns: repeat(2,1fr); }
+  .content-row      { grid-template-columns: 1fr; }
 }
 
 /* ================================================================
    RESPONSIVE — موبايل (< 768px)
    ================================================================ */
 @media (max-width: 768px) {
-
-  .top-nav       { padding: 0 16px; }
-  .reports-main  { padding: 16px; }
-
-  /* إخفاء نص الأزرار */
-  .btn-text  { display: none; }
-  .btn-add   { padding: 8px 12px; }
-  .guide-btn { padding: 8px 12px; }
-
-  /* الويلكام */
+  .top-nav      { padding: 0 16px; }
+  .reports-main { padding: 16px; }
+  .btn-text     { display: none; }
+  .btn-add      { padding: 8px 12px; }
+  .guide-btn    { padding: 8px 12px; }
   .welcome-content { flex-direction: column; gap: 16px; }
   .welcome-stats   { flex-direction: column; }
   .welcome-title   { font-size: 18px; }
-
-  /* الجريد */
-  .metrics-grid   { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .templates-grid { grid-template-columns: 1fr; }
-  .report-card    { flex-direction: column; align-items: flex-start; }
-  .filters-row    { flex-direction: column; }
-  .form-row       { grid-template-columns: 1fr; }
+  .metrics-grid    { grid-template-columns: repeat(2,1fr); gap: 12px; }
+  .templates-grid  { grid-template-columns: 1fr; }
+  .report-card     { flex-direction: column; align-items: flex-start; }
+  .filters-row     { flex-direction: column; }
+  .form-row        { grid-template-columns: 1fr; }
 }
 
 /* ================================================================
    RESPONSIVE — موبايل صغير (< 480px)
    ================================================================ */
 @media (max-width: 480px) {
-  .metrics-grid { grid-template-columns: 1fr; }
+  .metrics-grid  { grid-template-columns: 1fr; }
   .welcome-title { font-size: 16px; }
 }
