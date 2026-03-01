@@ -99,11 +99,12 @@ export class Login implements OnInit {
         next: (response: any) => {
           console.log('✅ response:', response);
 
-          // استخرج الـ token من أي شكل
+          // تحقق من الـ token في الـ response أو في localStorage (لو اتحفظ في catchError)
           const token =
             response?.token ??
             response?.data?.token ??
             response?.accessToken ??
+            localStorage.getItem('token') ??
             null;
 
           if (token) {
@@ -111,7 +112,7 @@ export class Login implements OnInit {
             this.isLoading = false;
             this.router.navigate(['/dashboard']);
           } else {
-            // الباك رد بـ 200 بس مفيش token
+            // الباك رد بس مفيش token خالص
             this.loginError = true;
             this.isLoading = false;
             this.errorMessage = 'حدث خطأ في الاستجابة. حاول مرة أخرى';
