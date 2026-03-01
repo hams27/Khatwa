@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 export interface LoginResponse {
   success: boolean;
@@ -56,23 +56,41 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
     return this.http.post<any>(`${this.apiUrl}/auth/register`, data)
       .pipe(
         map(response => {
-          // حفظ Token في localStorage بعد التسجيل
-          if (response.success && response.token) {
-            localStorage.setItem('token', response.token);
-            
-            // جلب بيانات المستخدم من endpoint تاني
+          // ✅ استخرج الـ token من أي شكل ممكن يرجعه الباك
+          const token =
+            response?.token ??
+            response?.data?.token ??
+            response?.accessToken ??
+            response?.access_token ??
+            null;
+
+          if (token) {
+            localStorage.setItem('token', token);
+
+            // ✅ احفظ الاسم فوراً من بيانات التسجيل قبل ما getProfile يرجع
+            const immediateUser = { name: data.name, email: data.email };
+            localStorage.setItem('currentUser', JSON.stringify(immediateUser));
+            this.currentUserSubject.next(immediateUser);
+
+            // جلب بيانات المستخدم الكاملة من الباك
             this.getProfile().subscribe({
               next: (profileResponse) => {
-                if (profileResponse.success && profileResponse.data) {
-                  localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
-                  this.currentUserSubject.next(profileResponse.data);
+                const user =
+                  profileResponse?.data?.user ??
+                  profileResponse?.data ??
+                  profileResponse?.user ??
+                  null;
+                if (user?.name) {
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  this.currentUserSubject.next(user);
                 }
               },
-              error: (error) => {
-                console.error('خطأ في جلب بيانات المستخدم:', error);
+              error: (err) => {
+                console.error('خطأ في جلب بيانات المستخدم:', err);
               }
             });
           }
+
           return response;
         })
       );
@@ -83,24 +101,66 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
     return this.http.post<any>(`${this.apiUrl}/auth/login`, data)
       .pipe(
         map(response => {
-          // حفظ Token في localStorage
-          if (response.success && response.token) {
-            localStorage.setItem('token', response.token);
-            
-            // الباك إند بيبعت token بس، فهنجيب الـ user data من endpoint تاني
+          const token =
+            response?.token ??
+            response?.data?.token ??
+            response?.accessToken ??
+            response?.access_token ??
+            null;
+
+          if (token) {
+            localStorage.setItem('token', token);
+
+            const userFromResponse =
+              response?.data?.user ??
+              response?.data ??
+              response?.user ??
+              null;
+
+            if (userFromResponse?.name) {
+              localStorage.setItem('currentUser', JSON.stringify(userFromResponse));
+              this.currentUserSubject.next(userFromResponse);
+            }
+
+            // جلب بيانات المستخدم — لو فشل مش مشكلة، الـ token محفوظ
             this.getProfile().subscribe({
               next: (profileResponse) => {
-                if (profileResponse.success && profileResponse.data) {
-                  localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
-                  this.currentUserSubject.next(profileResponse.data);
+                const user =
+                  profileResponse?.data?.user ??
+                  profileResponse?.data ??
+                  profileResponse?.user ??
+                  null;
+                if (user?.name) {
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  this.currentUserSubject.next(user);
                 }
               },
-              error: (error) => {
-                console.error('خطأ في جلب بيانات المستخدم:', error);
-              }
+              error: () => {} // ignore profile errors
             });
           }
+
           return response;
+        }),
+        catchError(error => {
+          // لو الباك رجع 500 بس في token في الـ error body — نستخدمه
+          const body = error?.error;
+          const token =
+            body?.token ??
+            body?.data?.token ??
+            body?.accessToken ??
+            null;
+
+          if (token) {
+            localStorage.setItem('token', token);
+            const user = body?.data?.user ?? body?.data ?? body?.user ?? null;
+            if (user?.name) {
+              localStorage.setItem('currentUser', JSON.stringify(user));
+              this.currentUserSubject.next(user);
+            }
+            return [body]; // نرجعه كـ next مش error
+          }
+
+          return throwError(() => error);
         })
       );
   }
@@ -146,9 +206,10 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
     localStorage.setItem('token', token);
     this.getProfile().subscribe({
       next: (profileResponse) => {
-        if (profileResponse.success && profileResponse.data) {
-          localStorage.setItem('currentUser', JSON.stringify(profileResponse.data));
-          this.currentUserSubject.next(profileResponse.data);
+        const user = profileResponse?.data?.user ?? profileResponse?.data ?? profileResponse?.user ?? null;
+        if (user?.name) {
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
         }
       },
       error: (error) => {

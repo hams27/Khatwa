@@ -97,28 +97,44 @@ export class Login implements OnInit {
     this.authService.login({ email: this.email, password: this.password })
       .subscribe({
         next: (response: any) => {
-          this.loginSuccess = true;
-          this.isLoading = false;
-          console.log('تم تسجيل الدخول بنجاح:', response);
-          setTimeout(() => {
+          console.log('✅ response:', response);
+
+          // استخرج الـ token من أي شكل
+          const token =
+            response?.token ??
+            response?.data?.token ??
+            response?.accessToken ??
+            null;
+
+          if (token) {
+            this.loginSuccess = true;
+            this.isLoading = false;
             this.router.navigate(['/dashboard']);
-          }, 1500);
+          } else {
+            // الباك رد بـ 200 بس مفيش token
+            this.loginError = true;
+            this.isLoading = false;
+            this.errorMessage = 'حدث خطأ في الاستجابة. حاول مرة أخرى';
+            this.shakeForm();
+          }
         },
         error: (error: any) => {
           this.loginError = true;
           this.isLoading = false;
-          
-          if (error.error && error.error.message) {
-            this.errorMessage = error.error.message;
-          } else if (error.status === 401) {
+
+          if (error.status === 401 || error.status === 400) {
             this.errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+          } else if (error.status === 500) {
+            this.errorMessage = 'خطأ في السيرفر. تواصل مع الدعم الفني';
           } else if (error.status === 0) {
-            this.errorMessage = 'فشل الاتصال بالسيرفر. تأكد من تشغيل Backend';
+            this.errorMessage = 'فشل الاتصال بالسيرفر';
+          } else if (error.error?.message) {
+            this.errorMessage = error.error.message;
           } else {
             this.errorMessage = 'حدث خطأ. حاول مرة أخرى';
           }
-          
-          console.error('خطأ في تسجيل الدخول:', error);
+
+          console.error('❌ خطأ في تسجيل الدخول:', error);
           this.shakeForm();
         }
       });
