@@ -82,6 +82,13 @@ export class Login implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  // ⚠️ TODO - Backend Fix Required
+  // endpoint: POST /api/v1/auth/login
+  // المشكلة: الـ Backend بيرجع 500 error بسبب unknown column 'job_title' في جدول الـ users
+  // الـ workaround الحالي: بنتحقق من localStorage مباشرة لو الـ token اتحفظ رغم الـ 500
+  // المطلوب من الـ Backend: إضافة عامود job_title أو حذفه من كود الـ Backend
+  // بعد الحل: نشيل سطر localStorage.getItem('token') من الـ token check هنا
+
   async onSubmit() {
     const emailValid = this.validateEmail();
     const passwordValid = this.validatePassword();

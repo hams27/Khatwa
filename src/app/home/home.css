@@ -682,6 +682,11 @@
   .footer-brand { grid-column: span 2; }
   .hero-stats { gap: 36px; }
   .steps-timeline { max-width: 700px; margin: 0 auto; }
+  /* تابلت: إخفاء nav links وإظهار hamburger */
+  .nav-links { display: none; }
+  .btn-cta-nav { display: none; }
+  .mobile-menu-btn { display: flex; }
+  .mobile-menu { display: flex; }
 }
 @media (max-width: 768px) {
   .header-inner { max-width: 85%; } .section-wrap { max-width: 85%; }
@@ -741,3 +746,13 @@
 .fab-top:active { transform: scale(0.94); }
 
 @media (max-width: 768px) { .fab-top { bottom: 20px; right: 20px; width: 46px; height: 46px; } }
+
+/* ===== موبايل صغير 480px ===== */
+@media (max-width: 480px) {
+  .header { padding: 0 16px; height: 70px; }
+  .logo img { width: 60px; height: 60px; }
+  .theme-toggle-btn { width: 38px; height: 38px; }
+  .mobile-menu { top: 70px; }
+  .mobile-link { font-size: 15px; padding: 11px 14px; }
+  .mobile-menu.open .btn-cta-nav { width: 100%; justify-content: center; font-size: 16px; padding: 12px; }
+}

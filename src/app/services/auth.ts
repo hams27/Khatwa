@@ -80,6 +80,13 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
       );
   }
 
+  // ⚠️ TODO - Backend Fix Required
+  // endpoint: POST /api/v1/auth/login
+  // المشكلة: الـ Backend بيرجع 500 error بسبب unknown column 'job_title' في جدول الـ users
+  // المطلوب من الـ Backend: إضافة عامود job_title في جدول الـ users في الداتابيز
+  // أو حذف job_title من كود الـ Backend لو مش محتاجينه
+  // بعد الحل: نرجع نفعّل getProfile() اللي اتعلقت في السطور دي
+
   // تسجيل الدخول
   login(data: LoginData): Observable<LoginResponse> {
     return this.http.post<any>(`${this.apiUrl}/auth/login`, data)
