@@ -20,6 +20,7 @@
   top: -200px;
   right: -200px;
   border-radius: 50%;
+  background: radial-gradient(circle, rgba(26, 86, 255, 0.07), transparent);
   filter: blur(80px);
   animation: float 10s infinite ease-in-out;
 }
@@ -256,6 +257,7 @@
 
 .form-label i {
   font-size: 20px;
+  display: inline-block;
   background: #1A56FF;
   -webkit-background-clip: text;
   background-clip: text;

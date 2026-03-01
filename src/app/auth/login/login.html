@@ -84,6 +84,7 @@
               class="toggle-password"
               (click)="togglePassword()"
               [disabled]="isLoading">
+              <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
             </button>
             <div class="input-border"></div>
             <div class="input-glow"></div>
