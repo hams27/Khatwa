@@ -687,9 +687,12 @@
   .btn-cta-nav { display: none; }
   .mobile-menu-btn { display: flex; }
   .mobile-menu { display: flex; }
+  .header { padding: 0 24px; }
+  .header-inner { max-width: 100%; }
 }
 @media (max-width: 768px) {
-  .header-inner { max-width: 85%; } .section-wrap { max-width: 85%; }
+  .header { padding: 0 16px; }
+  .header-inner { max-width: 100%; width: 100%; } .section-wrap { max-width: 92%; }
   .logo img { width: 70px; height: 70px; }
   .nav-links { display: none; } .btn-cta-nav { display: none; }
   .mobile-menu-btn { display: flex; }
