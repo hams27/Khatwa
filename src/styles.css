@@ -944,11 +944,11 @@ body.dark-mode .form-container::before {
   background: linear-gradient(90deg, #1a56ff, #3b82f6, #1a56ff) !important;
 }
 body.dark-mode .form-title        { color: #e2e8f0 !important; }
-body.dark-mode .title-gradient    { background: linear-gradient(135deg, #60a5fa, #93c5fd) !important; -webkit-background-clip: text; background-clip: text; }
+body.dark-mode .title-gradient    { color: #93c5fd !important; background: none !important; -webkit-text-fill-color: unset !important; }
 body.dark-mode .form-subtitle     { color: rgba(147,196,253,0.65) !important; }
 
 body.dark-mode .form-label        { color: #cbd5e1 !important; }
-body.dark-mode .form-label i      { background: linear-gradient(135deg, #60a5fa, #93c5fd) !important; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+body.dark-mode .form-label i      { color: #60a5fa !important; background: none !important; -webkit-text-fill-color: unset !important; }
 body.dark-mode .form-input {
   background: rgba(15,23,42,0.90) !important;
   border-color: rgba(96,165,250,0.20) !important;
@@ -1097,3 +1097,83 @@ body.dark-mode .period-btn.active {
   box-shadow: 0 1px 6px rgba(0,0,0,0.3) !important;
 }
 body.dark-mode .toggle-switch:not(.active) { background: rgba(96,165,250,0.15) !important; }
+
+/* ================================================================
+   DARK MODE — LAYOUT / ONBOARDING STEPS (Deep Fix)
+   ================================================================ */
+
+/* Progress Container */
+body.dark-mode .progress-container {
+  background: rgba(15,23,42,0.80) !important;
+}
+
+/* Card */
+body.dark-mode .card {
+  background: rgba(12,18,35,0.96) !important;
+  border-color: rgba(96,165,250,0.18) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.50) !important;
+}
+
+body.dark-mode .card h2 {
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .subtitle {
+  color: #93c5fd !important;
+}
+
+/* Options */
+body.dark-mode .option {
+  background: rgba(15,23,42,0.90) !important;
+  border-color: rgba(96,165,250,0.18) !important;
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .option:hover {
+  background: rgba(30,41,59,0.95) !important;
+  border-color: rgba(96,165,250,0.50) !important;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.40) !important;
+}
+
+body.dark-mode .option.selected {
+  background: rgba(37,99,235,0.15) !important;
+  border-color: rgba(96,165,250,0.60) !important;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.50) !important;
+}
+
+/* Option shimmer line at bottom — keep blue, no override needed */
+
+/* Title & Desc inside options */
+body.dark-mode .title {
+  color: #e2e8f0 !important;
+}
+
+body.dark-mode .option:hover .title {
+  color: #93c5fd !important;
+}
+
+body.dark-mode .desc {
+  color: rgba(147,196,253,0.65) !important;
+}
+
+body.dark-mode .option:hover .desc {
+  color: #93c5fd !important;
+}
+
+/* Buttons */
+body.dark-mode button.back {
+  background: rgba(15,23,42,0.90) !important;
+  border-color: rgba(96,165,250,0.22) !important;
+  color: #93c5fd !important;
+}
+
+body.dark-mode button.back:hover {
+  background: rgba(30,41,59,0.95) !important;
+  border-color: rgba(96,165,250,0.50) !important;
+  color: #e2e8f0 !important;
+}
+
+/* Progress text */
+body.dark-mode .progress-text {
+  color: #e2e8f0 !important;
+}

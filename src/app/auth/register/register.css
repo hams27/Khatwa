@@ -115,16 +115,13 @@
 }
 
 .title-gradient {
-  background: #1A56FF;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #1A56FF;
   animation: titleShine 3s ease-in-out infinite;
 }
 
 @keyframes titleShine {
   0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.2); }
+  50% { filter: brightness(1.3); }
 }
 
 .form-subtitle {
@@ -255,12 +252,9 @@
 }
 
 .form-label i {
-  font-size: 20px;
+  font-size: 16px;
   display: inline-block;
-  background: #1A56FF;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #1A56FF;
 }
 
 .input-wrapper {
