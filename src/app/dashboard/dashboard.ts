@@ -183,14 +183,19 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   /**
    * يجلب بيانات المستخدم الحالي من AuthService (JWT / localStorage)
-   * لا يوجد Endpoint منفصل — يعتمد على currentUserValue
+   * يشترك على currentUser Observable — يتحدث فور رجوع getProfile() من الباك
    */
   loadUserData() {
-    this.currentUser = this.authService.currentUserValue;
-    if (this.currentUser) {
-      this.userName = this.currentUser.name || 'المستخدم';
-      this.calculateUserLevel();
-    }
+    this.authService.currentUser
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(user => {
+        if (user?.name) {
+          this.currentUser = user;
+          this.userName = user.name;
+          this.calculateUserLevel();
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   calculateUserLevel() {

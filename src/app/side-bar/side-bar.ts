@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, Output, EventEmitter, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, Output, EventEmitter, HostListener, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 interface MenuItem {
   label: string;
@@ -17,9 +18,10 @@ interface MenuItem {
   templateUrl: './side-bar.html',
   styleUrl: './side-bar.css',
 })
-export class SideBar {
+export class SideBar implements OnInit, OnDestroy {
   isCollapsed = false;
   isMobileOpen = false;
+  private userSub?: Subscription;
 
   @Output() collapsedChange = new EventEmitter<boolean>();
 
@@ -43,13 +45,21 @@ export class SideBar {
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef
-  ) {
-    // جلب بيانات المستخدم من AuthService (localStorage / JWT)
-    const user = this.authService.currentUserValue;
-    if (user?.name) {
-      this.userInfo.name   = user.name;
-      this.userInfo.avatar = user.name.trim().charAt(0);
-    }
+  ) {}
+
+  ngOnInit() {
+    // الاشتراك على currentUser Observable — يتحدث فور ما يرجع getProfile()
+    this.userSub = this.authService.currentUser.subscribe(user => {
+      if (user?.name) {
+        this.userInfo.name   = user.name;
+        this.userInfo.avatar = user.name.trim().charAt(0).toUpperCase();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.userSub?.unsubscribe();
   }
 
   @HostListener('document:keydown.escape')

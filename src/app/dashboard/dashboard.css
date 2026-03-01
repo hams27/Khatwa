@@ -995,3 +995,144 @@ h3.card-title,
   .welcome-title { font-size: 16px; }
   .metric-value  { font-size: 20px; }
 }
+
+/* ================================================================
+   DARK MODE — DASHBOARD (via :host-context)
+   ================================================================ */
+
+/* Metric Cards */
+:host-context(body.dark-mode) .metric-card {
+  background: rgba(30,41,59,0.80) !important;
+  border-color: rgba(96,165,250,0.15) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
+}
+:host-context(body.dark-mode) .metric-card:hover {
+  border-color: rgba(96,165,250,0.40) !important;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.5) !important;
+}
+:host-context(body.dark-mode) .metric-label  { color: #93c5fd !important; }
+:host-context(body.dark-mode) .metric-value  { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .metric-subtitle { color: #93c5fd !important; }
+:host-context(body.dark-mode) .progress-bar-mini { background: rgba(96,165,250,0.15) !important; }
+
+/* Chart Cards & Dashboard Cards */
+:host-context(body.dark-mode) .chart-card,
+:host-context(body.dark-mode) .dashboard-card {
+  background: rgba(30,41,59,0.80) !important;
+  border-color: rgba(96,165,250,0.15) !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.35) !important;
+}
+:host-context(body.dark-mode) h3.card-title,
+:host-context(body.dark-mode) .chart-header h3 { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .chart-subtitle  { color: #93c5fd !important; }
+:host-context(body.dark-mode) .chart-footer    { border-top-color: rgba(96,165,250,0.12) !important; }
+:host-context(body.dark-mode) .stat-label      { color: #93c5fd !important; }
+:host-context(body.dark-mode) .stat-value      { color: #e2e8f0 !important; }
+
+/* Top Nav */
+:host-context(body.dark-mode) .top-nav {
+  background: rgba(7,11,24,0.92) !important;
+  border-bottom-color: rgba(96,165,250,0.12) !important;
+}
+:host-context(body.dark-mode) .nav-page-title { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .nav-page-sub   { color: #93c5fd !important; }
+:host-context(body.dark-mode) .guide-btn {
+  background: rgba(30,41,59,0.90) !important;
+  color: #e2e8f0 !important;
+  border: 1px solid rgba(96,165,250,0.15) !important;
+}
+
+/* Progress Steps */
+:host-context(body.dark-mode) .step.completed {
+  background: rgba(37,99,235,0.15) !important;
+}
+:host-context(body.dark-mode) .step:not(.completed) {
+  background: rgba(15,23,42,0.80) !important;
+}
+:host-context(body.dark-mode) .step-title       { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .step-description { color: #93c5fd !important; }
+:host-context(body.dark-mode) .step:not(.completed) .step-icon {
+  background: rgba(96,165,250,0.20) !important;
+  color: #93c5fd !important;
+}
+:host-context(body.dark-mode) .progress-text-large { fill: #e2e8f0 !important; }
+:host-context(body.dark-mode) .progress-text-small { fill: #93c5fd !important; }
+:host-context(body.dark-mode) .progress-bg         { stroke: rgba(96,165,250,0.15) !important; }
+
+/* Task Items */
+:host-context(body.dark-mode) .task-item {
+  background: rgba(15,23,42,0.80) !important;
+  border-color: rgba(96,165,250,0.10) !important;
+}
+:host-context(body.dark-mode) .task-item:hover {
+  background: rgba(37,99,235,0.12) !important;
+  border-color: rgba(96,165,250,0.30) !important;
+}
+:host-context(body.dark-mode) .task-title { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .task-time  { color: #93c5fd !important; }
+:host-context(body.dark-mode) .task-check {
+  background: rgba(15,23,42,0.90) !important;
+  border-color: rgba(96,165,250,0.20) !important;
+}
+
+/* Action Buttons */
+:host-context(body.dark-mode) .action-btn {
+  background: rgba(15,23,42,0.80) !important;
+  border-color: rgba(96,165,250,0.12) !important;
+  color: #e2e8f0 !important;
+}
+:host-context(body.dark-mode) .action-btn:hover {
+  box-shadow: 0 6px 28px rgba(0,0,0,0.4) !important;
+}
+
+/* AI Insights */
+:host-context(body.dark-mode) .insight-item.success { background: rgba(37,99,235,0.08) !important; }
+:host-context(body.dark-mode) .insight-item.warning { background: rgba(245,158,11,0.08) !important; }
+:host-context(body.dark-mode) .insight-item.info    { background: rgba(29,78,216,0.08) !important; }
+:host-context(body.dark-mode) .insight-text   { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .insight-action { color: #93c5fd !important; }
+
+/* Activity */
+:host-context(body.dark-mode) .activity-text { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .activity-time { color: #93c5fd !important; }
+:host-context(body.dark-mode) .activity-item:not(:last-child)::after {
+  background: rgba(96,165,250,0.15) !important;
+}
+:host-context(body.dark-mode) .activity-dot {
+  border-color: rgba(15,23,42,0.80) !important;
+}
+
+/* Empty State */
+:host-context(body.dark-mode) .empty-state p    { color: #93c5fd !important; }
+:host-context(body.dark-mode) .empty-icon       { color: rgba(96,165,250,0.25) !important; }
+
+/* Progress Percentage */
+:host-context(body.dark-mode) .progress-percentage { color: #e2e8f0 !important; }
+
+/* btn-link */
+:host-context(body.dark-mode) .btn-link { color: #93c5fd !important; }
+
+/* AI Badge */
+:host-context(body.dark-mode) .ai-badge {
+  background: rgba(37,99,235,0.25) !important;
+  color: #93c5fd !important;
+}
+
+/* Guide Modal */
+:host-context(body.dark-mode) .modal-container {
+  background: #0f172a !important;
+  border: 1px solid rgba(96,165,250,0.18) !important;
+}
+:host-context(body.dark-mode) .modal-header,
+:host-context(body.dark-mode) .modal-footer {
+  border-color: rgba(96,165,250,0.12) !important;
+  background: #0f172a !important;
+}
+:host-context(body.dark-mode) .modal-header h3 { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .guide-intro     { color: #93c5fd !important; }
+:host-context(body.dark-mode) .guide-item {
+  background: rgba(37,99,235,0.08) !important;
+  border-color: rgba(96,165,250,0.15) !important;
+}
+:host-context(body.dark-mode) .guide-item h4 { color: #e2e8f0 !important; }
+:host-context(body.dark-mode) .guide-item p  { color: #93c5fd !important; }
