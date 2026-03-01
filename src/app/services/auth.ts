@@ -72,23 +72,7 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
             localStorage.setItem('currentUser', JSON.stringify(immediateUser));
             this.currentUserSubject.next(immediateUser);
 
-            // جلب بيانات المستخدم الكاملة من الباك
-            this.getProfile().subscribe({
-              next: (profileResponse) => {
-                const user =
-                  profileResponse?.data?.user ??
-                  profileResponse?.data ??
-                  profileResponse?.user ??
-                  null;
-                if (user?.name) {
-                  localStorage.setItem('currentUser', JSON.stringify(user));
-                  this.currentUserSubject.next(user);
-                }
-              },
-              error: (err) => {
-                console.error('خطأ في جلب بيانات المستخدم:', err);
-              }
-            });
+            // تم إيقاف getProfile مؤقتاً بسبب خطأ job_title في الـ Backend
           }
 
           return response;
@@ -122,21 +106,7 @@ private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
               this.currentUserSubject.next(userFromResponse);
             }
 
-            // جلب بيانات المستخدم — لو فشل مش مشكلة، الـ token محفوظ
-            this.getProfile().subscribe({
-              next: (profileResponse) => {
-                const user =
-                  profileResponse?.data?.user ??
-                  profileResponse?.data ??
-                  profileResponse?.user ??
-                  null;
-                if (user?.name) {
-                  localStorage.setItem('currentUser', JSON.stringify(user));
-                  this.currentUserSubject.next(user);
-                }
-              },
-              error: () => {} // ignore profile errors
-            });
+            // تم إيقاف getProfile مؤقتاً بسبب خطأ job_title في الـ Backend
           }
 
           return response;
