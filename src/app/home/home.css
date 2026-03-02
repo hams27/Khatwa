@@ -30,7 +30,7 @@
   justify-content: space-between;
   flex-wrap: nowrap;
   flex-direction: row;
-  direction: rtl;
+  direction: ltr;
 }
 /* اللوجو يرجع RTL من جوا بس */
 .navbar-brand { margin: 0; }
@@ -75,7 +75,8 @@
 /* هامبرجر مخصص */
 .khatwa-toggler {
   border: none; background: none; padding: 6px;
-  display: flex; flex-direction: column; justify-content: center; gap: 5px;
+  display: none;
+  flex-direction: column; justify-content: center; gap: 5px;
   width: 38px; height: 38px;
 }
 .khatwa-toggler span {
@@ -83,6 +84,10 @@
   background: #2563EB; border-radius: 3px; transition: all 0.3s;
 }
 .khatwa-toggler:focus { outline: none; box-shadow: none; }
+
+@media (max-width: 991px) {
+  .khatwa-toggler { display: flex; }
+}
 
 /* موبايل مينيو */
 .navbar-collapse {
