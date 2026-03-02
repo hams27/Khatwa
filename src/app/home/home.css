@@ -25,12 +25,6 @@
   padding: 8px 0;
   direction: rtl;
 }
-.khatwa-navbar .container-fluid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-}
 .navbar-logo { height: 70px; width: 70px; display: block; }
 .khatwa-link {
   position: relative; padding: 8px 16px !important;
@@ -57,7 +51,7 @@
 .btn-cta-nav:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(37,99,235,0.55); }
 .theme-toggle-btn {
   width: 40px; height: 40px; border-radius: 12px;
-  /* background: var(--blue-light); */
+  background: var(--blue-light);
   border: 1.5px solid var(--border-color);
   color: var(--text-primary);
   cursor: pointer;
