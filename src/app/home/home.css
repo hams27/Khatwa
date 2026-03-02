@@ -29,7 +29,11 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: nowrap;
+  flex-direction: row;
+  direction: ltr;
 }
+/* اللوجو يرجع RTL من جوا بس */
+.navbar-brand { margin: 0; }
 .navbar-logo { height: 70px; width: 70px; display: block; }
 .khatwa-link {
   position: relative; padding: 8px 16px !important;
