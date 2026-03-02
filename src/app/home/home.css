@@ -23,7 +23,12 @@
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color);
   padding: 8px 0;
-  direction: rtl;
+}
+.khatwa-navbar .container-fluid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
 }
 .navbar-logo { height: 70px; width: 70px; display: block; }
 .khatwa-link {
