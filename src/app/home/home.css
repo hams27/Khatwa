@@ -30,7 +30,7 @@
   justify-content: space-between;
   flex-wrap: nowrap;
   flex-direction: row;
-  direction: ltr;
+  direction: rtl;
 }
 /* اللوجو يرجع RTL من جوا بس */
 .navbar-brand { margin: 0; }
