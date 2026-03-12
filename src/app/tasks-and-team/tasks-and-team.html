@@ -1,6 +1,3 @@
-<!-- Bootstrap Icons CDN -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
 <app-side-bar #sidebarRef (collapsedChange)="onSidebarToggle($event)"></app-side-bar>
 <app-ai-chat></app-ai-chat>
 
@@ -42,7 +39,7 @@
 <div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3><i class="bi bi-kanban"></i> دليل استخدام المهام والفريق</h3>
+      <h3>📋 دليل استخدام المهام والفريق</h3>
       <button class="close-btn" (click)="closeGuide()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
@@ -50,10 +47,10 @@
     <div class="modal-body">
       <p class="guide-intro">لوحة الكانبان تتيح لك إدارة مهام فريقك بسهولة وسرعة.</p>
       <div class="guide-features">
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-hand-index"></i></span><div><h4>السحب والإفلات</h4><p>حرّك المهام بين الأعمدة لتغيير حالتها</p></div></div>
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-people"></i></span><div><h4>إدارة الفريق</h4><p>تابع إنجاز كل عضو في فريقك</p></div></div>
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-lightning-charge"></i></span><div><h4>الأولويات</h4><p>حدد أولوية كل مهمة للتنظيم الأمثل</p></div></div>
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-tags"></i></span><div><h4>الوسوم</h4><p>صنف المهام بالوسوم للبحث والتصفية السريعة</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🖱️</span><div><h4>السحب والإفلات</h4><p>حرّك المهام بين الأعمدة لتغيير حالتها</p></div></div>
+        <div class="guide-item"><span class="guide-icon">👥</span><div><h4>إدارة الفريق</h4><p>تابع إنجاز كل عضو في فريقك</p></div></div>
+        <div class="guide-item"><span class="guide-icon">⚡</span><div><h4>الأولويات</h4><p>حدد أولوية كل مهمة للتنظيم الأمثل</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🏷️</span><div><h4>الوسوم</h4><p>صنف المهام بالوسوم للبحث والتصفية السريعة</p></div></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -87,19 +84,19 @@
   <section class="welcome-section">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1 class="welcome-title">المهام والفريق <span><i class="bi bi-kanban"></i></span></h1>
+        <h1 class="welcome-title">المهام والفريق <span>📋</span></h1>
         <p class="welcome-sub">تابع تقدم مشروعك وأدر فريقك بكفاءة عالية</p>
       </div>
       <div class="welcome-badges">
         <div class="w-badge">
-          <span class="w-badge-icon"><i class="bi bi-check-circle"></i></span>
+          <span class="w-badge-icon">✅</span>
           <div>
             <span class="w-badge-lbl">مهام مكتملة</span>
             <span class="w-badge-val">{{ completedCount }}</span>
           </div>
         </div>
         <div class="w-badge">
-          <span class="w-badge-icon"><i class="bi bi-people"></i></span>
+          <span class="w-badge-icon">👥</span>
           <div>
             <span class="w-badge-lbl">أعضاء الفريق</span>
             <span class="w-badge-val">{{ teamMembers.length }}</span>
@@ -112,25 +109,25 @@
   <!-- ===== METRICS ===== -->
   <section class="metrics-grid">
     <div class="mc">
-      <div class="mc-icon"><i class="bi bi-clipboard"></i></div>
+      <div class="mc-icon">📝</div>
       <div class="mc-lbl">قائمة المهام</div>
       <div class="mc-val">{{ todoCount }}</div>
       <div class="mini-prog"><div class="mini-prog-fill b" [style.width.%]="(todoCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
     </div>
     <div class="mc">
-      <div class="mc-icon"><i class="bi bi-arrow-repeat"></i></div>
+      <div class="mc-icon">🔄</div>
       <div class="mc-lbl">قيد التنفيذ</div>
       <div class="mc-val">{{ inProgressCount }}</div>
       <div class="mini-prog"><div class="mini-prog-fill o" [style.width.%]="(inProgressCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
     </div>
     <div class="mc">
-      <div class="mc-icon"><i class="bi bi-eye"></i></div>
+      <div class="mc-icon">👁️</div>
       <div class="mc-lbl">المراجعة</div>
       <div class="mc-val">{{ reviewCount }}</div>
       <div class="mini-prog"><div class="mini-prog-fill p" [style.width.%]="(reviewCount / (todoCount+inProgressCount+reviewCount+completedCount||1))*100"></div></div>
     </div>
     <div class="mc">
-      <div class="mc-icon"><i class="bi bi-check2-all"></i></div>
+      <div class="mc-icon">✅</div>
       <div class="mc-lbl">مكتملة</div>
       <div class="mc-val">{{ completedCount }}</div>
       <div class="mc-trend up">↑ {{ ((completedCount/(todoCount+inProgressCount+reviewCount+completedCount||1))*100).toFixed(0) }}%</div>
@@ -141,7 +138,7 @@
   <!-- ===== TEAM SECTION ===== -->
   <section class="team-section">
     <div class="section-head">
-      <div class="section-title"><i class="bi bi-people"></i> أعضاء الفريق</div>
+      <div class="section-title">👥 أعضاء الفريق</div>
       <button class="see-all" (click)="openTeamModal()">إدارة الفريق ›</button>
     </div>
     <div class="team-grid">
@@ -167,7 +164,7 @@
       <div class="col-header todo">
         <div class="col-title">
           <span class="col-dot todo-dot"></span>
-          <i class="bi bi-clipboard-check"></i> قائمة المهام
+          📝 قائمة المهام
         </div>
         <span class="col-count">{{ todoCount }}</span>
       </div>
@@ -176,9 +173,11 @@
         [cdkDropListData]="todoTasks"
         [cdkDropListConnectedTo]="[inProgressList, reviewList, completedList]"
         (cdkDropListDropped)="drop($event, 'todo')">
-        <div class="task-card" *ngFor="let task of todoTasks; trackBy: trackById"
+        <div class="task-card" *ngFor="let task of todoTasks"
           cdkDrag [cdkDragData]="task">
-
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
           <div class="task-body">
             <div class="task-title">{{ task.title }}</div>
             <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
@@ -188,8 +187,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
-                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
-                <span class="task-date" *ngIf="task.date"><i class="bi bi-clock"></i> {{ task.date }}</span>
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)" title="حذف">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                 </button>
@@ -209,7 +207,7 @@
       <div class="col-header in-progress">
         <div class="col-title">
           <span class="col-dot inprog-dot"></span>
-          <i class="bi bi-arrow-repeat"></i> قيد التنفيذ
+          🔄 قيد التنفيذ
         </div>
         <span class="col-count">{{ inProgressCount }}</span>
       </div>
@@ -218,9 +216,11 @@
         [cdkDropListData]="inProgressTasks"
         [cdkDropListConnectedTo]="[todoList, reviewList, completedList]"
         (cdkDropListDropped)="drop($event, 'in-progress')">
-        <div class="task-card" *ngFor="let task of inProgressTasks; trackBy: trackById"
+        <div class="task-card" *ngFor="let task of inProgressTasks"
           cdkDrag [cdkDragData]="task">
-
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
           <div class="task-body">
             <div class="task-title">{{ task.title }}</div>
             <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
@@ -230,8 +230,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
-                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
-                <span class="task-date" *ngIf="task.date"><i class="bi bi-clock"></i> {{ task.date }}</span>
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                 </button>
@@ -251,7 +250,7 @@
       <div class="col-header review">
         <div class="col-title">
           <span class="col-dot review-dot"></span>
-          <i class="bi bi-eye"></i> المراجعة
+          👁️ المراجعة
         </div>
         <span class="col-count">{{ reviewCount }}</span>
       </div>
@@ -259,10 +258,12 @@
         cdkDropList #reviewList="cdkDropList"
         [cdkDropListData]="reviewTasks"
         [cdkDropListConnectedTo]="[todoList, inProgressList, completedList]"
-        (cdkDropListDropped)="drop($event, 'review')">
-        <div class="task-card" *ngFor="let task of reviewTasks; trackBy: trackById"
+        (cdkDropListDropped)="drop($event, 'in-progress')">
+        <div class="task-card" *ngFor="let task of reviewTasks"
           cdkDrag [cdkDragData]="task">
-
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
           <div class="task-body">
             <div class="task-title">{{ task.title }}</div>
             <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
@@ -272,8 +273,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
-                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
-                <span class="task-date" *ngIf="task.date"><i class="bi bi-clock"></i> {{ task.date }}</span>
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                 </button>
@@ -293,7 +293,7 @@
       <div class="col-header completed">
         <div class="col-title">
           <span class="col-dot done-dot"></span>
-          <i class="bi bi-check2-all"></i> المكتملة
+          ✅ المكتملة
         </div>
         <span class="col-count done-count">{{ completedCount }}</span>
       </div>
@@ -302,9 +302,11 @@
         [cdkDropListData]="completedTasks"
         [cdkDropListConnectedTo]="[todoList, inProgressList, reviewList]"
         (cdkDropListDropped)="drop($event, 'done')">
-        <div class="task-card task-done" *ngFor="let task of completedTasks; trackBy: trackById"
+        <div class="task-card task-done" *ngFor="let task of completedTasks"
           cdkDrag [cdkDragData]="task">
-
+          <div class="task-drag" cdkDragHandle>
+            <svg viewBox="0 0 16 16" fill="currentColor"><path d="M7 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0M7 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m-3 3a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+          </div>
           <div class="task-body">
             <div class="task-title done-title">{{ task.title }}</div>
             <p class="task-desc" *ngIf="task.description">{{ task.description }}</p>
@@ -314,8 +316,7 @@
             <div class="task-footer">
               <span class="priority-badge" [class]="'pri-'+task.priority">{{ getPriorityLabel(task.priority) }}</span>
               <div class="task-footer-right">
-                <span class="assigned-avatar" *ngIf="task.user" [title]="task.user">{{ task.avatar }}</span>
-                <span class="task-date" *ngIf="task.date"><i class="bi bi-clock"></i> {{ task.date }}</span>
+                <span class="task-date" *ngIf="task.date">🕐 {{ task.date }}</span>
                 <button class="del-btn" (click)="deleteTask(task)">
                   <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>
                 </button>
@@ -338,7 +339,7 @@
 <div class="modal-overlay" *ngIf="showNewTaskModal" (click)="closeNewTaskModal()">
   <div class="modal-container modal-lg" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3><i class="bi bi-plus-circle"></i> مهمة جديدة</h3>
+      <h3>➕ مهمة جديدة</h3>
       <button class="close-btn" (click)="closeNewTaskModal()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
@@ -362,7 +363,6 @@
           <select [(ngModel)]="newTask.status" class="form-input">
             <option value="todo">قائمة المهام</option>
             <option value="in-progress">قيد التنفيذ</option>
-            <option value="review">المراجعة</option>
             <option value="done">مكتملة</option>
           </select>
         </div>
@@ -376,15 +376,6 @@
       <div class="form-group">
         <label class="form-label">تاريخ الاستحقاق</label>
         <input type="date" [(ngModel)]="newTask.dueDate" class="form-input">
-      </div>
-      <div class="form-group" *ngIf="teamMembers.length > 0">
-        <label class="form-label">تعيين لعضو</label>
-        <select [(ngModel)]="newTask.user" class="form-input">
-          <option [ngValue]="undefined">— بدون تعيين —</option>
-          <option *ngFor="let m of teamMembers" [value]="m.name">
-            {{ m.avatar }} {{ m.name }} · {{ m.role || 'عضو' }}
-          </option>
-        </select>
       </div>
       <div class="form-group">
         <label class="form-label">الوسوم</label>
@@ -409,7 +400,7 @@
   <div class="modal-container modal-team" (click)="$event.stopPropagation()">
 
     <div class="modal-header">
-      <h3><i class="bi bi-people"></i> إدارة الفريق</h3>
+      <h3>👥 إدارة الفريق</h3>
       <button class="close-btn" (click)="closeTeamModal()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
@@ -419,7 +410,7 @@
 
       <!-- Add Member Form -->
       <div class="add-member-form">
-        <div class="add-member-title"><i class="bi bi-person-plus"></i> إضافة عضو جديد</div>
+        <div class="add-member-title">➕ إضافة عضو جديد</div>
         <div class="add-member-row">
           <div class="form-group flex-1" [class.has-error]="teamFormErrors.name">
             <input type="text" class="form-input" [(ngModel)]="newMember.name"
@@ -465,7 +456,7 @@
               </span>
             </div>
             <div class="member-meta">
-              <span *ngIf="member.email"><i class="bi bi-envelope"></i> {{ member.email }}</span>
+              <span *ngIf="member.email">📧 {{ member.email }}</span>
               <span *ngIf="member.role">· {{ member.role }}</span>
             </div>
           </div>
@@ -490,7 +481,7 @@
 
       <ng-template #noMembers>
         <div class="empty-state">
-          <div class="empty-icon"><i class="bi bi-people"></i></div>
+          <div class="empty-icon">👥</div>
           <p>لا يوجد أعضاء في الفريق حتى الآن. أضف أول عضو!</p>
         </div>
       </ng-template>

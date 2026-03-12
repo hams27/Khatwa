@@ -38,7 +38,7 @@
 <div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3><i class="bi bi-cash-stack"></i> دليل استخدام الحسابات المالية</h3>
+      <h3>💰 دليل استخدام الحسابات المالية</h3>
       <button class="close-btn" (click)="closeGuide()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
@@ -46,10 +46,10 @@
     <div class="modal-body">
       <p class="guide-intro">صفحة الحسابات المالية تمنحك رؤية شاملة عن الوضع المالي لمشروعك.</p>
       <div class="guide-features">
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-bar-chart-fill"></i></span><div><h4>متابعة الإيرادات</h4><p>أضف إيراداتك واضغط "إضافة إيراد" لتسجيلها</p></div></div>
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-cash"></i></span><div><h4>إدارة المصروفات</h4><p>سجّل مصروفاتك واضغط "تسجيل مصروف"</p></div></div>
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-graph-up-arrow"></i></span><div><h4>حساب الأرباح تلقائياً</h4><p>الأرباح = الإيرادات - المصروفات تُحسب فوراً</p></div></div>
-        <div class="guide-item"><span class="guide-icon"><i class="bi bi-arrow-repeat"></i></span><div><h4>سجل المعاملات</h4><p>استعرض جميع العمليات المالية بالتفصيل</p></div></div>
+        <div class="guide-item"><span class="guide-icon">📊</span><div><h4>متابعة الإيرادات</h4><p>أضف إيراداتك واضغط "إضافة إيراد" لتسجيلها</p></div></div>
+        <div class="guide-item"><span class="guide-icon">💸</span><div><h4>إدارة المصروفات</h4><p>سجّل مصروفاتك واضغط "تسجيل مصروف"</p></div></div>
+        <div class="guide-item"><span class="guide-icon">📈</span><div><h4>حساب الأرباح تلقائياً</h4><p>الأرباح = الإيرادات - المصروفات تُحسب فوراً</p></div></div>
+        <div class="guide-item"><span class="guide-icon">🔄</span><div><h4>سجل المعاملات</h4><p>استعرض جميع العمليات المالية بالتفصيل</p></div></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -64,8 +64,8 @@
 
     <div class="modal-header" [class.header-revenue]="addModalType==='revenue'" [class.header-expense]="addModalType==='expense'">
       <h3>
-        <span *ngIf="addModalType==='revenue'"><i class="bi bi-cash-stack"></i> إضافة إيراد جديد</span>
-        <span *ngIf="addModalType==='expense'"><i class="bi bi-cash"></i> تسجيل مصروف جديد</span>
+        <span *ngIf="addModalType==='revenue'">💰 إضافة إيراد جديد</span>
+        <span *ngIf="addModalType==='expense'">💸 تسجيل مصروف جديد</span>
       </h3>
       <button class="close-btn" (click)="closeAddModal()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
@@ -141,7 +141,7 @@
 
       <!-- معاينة الأثر على الأرباح -->
       <div class="profit-preview" *ngIf="newTransaction.amount && newTransaction.amount > 0">
-        <div class="pp-title"><i class="bi bi-bar-chart-fill"></i> الأثر على الأرباح</div>
+        <div class="pp-title">📊 الأثر على الأرباح</div>
         <div class="pp-row">
           <span>الأرباح الحالية</span>
           <span class="pp-val" [class.pos]="profit>=0" [class.neg]="profit<0">{{ formatCurrency(profit) }}</span>
@@ -175,8 +175,8 @@
         (click)="saveTransaction()"
         [disabled]="isSubmitting">
         <span *ngIf="!isSubmitting">
-          <span *ngIf="addModalType==='revenue'"><i class="bi bi-cash-stack"></i> حفظ الإيراد</span>
-          <span *ngIf="addModalType==='expense'"><i class="bi bi-cash"></i> حفظ المصروف</span>
+          <span *ngIf="addModalType==='revenue'">💰 حفظ الإيراد</span>
+          <span *ngIf="addModalType==='expense'">💸 حفظ المصروف</span>
         </span>
         <span *ngIf="isSubmitting">جاري الحفظ...</span>
       </button>
@@ -206,16 +206,16 @@
   <section class="welcome-section">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1 class="welcome-title">الحسابات المالية <span><i class="bi bi-cash-stack"></i></span></h1>
+        <h1 class="welcome-title">الحسابات المالية <span>💰</span></h1>
         <p class="welcome-sub">تحكم في أموالك وتتبع أداءك المالي باحترافية</p>
       </div>
       <div class="welcome-badges">
         <div class="w-badge">
-          <span class="w-badge-icon"><i class="bi bi-graph-up-arrow"></i></span>
+          <span class="w-badge-icon">📈</span>
           <div><span class="w-badge-lbl">صافي الربح</span><span class="w-badge-val">{{ formatCurrency(profit) }}</span></div>
         </div>
         <div class="w-badge">
-          <span class="w-badge-icon"><i class="bi bi-bar-chart-fill"></i></span>
+          <span class="w-badge-icon">📊</span>
           <div><span class="w-badge-lbl">هامش الربح</span><span class="w-badge-val">{{ profitMargin }}%</span></div>
         </div>
       </div>
@@ -225,7 +225,7 @@
   <!-- METRICS -->
   <section class="metrics-grid">
     <div class="mc mc-revenue">
-      <div class="mc-icon"><i class="bi bi-cash-stack"></i></div>
+      <div class="mc-icon">💰</div>
       <div class="mc-lbl">إجمالي الإيرادات</div>
       <div class="mc-val">{{ cards[0]?.value || '0 ر.س' }}</div>
       <div class="mc-trend up" *ngIf="cards[0]?.up">↑ {{ cards[0]?.percent }}</div>
@@ -233,14 +233,14 @@
       <div class="mini-prog"><div class="mini-prog-fill g" style="width:70%"></div></div>
     </div>
     <div class="mc mc-expenses">
-      <div class="mc-icon"><i class="bi bi-cash"></i></div>
+      <div class="mc-icon">💸</div>
       <div class="mc-lbl">إجمالي المصروفات</div>
       <div class="mc-val">{{ cards[1]?.value || '0 ر.س' }}</div>
       <div class="mc-trend down">↑ {{ cards[1]?.percent }}</div>
       <div class="mini-prog"><div class="mini-prog-fill r" style="width:55%"></div></div>
     </div>
     <div class="mc mc-profit">
-      <div class="mc-icon"><i class="bi bi-bar-chart-fill"></i></div>
+      <div class="mc-icon">📊</div>
       <div class="mc-lbl">صافي الربح</div>
       <div class="mc-val" [class.negative-val]="profit<0">{{ cards[2]?.value || '0 ر.س' }}</div>
       <div class="mc-trend up"   *ngIf="profit>=0">↑ {{ cards[2]?.percent }}</div>
@@ -248,7 +248,7 @@
       <div class="mini-prog"><div class="mini-prog-fill" [class.g]="profit>=0" [class.r]="profit<0" style="width:60%"></div></div>
     </div>
     <div class="mc mc-margin">
-      <div class="mc-icon"><i class="bi bi-graph-down-arrow"></i></div>
+      <div class="mc-icon">📉</div>
       <div class="mc-lbl">هامش الربح</div>
       <div class="mc-val">{{ cards[3]?.value || '0%' }}</div>
       <div class="mc-sub">نسبة الكفاءة</div>
@@ -260,21 +260,21 @@
   <div class="charts-row">
     <div class="chart-card wide">
       <div class="chart-head">
-        <div><div class="chart-title"><i class="bi bi-bar-chart-fill"></i> الإيرادات مقابل المصروفات</div><div class="chart-sub">مقارنة شاملة للفترة المحددة</div></div>
+        <div><div class="chart-title">📊 الإيرادات مقابل المصروفات</div><div class="chart-sub">مقارنة شاملة للفترة المحددة</div></div>
         <span class="chip chip-g" *ngIf="profit>0">↑ {{ profitMargin }}%</span>
         <span class="chip chip-r" *ngIf="profit<=0">↓ {{ profitMargin }}%</span>
       </div>
       <div style="height:240px"><canvas #revenueExpenseChart></canvas></div>
     </div>
     <div class="chart-card">
-      <div class="chart-head"><div><div class="chart-title"><i class="bi bi-pie-chart-fill"></i> توزيع المصروفات</div><div class="chart-sub">حسب الفئة</div></div></div>
+      <div class="chart-head"><div><div class="chart-title">🍩 توزيع المصروفات</div><div class="chart-sub">حسب الفئة</div></div></div>
       <div style="height:240px"><canvas #expenseDistributionChart></canvas></div>
     </div>
   </div>
 
   <div class="chart-card full-width" style="margin-bottom:16px">
     <div class="chart-head">
-      <div><div class="chart-title"><i class="bi bi-graph-up-arrow"></i> الاتجاه الشهري</div><div class="chart-sub">الإيرادات والمصروفات على مدار الأشهر</div></div>
+      <div><div class="chart-title">📈 الاتجاه الشهري</div><div class="chart-sub">الإيرادات والمصروفات على مدار الأشهر</div></div>
       <span class="chip chip-b">12 شهر</span>
     </div>
     <div style="height:220px"><canvas #monthlyTrendChart></canvas></div>
@@ -286,7 +286,7 @@
   </div>
 
   <div class="chart-card full-width" style="margin-bottom:24px">
-    <div class="chart-head"><div><div class="chart-title"><i class="bi bi-graph-down-arrow"></i> هامش الربح الشهري</div><div class="chart-sub">تطور نسبة الربحية</div></div></div>
+    <div class="chart-head"><div><div class="chart-title">📉 هامش الربح الشهري</div><div class="chart-sub">تطور نسبة الربحية</div></div></div>
     <div style="height:200px"><canvas #profitMarginChart></canvas></div>
   </div>
 
@@ -295,7 +295,7 @@
 
     <div class="card transactions-card">
       <div class="card-head">
-        <div class="card-title"><i class="bi bi-receipt"></i> آخر المعاملات</div>
+        <div class="card-title">📝 آخر المعاملات</div>
         <span class="tx-count">{{ transactions.length }} معاملة</span>
       </div>
       <div class="tx-list" *ngIf="transactions.length>0; else noTx">
@@ -304,14 +304,14 @@
           [class.tx-expense]="tx.type==='expense'"
           [class.tx-pending]="tx.type==='pending'">
           <div class="tx-icon">
-            <span *ngIf="tx.type==='revenue'"><i class="bi bi-cash-stack"></i></span>
-            <span *ngIf="tx.type==='expense'"><i class="bi bi-cash"></i></span>
-            <span *ngIf="tx.type==='pending'"><i class="bi bi-hourglass-split"></i></span>
+            <span *ngIf="tx.type==='revenue'">💰</span>
+            <span *ngIf="tx.type==='expense'">💸</span>
+            <span *ngIf="tx.type==='pending'">⏳</span>
           </div>
           <div class="tx-info">
             <div class="tx-title">{{ tx.title }}</div>
             <div class="tx-meta">
-              <span class="tx-date"><i class="bi bi-clock"></i> {{ tx.date }}</span>
+              <span class="tx-date">🕐 {{ tx.date }}</span>
               <span class="tx-cat" *ngIf="tx.category">{{ tx.category }}</span>
             </div>
           </div>
@@ -321,7 +321,7 @@
         </div>
       </div>
       <ng-template #noTx>
-        <div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div><p>لا توجد معاملات مالية حتى الآن</p></div>
+        <div class="empty-state"><div class="empty-icon">📭</div><p>لا توجد معاملات مالية حتى الآن</p></div>
       </ng-template>
     </div>
 
@@ -329,7 +329,7 @@
 
       <div class="card">
         <div class="card-head">
-          <div class="card-title"><i class="bi bi-pie-chart-fill"></i> ملخص مالي</div>
+          <div class="card-title">📊 ملخص مالي</div>
           <span class="prog-pct">{{ profitMargin }}%</span>
         </div>
         <div class="circ-wrap">
@@ -349,26 +349,26 @@
           </div>
         </div>
         <div class="summary-rows">
-          <div class="sum-row"><span class="sum-lbl"><i class="bi bi-cash-stack"></i> الإيرادات</span><span class="sum-val g">{{ formatCurrency(totalRevenue) }}</span></div>
-          <div class="sum-row"><span class="sum-lbl"><i class="bi bi-cash"></i> المصروفات</span><span class="sum-val r">{{ formatCurrency(totalExpenses) }}</span></div>
-          <div class="sum-row border-top"><span class="sum-lbl"><i class="bi bi-bar-chart-fill"></i> صافي الربح</span><span class="sum-val" [class.g]="profit>=0" [class.r]="profit<0">{{ formatCurrency(profit) }}</span></div>
+          <div class="sum-row"><span class="sum-lbl">💰 الإيرادات</span><span class="sum-val g">{{ formatCurrency(totalRevenue) }}</span></div>
+          <div class="sum-row"><span class="sum-lbl">💸 المصروفات</span><span class="sum-val r">{{ formatCurrency(totalExpenses) }}</span></div>
+          <div class="sum-row border-top"><span class="sum-lbl">📊 صافي الربح</span><span class="sum-val" [class.g]="profit>=0" [class.r]="profit<0">{{ formatCurrency(profit) }}</span></div>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-head"><div class="card-title"><i class="bi bi-lightning-charge-fill"></i> إجراءات سريعة</div></div>
+        <div class="card-head"><div class="card-title">⚡ إجراءات سريعة</div></div>
         <div class="actions-grid">
           <button class="act-btn act-revenue" (click)="openAddModal('revenue')">
-            <div class="act-icon"><i class="bi bi-cash-stack"></i></div><span>إضافة إيراد</span>
+            <div class="act-icon">💰</div><span>إضافة إيراد</span>
           </button>
           <button class="act-btn act-expense" (click)="openAddModal('expense')">
-            <div class="act-icon"><i class="bi bi-cash"></i></div><span>تسجيل مصروف</span>
+            <div class="act-icon">💸</div><span>تسجيل مصروف</span>
           </button>
           <button class="act-btn act-report" (click)="openReportModal()">
-            <div class="act-icon"><i class="bi bi-file-earmark-arrow-down"></i></div><span>تصدير تقرير</span>
+            <div class="act-icon">📄</div><span>تصدير تقرير</span>
           </button>
           <button class="act-btn act-chart" (click)="openAnalyticsModal()">
-            <div class="act-icon"><i class="bi bi-bar-chart-line-fill"></i></div><span>تحليل تفصيلي</span>
+            <div class="act-icon">📊</div><span>تحليل تفصيلي</span>
           </button>
         </div>
       </div>
@@ -381,7 +381,7 @@
 <div class="modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
   <div class="modal-container report-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3><i class="bi bi-file-earmark-arrow-down"></i> تصدير تقرير مالي</h3>
+      <h3>📄 تصدير تقرير مالي</h3>
       <button class="close-btn" (click)="closeReportModal()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
@@ -391,7 +391,7 @@
 
       <div class="report-options">
         <div class="report-opt" [class.selected]="reportType==='summary'" (click)="reportType='summary'">
-          <div class="report-opt-icon"><i class="bi bi-bar-chart-fill"></i></div>
+          <div class="report-opt-icon">📊</div>
           <div class="report-opt-info">
             <div class="report-opt-title">ملخص مالي شامل</div>
             <div class="report-opt-desc">إيرادات ومصروفات وأرباح وهامش الربح</div>
@@ -399,7 +399,7 @@
           <div class="report-check"></div>
         </div>
         <div class="report-opt" [class.selected]="reportType==='transactions'" (click)="reportType='transactions'">
-          <div class="report-opt-icon"><i class="bi bi-receipt"></i></div>
+          <div class="report-opt-icon">📝</div>
           <div class="report-opt-info">
             <div class="report-opt-title">سجل المعاملات التفصيلي</div>
             <div class="report-opt-desc">جميع الإيرادات والمصروفات مع التفاصيل</div>
@@ -407,7 +407,7 @@
           <div class="report-check"></div>
         </div>
         <div class="report-opt" [class.selected]="reportType==='categories'" (click)="reportType='categories'">
-          <div class="report-opt-icon"><i class="bi bi-folder2-open"></i></div>
+          <div class="report-opt-icon">🗂️</div>
           <div class="report-opt-info">
             <div class="report-opt-title">تقرير حسب الفئات</div>
             <div class="report-opt-desc">تحليل الإنفاق والإيرادات لكل فئة</div>
@@ -427,7 +427,7 @@
       </div>
 
       <div class="report-summary">
-        <div class="report-summary-title"><i class="bi bi-clipboard-check"></i> ملخص البيانات المضمّنة</div>
+        <div class="report-summary-title">📋 ملخص البيانات المضمّنة</div>
         <div class="report-summary-row"><span>إجمالي الإيرادات</span><span>{{ formatCurrency(totalRevenue) }}</span></div>
         <div class="report-summary-row"><span>إجمالي المصروفات</span><span>{{ formatCurrency(totalExpenses) }}</span></div>
         <div class="report-summary-row"><span>صافي الربح</span><span>{{ formatCurrency(profit) }}</span></div>
@@ -448,7 +448,7 @@
 <div class="modal-overlay" *ngIf="showAnalyticsModal" (click)="closeAnalyticsModal()">
   <div class="modal-container analytics-modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3><i class="bi bi-bar-chart-line-fill"></i> التحليل التفصيلي</h3>
+      <h3>📊 التحليل التفصيلي</h3>
       <button class="close-btn" (click)="closeAnalyticsModal()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
       </button>
@@ -458,32 +458,32 @@
       <!-- KPIs -->
       <div class="analytics-kpis">
         <div class="akpi green">
-          <div class="akpi-icon"><i class="bi bi-cash-stack"></i></div>
+          <div class="akpi-icon">💰</div>
           <div class="akpi-val">{{ formatCurrency(totalRevenue) }}</div>
           <div class="akpi-lbl">إجمالي الإيرادات</div>
         </div>
         <div class="akpi red">
-          <div class="akpi-icon"><i class="bi bi-cash"></i></div>
+          <div class="akpi-icon">💸</div>
           <div class="akpi-val">{{ formatCurrency(totalExpenses) }}</div>
           <div class="akpi-lbl">إجمالي المصروفات</div>
         </div>
         <div class="akpi" [class.green]="profit>=0" [class.red]="profit<0">
-          <div class="akpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+          <div class="akpi-icon">📈</div>
           <div class="akpi-val">{{ formatCurrency(profit) }}</div>
           <div class="akpi-lbl">صافي الربح</div>
         </div>
         <div class="akpi">
-          <div class="akpi-icon"><i class="bi bi-graph-down-arrow"></i></div>
+          <div class="akpi-icon">📉</div>
           <div class="akpi-val">{{ profitMargin }}%</div>
           <div class="akpi-lbl">هامش الربح</div>
         </div>
         <div class="akpi">
-          <div class="akpi-icon"><i class="bi bi-receipt"></i></div>
+          <div class="akpi-icon">📝</div>
           <div class="akpi-val">{{ transactions.length }}</div>
           <div class="akpi-lbl">إجمالي المعاملات</div>
         </div>
         <div class="akpi">
-          <div class="akpi-icon"><i class="bi bi-bar-chart-fill"></i></div>
+          <div class="akpi-icon">📊</div>
           <div class="akpi-val">{{ getAvgTransaction() }}</div>
           <div class="akpi-lbl">متوسط المعاملة</div>
         </div>
@@ -491,7 +491,7 @@
 
       <!-- توزيع المصروفات -->
       <div class="analytics-section">
-        <div class="analytics-section-title"><i class="bi bi-cash"></i> توزيع المصروفات حسب الفئة</div>
+        <div class="analytics-section-title">💸 توزيع المصروفات حسب الفئة</div>
         <div class="analytics-bars">
           <div class="abar-row" *ngFor="let cat of expensesByCategory">
             <div class="abar-label">{{ cat.name }}</div>
@@ -505,7 +505,7 @@
 
       <!-- توزيع الإيرادات -->
       <div class="analytics-section">
-        <div class="analytics-section-title"><i class="bi bi-cash-stack"></i> توزيع الإيرادات حسب الفئة</div>
+        <div class="analytics-section-title">💰 توزيع الإيرادات حسب الفئة</div>
         <div class="analytics-bars">
           <div class="abar-row" *ngFor="let cat of revenuesByCategory">
             <div class="abar-label">{{ cat.name }}</div>
@@ -519,10 +519,10 @@
 
       <!-- التوصيات -->
       <div class="analytics-section">
-        <div class="analytics-section-title"><i class="bi bi-lightbulb-fill"></i> رؤى وتوصيات</div>
+        <div class="analytics-section-title">💡 رؤى وتوصيات</div>
         <div class="analytics-insights">
           <div class="insight-item" [class]="insights[0].type" *ngFor="let insight of insights">
-            <div class="insight-icon"><i [class]="'bi ' + insight.icon"></i></div>
+            <div class="insight-icon">{{ insight.icon }}</div>
             <div class="insight-text" [innerHTML]="insight.text"></div>
           </div>
         </div>

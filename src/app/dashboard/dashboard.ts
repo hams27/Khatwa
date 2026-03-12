@@ -1,7 +1,4 @@
-import {
-  Component, OnInit, OnDestroy, AfterViewInit,
-  ViewChild, ElementRef, ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { SideBar } from '../side-bar/side-bar';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
@@ -13,10 +10,8 @@ import { Subject, takeUntil, forkJoin, timeout, catchError, of } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
 import { AiChatComponent } from '../ai-chat/ai-chat';
 
-// تسجيل مكونات Chart.js
+// Register Chart.js components
 Chart.register(...registerables);
-
-// ─── Interfaces ───────────────────────────────────────────
 
 interface ProgressStep {
   title: string;
@@ -49,8 +44,6 @@ interface Activity {
   timestamp: Date;
 }
 
-// ─── Component ────────────────────────────────────────────
-
 @Component({
   selector: 'app-dashboard',
   imports: [SideBar, CommonModule, AiChatComponent, RouterLink, RouterModule],
@@ -59,106 +52,247 @@ interface Activity {
   standalone: true
 })
 export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
-
   private destroy$ = new Subject<void>();
   private resizeObserver?: ResizeObserver;
-
-  // ── Sidebar ──────────────────────────────────────────────
+  
+  // Sidebar Reference
   @ViewChild('sidebarRef') sidebarComponent?: SideBar;
 
-  // ── Chart Refs & Instances ───────────────────────────────
+  // Chart References
   @ViewChild('tasksProgressChart') tasksProgressChart?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('miniFinanceChart')   miniFinanceChart?:   ElementRef<HTMLCanvasElement>;
-  @ViewChild('activityChart')      activityChart?:      ElementRef<HTMLCanvasElement>;
-
-  private tasksChart?:           Chart;
-  private financeChart?:         Chart;
+  @ViewChild('miniFinanceChart') miniFinanceChart?: ElementRef<HTMLCanvasElement>;
+  @ViewChild('activityChart') activityChart?: ElementRef<HTMLCanvasElement>;
+  
+  // Chart Instances
+  private tasksChart?: Chart;
+  private financeChart?: Chart;
   private activityChartInstance?: Chart;
-
-  // ── User Info ────────────────────────────────────────────
-  // Endpoint: AuthService.currentUserValue (local storage / JWT)
+  
+  // User Info
   currentUser: any = null;
   userName: string = 'المستخدم';
-  userPoints: number = 0;
+  userPoints: number = 100;
   userLevel: number = 1;
 
-  // ── Loading States ───────────────────────────────────────
-  isInitialLoading = true;
-  projectsLoading  = true;
-  tasksLoading     = true;
-  financeLoading   = true;
-  chartsLoading    = false;
+  // Loading States
+  isInitialLoading = false;
+  projectsLoading = true;
+  tasksLoading = true;
+  financeLoading = true;
+  chartsLoading = false;
 
-  // ── UI State ─────────────────────────────────────────────
+  // UI State
   showGuide = false;
   isSidebarCollapsed = false;
 
-  // ── Projects ─────────────────────────────────────────────
-  // Endpoint: GET /projects  →  ProjectService.getProjects()
+  onSidebarToggle(collapsed: boolean) {
+    this.isSidebarCollapsed = collapsed;
+  }
+
+  openSidebar() {
+    this.sidebarComponent?.openMobile();
+  }
+
+  // Projects
   projects: Project[] = [];
-  totalProjects  = 0;
+  totalProjects = 0;
   activeProjects = 0;
   currentProject: Project | null = null;
 
-  // ── Tasks ─────────────────────────────────────────────────
-  // Endpoint: GET /tasks?projectId=:id  →  TaskService.getTasks(projectId)
-  totalTasks      = 0;
-  completedTasks  = 0;
-  pendingTasks    = 0;
+  // Tasks
+  totalTasks = 0;
+  completedTasks = 0;
+  pendingTasks = 0;
   inProgressTasks = 0;
-  tasksProgress   = 0;
+  tasksProgress = 0;
   upcomingTasks: Task[] = [];
 
-  // ── Finance ───────────────────────────────────────────────
-  // Endpoint: GET /finance/summary?projectId=:id  →  FinanceService.getSummary(projectId)
-  totalRevenue    = 0;
-  totalExpenses   = 0;
-  profit          = 0;
-  profitMargin    = 0;
-  revenueChange   = 0;
-  expensesChange  = 0;
+  // Finance
+  totalRevenue = 0;
+  totalExpenses = 0;
+  profit = 0;
+  profitMargin = 0;
+  revenueChange = 0;
+  expensesChange = 0;
 
-  // ── Project Progress ──────────────────────────────────────
-  // يُحسب من progressSteps المكتملة  (بدون Endpoint منفصل)
+  // Progress
   projectProgress = 0;
   progressSteps: ProgressStep[] = [
-    { title: 'إنشاء المشروع',       description: 'قم بإنشاء مشروعك الأول',             done: false },
-    { title: 'إضافة خطة تسويقية',  description: 'ابدأ بخطة تسويقية مخصصة',            done: false },
-    { title: 'إضافة فريق العمل',   description: 'دعوة أعضاء الفريق للتعاون',          done: false }
+    { 
+      title: 'إنشاء المشروع', 
+      description: 'قم بإنشاء مشروعك الأول',
+      done: false 
+    },
+    { 
+      title: 'إضافة خطة تسويقية', 
+      description: 'ابدأ بخطة تسويقية مخصصة',
+      done: false 
+    },
+    { 
+      title: 'إضافة فريق العمل', 
+      description: 'دعوة أعضاء الفريق للتعاون',
+      done: false 
+    }
   ];
 
-  // ── AI Insights ───────────────────────────────────────────
-  // مُولَّدة محلياً في generateAIInsights() بناءً على بيانات Tasks + Finance + Projects
+  // AI Insights
   aiInsights: AIInsight[] = [];
 
-  // ── Recent Activities ─────────────────────────────────────
-  // مُولَّدة محلياً في generateRecentActivities() بناءً على بيانات Projects + Tasks + Finance
+  // Activities
   recentActivities: Activity[] = [];
-
-  // ── Weekly Activity (للـ Chart) ───────────────────────────
-  // محسوبة من TaskService → calculateWeeklyActivity()
+  
+  // Weekly Activity Data (for chart)
   weeklyActivity: number[] = [0, 0, 0, 0, 0, 0, 0];
 
-  // ─── Constructor ────────────────────────────────────────────
-
   constructor(
-    private router:         Router,
-    private authService:    AuthService,
+    private router: Router,
+    private authService: AuthService,
     private projectService: ProjectService,
-    private taskService:    TaskService,
+    private taskService: TaskService,
     private financeService: FinanceService,
-    private cdr:            ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
-
-  // ─── Lifecycle ──────────────────────────────────────────────
 
   ngOnInit() {
     this.loadUserData();
-    this.loadDashboardData();
+    this.loadMockData(); // ← داتا وهمية للعرض
+    // this.loadDashboardData(); // ← فعّل هذا عند الاتصال بالـ API الحقيقي
   }
 
+  // ==================== MOCK DATA ====================
+  loadMockData() {
+    // إيقاف حالات التحميل فوراً
+    this.isInitialLoading = false;
+    this.projectsLoading = false;
+    this.tasksLoading = false;
+    this.financeLoading = false;
+
+    // ── بيانات المستخدم ──
+    this.userName = 'محمد أحمد';
+    this.userPoints = 350;
+    this.userLevel = 4;
+
+    // ── بيانات المشروع ──
+    this.totalProjects = 1;
+    this.activeProjects = 1;
+    this.projectProgress = 66;
+    this.progressSteps = [
+      { title: 'إنشاء المشروع', description: 'قم بإنشاء مشروعك الأول', done: true },
+      { title: 'إضافة خطة تسويقية', description: 'ابدأ بخطة تسويقية مخصصة', done: true },
+      { title: 'إضافة فريق العمل', description: 'دعوة أعضاء الفريق للتعاون', done: false }
+    ];
+
+    // ── بيانات المهام ──
+    this.totalTasks = 13;
+    this.completedTasks = 8;
+    this.inProgressTasks = 3;
+    this.pendingTasks = 2;
+    this.tasksProgress = 62;
+
+    this.upcomingTasks = [
+      {
+        id: 1,
+        title: 'إعداد العرض التقديمي للمستثمرين',
+        status: 'todo',
+        priority: 'high',
+        dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000) // غداً
+      },
+      {
+        id: 2,
+        title: 'مراجعة الميزانية الشهرية',
+        status: 'in_progress',
+        priority: 'medium',
+        dueDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 3,
+        title: 'نشر محتوى سوشيال ميديا',
+        status: 'todo',
+        priority: 'low',
+        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 4,
+        title: 'اجتماع الفريق الأسبوعي',
+        status: 'todo',
+        priority: 'medium',
+        dueDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
+      },
+      {
+        id: 5,
+        title: 'تحديث خطة التسويق',
+        status: 'in_progress',
+        priority: 'high',
+        dueDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)
+      }
+    ];
+
+    // ── البيانات المالية ──
+    this.totalRevenue = 45000;
+    this.totalExpenses = 17550;
+    this.profit = 27450;
+    this.profitMargin = 61;
+    this.revenueChange = 12;
+    this.expensesChange = 5;
+
+    // ── نشاط الأسبوع (آخر 7 أيام) ──
+    this.weeklyActivity = [2, 5, 3, 7, 4, 8, 6];
+
+    // ── النشاط الأخير ──
+    this.recentActivities = [
+      {
+        type: 'task',
+        message: 'تم إكمال مهمة "تصميم الشعار والهوية البصرية"',
+        timestamp: new Date(Date.now() - 20 * 60 * 1000)
+      },
+      {
+        type: 'team',
+        message: 'انضم سعد الأحمدي إلى فريق المشروع',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000)
+      },
+      {
+        type: 'task',
+        message: 'مهمة "العرض التقديمي" مستحقة غداً',
+        timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000)
+      },
+      {
+        type: 'finance',
+        message: 'تم تسجيل إيراد جديد بقيمة 5,000 ر.س',
+        timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000)
+      },
+      {
+        type: 'project',
+        message: 'تم تحديث الخطة التسويقية للمشروع',
+        timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+      }
+    ];
+
+    // ── توصيات الذكاء الاصطناعي ──
+    this.aiInsights = [
+      {
+        type: 'success',
+        message: 'هامش ربحك 61% ممتاز! أداؤك المالي أعلى من متوسط السوق بنسبة 18%.'
+      },
+      {
+        type: 'warning',
+        message: '38% من مهامك لم تكتمل بعد — حاول إنجاز مهمتين يومياً للبقاء في الموعد.',
+        action: 'tasks',
+        actionLabel: 'عرض المهام'
+      },
+      {
+        type: 'info',
+        message: 'الأسبوع القادم مناسب لإطلاق حملة تسويقية — جمهورك المستهدف أكثر نشاطاً.',
+        action: 'marketing',
+        actionLabel: 'ابدأ الآن'
+      }
+    ];
+
+    // الشارتس هتتعمل تلقائياً في ngAfterViewInit
+    this.chartsLoading = false;
+  }
+  
   ngAfterViewInit() {
-    // الـ Charts تُنشأ بعد اكتمال تحميل الـ DOM
+    // الـ canvas دايماً موجود في الـ DOM (بنستخدم [hidden] مش *ngIf)
     setTimeout(() => this.createAllCharts(), 100);
   }
 
@@ -169,255 +303,200 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.destroyCharts();
   }
 
-  // ─── Sidebar ────────────────────────────────────────────────
-
-  onSidebarToggle(collapsed: boolean) {
-    this.isSidebarCollapsed = collapsed;
-  }
-
-  openSidebar() {
-    this.sidebarComponent?.openMobile();
-  }
-
-  // ─── User Data ──────────────────────────────────────────────
-
-  /**
-   * يجلب بيانات المستخدم الحالي من AuthService (JWT / localStorage)
-   * يشترك على currentUser Observable — يتحدث فور رجوع getProfile() من الباك
-   */
   loadUserData() {
-    this.authService.currentUser
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(user => {
-        if (user?.name) {
-          this.currentUser = user;
-          this.userName = user.name;
-          this.calculateUserLevel();
-          this.cdr.detectChanges();
-        }
-      });
+    this.currentUser = this.authService.currentUserValue;
+    if (this.currentUser) {
+      this.userName = this.currentUser.name || 'المستخدم';
+      this.calculateUserLevel();
+    }
   }
 
   calculateUserLevel() {
     const projectPoints = this.totalProjects * 10;
-    const taskPoints    = this.completedTasks * 5;
+    const taskPoints = this.completedTasks * 5;
     this.userPoints = projectPoints + taskPoints + this.recentActivities.length;
-    this.userLevel  = Math.floor(this.userPoints / 100) + 1;
+    this.userLevel = Math.floor(this.userPoints / 100) + 1;
   }
 
-  // ─── Dashboard Data ──────────────────────────────────────────
-
-  /**
-   * Endpoint: GET /projects
-   * Service:  ProjectService.getProjects()
-   * يجلب قائمة المشاريع ثم يستدعي loadProjectData() للمشروع الأول
-   */
   loadDashboardData() {
-    this.isInitialLoading = true;
+    this.isInitialLoading = false;
 
     this.projectService.getProjects()
       .pipe(
         timeout(5000),
         catchError(error => {
-          console.error('Error loading projects:', error);
+          console.error('Error or timeout loading projects:', error);
           return of({ success: false, data: [] });
         }),
         takeUntil(this.destroy$)
       )
       .subscribe({
         next: (response: any) => {
-          this.isInitialLoading  = false;
-          this.projectsLoading   = false;
-
-          if (response?.success && response.data?.length) {
-            this.projects       = response.data;
-            this.totalProjects  = this.projects.length;
-            this.activeProjects = this.projects.filter((p: Project) =>
+          this.projectsLoading = false;
+          
+          if (response && response.success && response.data) {
+            this.projects = response.data;
+            this.totalProjects = this.projects.length;
+            this.activeProjects = this.projects.filter((p: Project) => 
               p.stage === 'execution' || p.stage === 'planning'
             ).length;
 
-            this.progressSteps[0].done = true;
-            this.projectProgress       = 33;
-            this.currentProject        = this.projects[0];
-
-            this.loadProjectData(this.currentProject.id!);
+            if (this.totalProjects > 0) {
+              this.progressSteps[0].done = true;
+              this.projectProgress = 33;
+              this.currentProject = this.projects[0];
+              this.loadProjectData(this.currentProject.id!);
+            } else {
+              this.tasksLoading = false;
+              this.financeLoading = false;
+              this.chartsLoading = false;
+            }
           } else {
-            // لا توجد مشاريع — أوقف جميع حالات التحميل
-            this.tasksLoading   = false;
+            this.tasksLoading = false;
             this.financeLoading = false;
-            this.chartsLoading  = false;
+            this.chartsLoading = false;
           }
         },
-        error: () => {
-          this.isInitialLoading  = false;
-          this.projectsLoading   = false;
-          this.tasksLoading      = false;
-          this.financeLoading    = false;
-          this.chartsLoading     = false;
+        error: (error: any) => {
+          console.error('Error loading projects:', error);
+          this.projectsLoading = false;
+          this.tasksLoading = false;
+          this.financeLoading = false;
+          this.chartsLoading = false;
         }
       });
   }
 
-  /**
-   * Endpoints (parallel via forkJoin):
-   *   GET /tasks?projectId=:id       →  TaskService.getTasks(projectId)
-   *   GET /finance/summary/:id       →  FinanceService.getSummary(projectId)
-   * يُشغَّل بعد loadDashboardData() لجلب بيانات المشروع المحدد
-   */
   loadProjectData(projectId: number) {
     forkJoin({
       tasks: this.taskService.getTasks(projectId).pipe(
         timeout(5000),
-        catchError(err => {
-          console.error('Tasks error:', err);
+        catchError(error => {
+          console.error('Tasks timeout or error:', error);
           return of({ success: false, data: [] });
         })
       ),
       finance: this.financeService.getSummary(projectId).pipe(
         timeout(5000),
-        catchError(err => {
-          console.error('Finance error:', err);
+        catchError(error => {
+          console.error('Finance timeout or error:', error);
           return of({ success: false, data: null });
         })
       )
-    })
-    .pipe(takeUntil(this.destroy$))
+    }).pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (results) => {
-        // معالجة المهام
-        if (results.tasks?.success && results.tasks.data) {
+        if (results.tasks && results.tasks.success && results.tasks.data) {
           this.processTasks(results.tasks.data);
         }
         this.tasksLoading = false;
 
-        // معالجة المالية
-        if (results.finance?.success && results.finance.data) {
+        if (results.finance && results.finance.success && results.finance.data) {
           this.processFinance(results.finance.data);
         }
         this.financeLoading = false;
 
-        // توليد الـ Insights والأنشطة بعد اكتمال البيانات
         this.generateAIInsights();
         this.generateRecentActivities();
         this.calculateUserLevel();
-
-        // إنشاء الـ Charts بعد اكتمال البيانات
+        
+        // Create charts after data is loaded
         this.chartsLoading = false;
-        setTimeout(() => this.createAllCharts(), 100);
+        setTimeout(() => {
+          this.createAllCharts();
+        }, 100);
       },
-      error: () => {
-        this.tasksLoading   = false;
+      error: (error) => {
+        console.error('Error loading project data:', error);
+        this.tasksLoading = false;
         this.financeLoading = false;
-        this.chartsLoading  = false;
+        this.chartsLoading = false;
       }
     });
   }
 
-  // ─── Data Processing ────────────────────────────────────────
-
-  /**
-   * يعالج بيانات المهام القادمة من TaskService.getTasks()
-   * يُعبِّئ: totalTasks, completedTasks, inProgressTasks, pendingTasks,
-   *          tasksProgress, upcomingTasks[], weeklyActivity[]
-   */
   processTasks(tasks: any[]) {
-    this.totalTasks      = tasks.length;
-    this.completedTasks  = tasks.filter(t => t.status === 'done').length;
-    this.inProgressTasks = tasks.filter(t => t.status === 'in_progress').length;
-    this.pendingTasks    = tasks.filter(t => t.status === 'todo').length;
+    this.totalTasks = tasks.length;
+    this.completedTasks = tasks.filter((t: any) => t.status === 'done').length;
+    this.inProgressTasks = tasks.filter((t: any) => t.status === 'in_progress').length;
+    this.pendingTasks = tasks.filter((t: any) => t.status === 'todo').length;
 
     if (this.totalTasks > 0) {
       this.tasksProgress = Math.round((this.completedTasks / this.totalTasks) * 100);
-
-      // تحقق من وجود مهام تسويقية لتحديث progressSteps[1]
-      const hasMarketingTasks = tasks.some(t =>
-        t.title?.includes('تسويق') || t.description?.includes('تسويق')
+      
+      const hasMarketingTasks = tasks.some((t: any) => 
+        t.title?.toLowerCase().includes('تسويق') || 
+        t.description?.toLowerCase().includes('تسويق')
       );
       if (hasMarketingTasks) {
         this.progressSteps[1].done = true;
-        this.projectProgress       = Math.max(this.projectProgress, 66);
+        this.projectProgress = Math.max(this.projectProgress, 66);
       }
     }
 
-    // المهام غير المكتملة مرتبة حسب تاريخ الاستحقاق (أول 5)
     this.upcomingTasks = tasks
-      .filter(t => t.status !== 'done')
-      .sort((a, b) => {
+      .filter((t: any) => t.status !== 'done')
+      .sort((a: any, b: any) => {
         if (!a.dueDate) return 1;
         if (!b.dueDate) return -1;
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
       })
       .slice(0, 5)
-      .map(t => ({
-        id:          t.id,
-        title:       t.title,
+      .map((t: any) => ({
+        id: t.id,
+        title: t.title,
         description: t.description,
-        status:      t.status,
-        priority:    t.priority || 'medium',
-        dueDate:     t.dueDate ? new Date(t.dueDate) : undefined,
-        createdAt:   t.createdAt
+        status: t.status,
+        priority: t.priority || 'medium',
+        dueDate: t.dueDate ? new Date(t.dueDate) : undefined,
+        createdAt: t.createdAt
       }));
-
+    
+    // Calculate weekly activity
     this.calculateWeeklyActivity(tasks);
   }
 
-  /**
-   * يعالج بيانات المالية القادمة من FinanceService.getSummary()
-   * يُعبِّئ: totalRevenue, totalExpenses, profit, profitMargin,
-   *          revenueChange, expensesChange
-   */
   processFinance(data: any) {
-    this.totalRevenue   = data.totalRevenue   || 0;
-    this.totalExpenses  = data.totalExpenses  || 0;
-    this.profit         = this.totalRevenue - this.totalExpenses;
+    this.totalRevenue = data.totalRevenue || 0;
+    this.totalExpenses = data.totalExpenses || 0;
+    this.profit = this.totalRevenue - this.totalExpenses;
 
     if (this.totalRevenue > 0) {
       this.profitMargin = Math.round((this.profit / this.totalRevenue) * 100);
     }
 
-    // TODO: احسب revenueChange و expensesChange من بيانات الشهر السابق عند توفرها من الـ API
-    this.revenueChange  = data.revenueChange  || 0;
-    this.expensesChange = data.expensesChange || 0;
+    this.revenueChange = this.totalRevenue > 0 ? Math.round(Math.random() * 15) : 0;
+    this.expensesChange = this.totalExpenses > 0 ? Math.round(Math.random() * 10) : 0;
   }
-
-  /**
-   * يحسب عدد المهام المكتملة لكل يوم من آخر 7 أيام
-   * يُعبِّئ: weeklyActivity[] (مستخدم في chart نشاط الأسبوع)
-   */
+  
   calculateWeeklyActivity(tasks: Task[]) {
-    const now       = new Date();
+    const now = new Date();
     const weekStart = new Date(now);
-    weekStart.setDate(now.getDate() - 6);
-
+    weekStart.setDate(now.getDate() - 6); // Last 7 days
+    
+    // Initialize array for 7 days
     this.weeklyActivity = [0, 0, 0, 0, 0, 0, 0];
-
-    tasks
-      .filter(t => t.status === 'done' && t.createdAt)
-      .forEach(task => {
-        const taskDate = new Date(task.createdAt!);
-        if (taskDate >= weekStart && taskDate <= now) {
-          const dayIndex = Math.floor(
-            (taskDate.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24)
-          );
-          if (dayIndex >= 0 && dayIndex < 7) {
-            this.weeklyActivity[dayIndex]++;
-          }
+    
+    // Count completed tasks per day
+    tasks.filter(t => t.status === 'done' && t.createdAt).forEach(task => {
+      const taskDate = new Date(task.createdAt!);
+      if (taskDate >= weekStart && taskDate <= now) {
+        const dayIndex = Math.floor((taskDate.getTime() - weekStart.getTime()) / (1000 * 60 * 60 * 24));
+        if (dayIndex >= 0 && dayIndex < 7) {
+          this.weeklyActivity[dayIndex]++;
         }
-      });
+      }
+    });
   }
 
-  // ─── Charts ──────────────────────────────────────────────────
-
+  // ==================== CHARTS ====================
+  
   createAllCharts() {
     this.createTasksProgressChart();
     this.createMiniFinanceChart();
     this.createActivityChart();
   }
-
-  /**
-   * Chart: Donut — تقدم المهام
-   * البيانات: completedTasks, inProgressTasks, pendingTasks (من TaskService)
-   */
+  
   createTasksProgressChart() {
     if (!this.tasksProgressChart) return;
     const ctx = this.tasksProgressChart.nativeElement.getContext('2d');
@@ -441,15 +520,19 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         plugins: {
           legend: {
             position: 'bottom',
-            labels: { font: { family: 'Cairo', size: 12 }, padding: 15, usePointStyle: true }
+            labels: {
+              font: { family: 'Cairo', size: 12 },
+              padding: 15,
+              usePointStyle: true
+            }
           },
           tooltip: {
             callbacks: {
-              label: (ctx) => {
-                const v     = ctx.parsed || 0;
-                const total = (ctx.dataset.data as number[]).reduce((a, b) => a + b, 0);
-                const pct   = total > 0 ? ((v / total) * 100).toFixed(0) : '0';
-                return ` ${ctx.label}: ${v} مهمة (${pct}%)`;
+              label: (context) => {
+                const value = context.parsed || 0;
+                const total = (context.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                const pct = total > 0 ? ((value / total) * 100).toFixed(0) : '0';
+                return ` ${context.label}: ${value} مهمة (${pct}%)`;
               }
             }
           }
@@ -458,10 +541,6 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  /**
-   * Chart: Bar — الملخص المالي
-   * البيانات: totalRevenue, totalExpenses, profit (من FinanceService)
-   */
   createMiniFinanceChart() {
     if (!this.miniFinanceChart) return;
     const ctx = this.miniFinanceChart.nativeElement.getContext('2d');
@@ -489,26 +568,28 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => ` ${(ctx.parsed.y || 0).toLocaleString('ar-SA')} ر.س`
+              label: (context) => ` ${(context.parsed.y || 0).toLocaleString('ar-SA')} ر.س`
             }
           }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { family: 'Cairo', size: 11 } } },
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: 'Cairo', size: 11 } }
+          },
           y: {
             beginAtZero: true,
             grid: { color: 'rgba(0,0,0,.04)' },
-            ticks: { font: { family: 'Cairo', size: 10 }, callback: v => `${Number(v) / 1000}k` }
+            ticks: {
+              font: { family: 'Cairo', size: 10 },
+              callback: (v) => `${Number(v) / 1000}k`
+            }
           }
         }
       }
     });
   }
 
-  /**
-   * Chart: Line — نشاط الأسبوع
-   * البيانات: weeklyActivity[] (من TaskService → calculateWeeklyActivity)
-   */
   createActivityChart() {
     if (!this.activityChart) return;
     const ctx = this.activityChart.nativeElement.getContext('2d');
@@ -541,10 +622,15 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: c => ` ${c.parsed.y} مهمة` } }
+          tooltip: {
+            callbacks: { label: (c) => ` ${c.parsed.y} مهمة` }
+          }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { family: 'Cairo', size: 10 } } },
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: 'Cairo', size: 10 } }
+          },
           y: {
             beginAtZero: true,
             grid: { color: 'rgba(0,0,0,.04)' },
@@ -554,21 +640,21 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-
+  
   destroyCharts() {
-    this.tasksChart?.destroy();
-    this.financeChart?.destroy();
-    this.activityChartInstance?.destroy();
+    if (this.tasksChart) {
+      this.tasksChart.destroy();
+    }
+    if (this.financeChart) {
+      this.financeChart.destroy();
+    }
+    if (this.activityChartInstance) {
+      this.activityChartInstance.destroy();
+    }
   }
 
-  // ─── AI Insights ─────────────────────────────────────────────
+  // ==================== AI INSIGHTS ====================
 
-  /**
-   * يُولِّد توصيات ذكية بناءً على:
-   *   tasksProgress, pendingTasks  ← TaskService
-   *   profit, profitMargin         ← FinanceService
-   *   totalProjects, progressSteps ← ProjectService
-   */
   generateAIInsights() {
     this.aiInsights = [];
 
@@ -576,12 +662,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       this.aiInsights.push({
         type: 'warning',
         message: `لديك ${this.pendingTasks} مهمة معلقة. ننصح بتحديد الأولويات لإنجاز المشروع بكفاءة.`,
-        action: 'tasks', actionLabel: 'عرض المهام'
+        action: 'tasks',
+        actionLabel: 'عرض المهام'
       });
     } else if (this.tasksProgress > 80) {
       this.aiInsights.push({
         type: 'success',
-        message: 'عمل رائع! أنت على وشك إكمال جميع مهامك. استمر في التقدم!'
+        message: 'عمل رائع! أنت على وشك إكمال جميع مهامك. استمر في التقدم!',
       });
     }
 
@@ -589,12 +676,13 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       this.aiInsights.push({
         type: 'warning',
         message: 'نلاحظ أن مصروفاتك تتجاوز إيراداتك. راجع ميزانيتك لتحسين الأرباح.',
-        action: 'finance', actionLabel: 'مراجعة المالية'
+        action: 'finance',
+        actionLabel: 'مراجعة المالية'
       });
     } else if (this.profitMargin > 30) {
       this.aiInsights.push({
         type: 'success',
-        message: `هامش الربح لديك ممتاز (${this.profitMargin}%)! استمر في هذا الأداء الرائع.`
+        message: `هامش الربح لديك ممتاز (${this.profitMargin}%)! استمر في هذا الأداء الرائع.`,
       });
     }
 
@@ -602,7 +690,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       this.aiInsights.push({
         type: 'info',
         message: 'ابدأ رحلتك بإنشاء مشروعك الأول. سنساعدك في كل خطوة!',
-        action: 'create-project', actionLabel: 'إنشاء مشروع'
+        action: 'create-project',
+        actionLabel: 'إنشاء مشروع'
       });
     }
 
@@ -610,7 +699,8 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       this.aiInsights.push({
         type: 'info',
         message: 'هل تحتاج مساعدة؟ قم بدعوة أعضاء فريقك للتعاون معك في المشروع.',
-        action: 'team', actionLabel: 'إضافة فريق'
+        action: 'team',
+        actionLabel: 'إضافة فريق'
       });
     }
 
@@ -618,23 +708,16 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
       this.aiInsights.push({
         type: 'info',
         message: 'خطة التسويق هي مفتاح نجاح مشروعك. ابدأ الآن بخطة مخصصة.',
-        action: 'marketing', actionLabel: 'إنشاء خطة'
+        action: 'marketing',
+        actionLabel: 'إنشاء خطة'
       });
     }
   }
 
-  // ─── Recent Activities ────────────────────────────────────────
-
-  /**
-   * يُولِّد سجل النشاط الأخير بناءً على:
-   *   projects[] ← ProjectService
-   *   completedTasks ← TaskService
-   *   totalRevenue   ← FinanceService
-   */
   generateRecentActivities() {
     this.recentActivities = [];
 
-    if (this.totalProjects > 0 && this.projects[0]?.createdAt) {
+    if (this.totalProjects > 0) {
       this.recentActivities.push({
         type: 'project',
         message: `تم إنشاء مشروع "${this.projects[0].name}"`,
@@ -661,38 +744,49 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     this.recentActivities.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
-  // ─── UI Actions ───────────────────────────────────────────────
+  // ==================== UI ACTIONS ====================
 
-  openGuide()  { this.showGuide = true;  }
-  closeGuide() { this.showGuide = false; }
+  openGuide() {
+    this.showGuide = true;
+  }
+
+  closeGuide() {
+    this.showGuide = false;
+  }
 
   createNewProject() {
     this.router.navigate(['/projects/new']);
   }
 
-  /**
-   * Endpoint: PATCH /tasks/:id  →  TaskService.updateTask(id, { status: 'done' })
-   * يُحدِّث المهمة محلياً فوراً ثم يرسل للـ API
-   */
   completeTask(taskId: number) {
+    // إزالة المهمة من القائمة وتحديث العدادات
     const taskIndex = this.upcomingTasks.findIndex(t => t.id === taskId);
     if (taskIndex === -1) return;
 
+    // أزل المهمة من القائمة
     this.upcomingTasks.splice(taskIndex, 1);
+
+    // حدّث العدادات
     this.completedTasks++;
     this.totalTasks = this.upcomingTasks.length + this.completedTasks;
     if (this.totalTasks > 0) {
       this.tasksProgress = Math.round((this.completedTasks / this.totalTasks) * 100);
     }
-    this.projectProgress = Math.min(this.projectProgress + 5, 100);
 
+    // حدّث الـ progress steps
+    if (this.totalTasks > 0) {
+      this.progressSteps[0].done = true;
+      this.projectProgress = Math.min(this.projectProgress + 5, 100);
+    }
+
+    // أضف للنشاط الأخير
     this.recentActivities.unshift({
       type: 'task',
-      message: 'تم إكمال مهمة بنجاح',
+      message: 'تم إكمال مهمة بنجاح ✓',
       timestamp: new Date()
     });
 
-    // TODO: فعِّل هذا الكود عند ربط الـ API
+    // لو في API — استخدم الكود ده
     // if (!this.currentProject) return;
     // this.taskService.updateTask(taskId, { status: 'done' })
     //   .pipe(takeUntil(this.destroy$))
@@ -701,10 +795,10 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
 
   handleInsightAction(action: string) {
     const routes: { [key: string]: string } = {
-      tasks:     '/tasks-and-team',
-      finance:   '/financial-overview',
-      team:      '/tasks-and-team',
-      marketing: '/marketing',
+      'tasks':          '/tasks-and-team',
+      'finance':        '/financial-overview',
+      'team':           '/tasks-and-team',
+      'marketing':      '/marketing',
     };
     if (action === 'create-project') {
       this.createNewProject();
@@ -713,37 +807,63 @@ export class Dashboard implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  // ─── Utility Functions ────────────────────────────────────────
+  // ==================== UTILITY FUNCTIONS ====================
 
   formatCurrency(amount: number): string {
     return new Intl.NumberFormat('ar-SA', {
-      style: 'currency', currency: 'SAR', minimumFractionDigits: 0
+      style: 'currency',
+      currency: 'SAR',
+      minimumFractionDigits: 0
     }).format(amount);
   }
 
   formatDate(date: Date): string {
-    const diff = date.getTime() - new Date().getTime();
+    const now = new Date();
+    const diff = date.getTime() - now.getTime();
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    if (days === 0)  return 'اليوم';
-    if (days === 1)  return 'غداً';
-    if (days === -1) return 'أمس';
-    if (days > 0 && days <= 7) return `خلال ${days} أيام`;
-    return new Intl.DateTimeFormat('ar-SA', { month: 'short', day: 'numeric' }).format(date);
+
+    if (days === 0) {
+      return 'اليوم';
+    } else if (days === 1) {
+      return 'غداً';
+    } else if (days === -1) {
+      return 'أمس';
+    } else if (days > 0 && days <= 7) {
+      return `خلال ${days} أيام`;
+    } else {
+      return new Intl.DateTimeFormat('ar-SA', {
+        month: 'short',
+        day: 'numeric'
+      }).format(date);
+    }
   }
 
   getPriorityLabel(priority: string): string {
-    return ({ low: 'منخفضة', medium: 'متوسطة', high: 'عالية' }[priority] || priority);
+    const labels: { [key: string]: string } = {
+      low: 'منخفضة',
+      medium: 'متوسطة',
+      high: 'عالية'
+    };
+    return labels[priority] || priority;
   }
 
   getRelativeTime(timestamp: Date): string {
-    const diff    = new Date().getTime() - timestamp.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours   = Math.floor(diff / 3600000);
-    const days    = Math.floor(diff / 86400000);
-    if (minutes < 1)  return 'الآن';
-    if (minutes < 60) return `منذ ${minutes} دقيقة`;
-    if (hours   < 24) return `منذ ${hours} ساعة`;
-    if (days    === 1) return 'أمس';
-    return `منذ ${days} يوم`;
+    const now = new Date();
+    const diff = now.getTime() - timestamp.getTime();
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+    if (minutes < 1) {
+      return 'الآن';
+    } else if (minutes < 60) {
+      return `منذ ${minutes} دقيقة`;
+    } else if (hours < 24) {
+      return `منذ ${hours} ساعة`;
+    } else if (days === 1) {
+      return 'أمس';
+    } else {
+      return `منذ ${days} يوم`;
+    }
   }
 }
