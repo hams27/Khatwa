@@ -1,0 +1,98 @@
+<!-- Overlay for mobile -->
+<div class="sidebar-overlay" [class.active]="isMobileOpen" (click)="closeMobile()"></div>
+
+<aside class="sidebar" [class.collapsed]="isCollapsed" [class.mobile-open]="isMobileOpen">
+
+  <!-- Toggle Button (desktop only) -->
+  <button class="toggle-btn desktop-only" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'فتح القائمة' : 'إغلاق القائمة'">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line *ngIf="!isCollapsed" x1="3" y1="12" x2="21" y2="12"></line>
+      <line *ngIf="!isCollapsed" x1="3" y1="6" x2="21" y2="6"></line>
+      <line *ngIf="!isCollapsed" x1="3" y1="18" x2="21" y2="18"></line>
+      <polyline *ngIf="isCollapsed" points="15 18 9 12 15 6"></polyline>
+    </svg>
+  </button>
+
+  <!-- Close Button (mobile only) -->
+  <button class="mobile-close-btn mobile-only" (click)="closeMobile()" aria-label="إغلاق القائمة">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+  </button>
+
+  <!-- Logo -->
+  <div class="sidebar-header">
+    <div class="logo">
+      <div class="logo-icon">
+        <img src="khatwa.svg" alt="خطوة">
+      </div>
+      <div class="logo-text-wrap">
+        <div class="logo-name">خطوة</div>
+        <div class="logo-sub">منصة إدارة المشاريع</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="sidebar-content">
+
+    <!-- Main nav label -->
+    <div class="nav-section">
+      <div class="nav-section-label">الرئيسية</div>
+
+      <!-- Dashboard Button -->
+      <a
+        class="dashboard-btn nav-item"
+        [routerLink]="'/dashboard'"
+        routerLinkActive="active"
+        (click)="closeMobile()"
+        [title]="isCollapsed ? 'لوحة التحكم' : ''"
+      >
+        <img src="squares.png" alt="لوحة التحكم" class="nav-icon">
+        <span class="nav-label" *ngIf="!isCollapsed">لوحة التحكم</span>
+      </a>
+
+      <!-- Nav Items -->
+      <nav class="sidebar-nav">
+        <a
+          *ngFor="let item of menuItems"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="nav-item"
+          [title]="isCollapsed ? item.label : ''"
+          (click)="closeMobile()"
+        >
+          <img
+            *ngIf="item.icon"
+            [src]="item.icon"
+            [alt]="item.label"
+            class="nav-icon"
+          />
+          <span class="nav-label" *ngIf="!isCollapsed">{{ item.label }}</span>
+        </a>
+      </nav>
+    </div>
+
+  </div>
+
+  <!-- User Section -->
+  <div class="user-section" [title]="isCollapsed ? userInfo.name : ''">
+    <div class="user-avatar">{{ userInfo.avatar }}</div>
+
+    <div class="user-details" *ngIf="!isCollapsed">
+      <div class="user-name">{{ userInfo.name }}</div>
+      <div class="user-role">{{ userInfo.role }}</div>
+    </div>
+
+    <button (click)="logout()" class="logout-btn" [class.icon-only]="isCollapsed" [title]="isCollapsed ? 'تسجيل الخروج' : ''">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
+      </svg>
+      <span *ngIf="!isCollapsed">خروج</span>
+    </button>
+  </div>
+
+</aside>

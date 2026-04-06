@@ -1,0 +1,370 @@
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg khatwa-navbar">
+  <div class="container-fluid px-3 px-md-4">
+
+    <!-- اللوجو على اليمين (تاني في LTR = يمين) -->
+    <a class="navbar-brand" routerLink="/">
+      <img src="khatwa.svg" alt="خطوة" class="navbar-logo">
+    </a>
+
+    <!-- الايقونات على الشمال - موبايل فقط -->
+    <div class="d-flex align-items-center gap-2 d-lg-none">
+      <button class="theme-toggle-btn" (click)="themeService.toggleTheme()">
+        <svg *ngIf="!(themeService.isDark$ | async)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+        </svg>
+        <svg *ngIf="themeService.isDark$ | async" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+        </svg>
+      </button>
+      <button class="khatwa-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- المينيو المخفي -->
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item" *ngFor="let link of navLinks">
+          <a class="nav-link khatwa-link" [class.active]="link.active"
+             (click)="scrollToSection(link.sectionId); setActiveLink(link)">
+            {{ link.name }}
+            <span class="nav-dot"></span>
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center gap-2 mt-2 mt-lg-0">
+        <button class="theme-toggle-btn d-none d-lg-flex" (click)="themeService.toggleTheme()">
+          <svg *ngIf="!(themeService.isDark$ | async)" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"/>
+          </svg>
+          <svg *ngIf="themeService.isDark$ | async" xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6zm0 1a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+          </svg>
+        </button>
+        <button class="btn-cta-nav" routerLink="/register">
+          <span>ابدأ مجاناً</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="hero">
+  <div class="hero-video-wrap">
+    <video autoplay loop muted playsinline preload="auto" class="hero-video">
+      <source src="hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-badge reveal-up" style="animation-delay:0.2s">
+      <span class="badge-dot"></span>
+      <span>منصة إدارة الأعمال الأولى عربياً 
+       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-rocket-takeoff" viewBox="0 0 16 16">
+          <path d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"/>
+          <path d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"/>
+          <path d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"/>
+       </svg>  
+      </span>
+    </div>
+
+    <h1 class="hero-title reveal-up" style="animation-delay:0.4s">
+      احنــــا معــاك<br>
+      <span class="typed-wrap">
+        <span class="typed-text" id="typed-text">خطـــــوة بخـطـــــوة</span>
+        <span class="typed-cursor">|</span>
+      </span>
+    </h1>
+
+    <p class="hero-sub reveal-up" style="animation-delay:0.6s">
+      الطريـق طويـل... بـس أول خطـوة هي الأهـم
+    </p>
+
+    <div class="hero-actions reveal-up" style="animation-delay:0.9s">
+      <button class="btn-hero-primary" routerLink="/register">
+        <span>ابـدأ خـطــوتــك</span>
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button class="btn-hero-secondary" (click)="scrollToSection('خطوات العمل')">
+        <i class="bi bi-play-circle"></i>
+        <span>شاهـد العـرض</span>
+      </button>
+    </div>
+
+    <div class="hero-stats reveal-up" style="animation-delay:1.1s">
+      <div class="h-stat" *ngFor="let stat of stats">
+        <span class="h-stat-val">{{ stat.displayValue }}</span>
+        <span class="h-stat-lbl">{{ stat.label }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NEEDS ================= -->
+<section class="needs-section" id="احتياجاتك">
+  <div class="section-wrap">
+    <div class="section-tag scroll-reveal">ما تحتاجه</div>
+    <div class="section-title scroll-reveal">
+    كــل اللـي يحتــاجه مشروعـك
+     <br> في مكـان واحد 
+    </div>
+    <p class="section-desc scroll-reveal">منصـة شاملـة مصممـة لأصحـاب المشـاريـع الصغيـرة ورواد الأعمــال</p>
+
+    <div class="needs-grid">
+      <div class="need-card scroll-reveal"
+           *ngFor="let need of needs; let i = index"
+           [class.from-left]="i % 2 !== 0">
+        <div class="need-icon" [style.background]="need.bg">
+          <i [class]="need.biIcon" [style.color]="need.color"></i>
+        </div>
+        <h3>{{ need.title }}</h3>
+        <p>{{ need.desc }}</p>
+        <div class="need-glow" [style.background]="need.bg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="steps-section" id="خطوات العمل">
+  <div class="section-wrap">
+    <div class="section-tag scroll-reveal">كيـف تبـدأ</div>
+    <h2 class="section-title scroll-reveal">ثـلاث خطـوات تغيّــر كل شيء</h2>
+
+    <div class="steps-timeline">
+      <div class="timeline-line"></div>
+      <div class="step-block scroll-reveal" *ngFor="let step of steps; let i = index" [style.transition-delay]="(i*0.2)+'s'">
+        <div class="step-num">{{ i+1 }}</div>
+        <div class="step-card">
+          <div class="step-icon-wrap"><i [class]="step.biIcon"></i></div>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.desc }}</p>
+          <div class="step-badge">{{ step.badge }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="features-section" id="features">
+  <div class="section-wrap">
+    <div class="section-tag scroll-reveal">مميـزات المنصة</div>
+    <h2 class="section-title scroll-reveal">لمــاذا خطـوة؟</h2>
+
+    <div class="features-bento">
+      <div class="bento-card scroll-reveal" style="transition-delay:0.1s">
+        <div class="bento-icon"><i class="bi bi-check2-square"></i></div>
+        <h3>إدارة المهام</h3>
+        <p>نظّـم فريقـك وتتبـع المهــام بسهولـة</p>
+      </div>
+      <div class="bento-card scroll-reveal" style="transition-delay:0.15s">
+        <div class="bento-icon"><i class="bi bi-graph-up-arrow"></i></div>
+        <h3>تحليـلات متقدمـة</h3>
+        <p>بيـانـات وتقــاريـر تســاعدك تتخـذ قرارات أذكى</p>
+      </div>
+      <div class="bento-card scroll-reveal" style="transition-delay:0.2s">
+        <div class="bento-icon"><i class="bi bi-bullseye"></i></div>
+        <h3>تسويـق مستهـدف</h3>
+        <p>أدوات تسويـق احترافيـة تســاعدك توصـل لعملائـك</p>
+      </div>
+      <div class="bento-card scroll-reveal" style="transition-delay:0.25s">
+        <div class="bento-icon"><i class="bi bi-wallet2"></i></div>
+        <h3>إدارة مالية</h3>
+        <p>تتبـع إيراداتـك ومصروفــاتـك بدقة وتقارير فورية</p>
+      </div>
+      <div class="bento-card bento-wide scroll-reveal" style="transition-delay:0.3s">
+        <div class="bento-icon"><i class="bi bi-people-fill"></i></div>
+        <h3>مجتمـع رواد الأعمـال</h3>
+        <p>تـواصـل مع آلاف رواد الأعمــال وشــارك الخبرات واستفـد من تجــارب الآخريـن — لأن النجــاح أجمـل وأسـرع مع مجتمـع داعـم</p>
+        <div class="members-preview">
+          <span class="mem-count">+10,000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="bento-card bento-big scroll-reveal">
+      <div class="bento-icon"><i class="bi bi-speedometer2"></i></div>
+      <h3>لوحـة تحكـم ذكيـة</h3>
+      <p>شــاشة واحـدة تعرضلـك كل شيء عن مشروعـك — المبيعــات، المهــام، الفريـق، والتحليلات في لمحة واحدة</p>
+      <div class="bento-visual">
+        <div class="mini-chart">
+          <div class="bar" style="height:60%"></div>
+          <div class="bar" style="height:80%"></div>
+          <div class="bar" style="height:45%"></div>
+          <div class="bar" style="height:90%"></div>
+          <div class="bar" style="height:70%"></div>
+          <div class="bar" style="height:100%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="testimonials-section" id="آراء العملاء">
+  <div class="section-wrap">
+    <div class="section-tag scroll-reveal">قصص نجــاح</div>
+    <h2 class="section-title scroll-reveal">نـاس غيّـرت مسـارهـا مع خطـوة</h2>
+  </div>
+  <div class="testimonials-scroll">
+    <div class="testimonials-track">
+      <div class="t-card" *ngFor="let t of allTestimonials">
+        <div class="t-stars">
+  <ng-container *ngFor="let s of getStars(t.stars)">
+    
+    <img *ngIf="s === 'full'"  src="star-full.svg"  width="24" height="24" >
+    <img *ngIf="s === 'half'"  src="star-half.svg"  width="24" height="24">
+    <img *ngIf="s === 'empty'" src="star-empty.svg" width="24" height="24">
+  </ng-container>
+         </div>
+        <p class="t-text">"{{ t.text }}"</p>
+        <div class="t-author">
+          <div class="t-avatar">{{ t.name.trim().charAt(0) }}</div>
+          <div>
+            <div class="t-name">{{ t.name }}</div>
+            <div class="t-role">{{ t.role }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq-section" id="الأسئلة الشائعة">
+  <div class="section-wrap">
+    <div class="section-tag scroll-reveal">أسئلـة شائعـة</div>
+    <h2 class="section-title scroll-reveal">عندك سؤال؟</h2>
+    <p class="section-desc scroll-reveal">إجـابـات على أكثر الأسئلـة اللي بتتسـأل</p>
+
+    <div class="faq-list">
+      <div class="faq-item scroll-reveal"
+           *ngFor="let faq of faqs; let i = index"
+           [style.transition-delay]="(i*0.08)+'s'"
+           [class.open]="faq.open"
+           (click)="toggleFaq(faq)">
+        <div class="faq-q">
+          <span>{{ faq.q }}</span>
+          <div class="faq-arrow">
+            <i class="bi bi-chevron-up"></i>
+          </div>
+        </div>
+        <div class="faq-a">
+          <p>{{ faq.a }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="contact-section">
+
+  <!-- نجوم متلألئة -->
+  <div class="contact-stars">
+    <div class="contact-star" style="--dur:2.1s;--delay:0s;   top:8%;  left:12%"></div>
+    <div class="contact-star" style="--dur:3.4s;--delay:0.5s; top:15%; left:78%"></div>
+    <div class="contact-star" style="--dur:2.8s;--delay:1s;   top:30%; left:5%"></div>
+    <div class="contact-star" style="--dur:1.9s;--delay:1.5s; top:22%; left:55%"></div>
+    <div class="contact-star" style="--dur:3.1s;--delay:0.3s; top:70%; left:88%"></div>
+    <div class="contact-star" style="--dur:2.5s;--delay:0.8s; top:85%; left:22%"></div>
+    <div class="contact-star" style="--dur:3.7s;--delay:2s;   top:55%; left:92%"></div>
+    <div class="contact-star" style="--dur:2.2s;--delay:1.2s; top:40%; left:3%"></div>
+    <div class="contact-star" style="--dur:2.9s;--delay:0.6s; top:90%; left:60%"></div>
+    <div class="contact-star" style="--dur:1.7s;--delay:1.8s; top:12%; left:40%"></div>
+    <div class="contact-star" style="--dur:3.3s;--delay:0.1s; top:75%; left:48%"></div>
+    <div class="contact-star" style="--dur:2.6s;--delay:2.3s; top:48%; left:70%"></div>
+  </div>
+
+  <!-- خطوط ضوئية تنزل -->
+  <div class="contact-beam" style="--bdur:5s;  --bdelay:0s;   left:15%; height:180px; opacity:0.6"></div>
+  <div class="contact-beam" style="--bdur:7s;  --bdelay:1.5s; left:40%; height:250px; opacity:0.4"></div>
+  <div class="contact-beam" style="--bdur:4.5s;--bdelay:3s;   left:68%; height:200px; opacity:0.5"></div>
+  <div class="contact-beam" style="--bdur:6s;  --bdelay:0.8s; left:85%; height:160px; opacity:0.35"></div>
+
+  <div class="contact-inner scroll-reveal">
+    <div class="contact-glow-1"></div>
+    <div class="contact-glow-2"></div>
+    <h2>تواصـل معنـا</h2>
+    <p>فريقنــا مستعـد دائمـاً لمساعدتـك — تواصـل معنـا بأي طريقة تناسبـك</p>
+    <div class="contact-methods">
+      <a href="https://wa.me/201154472434" class="contact-method">
+        <span><i class="bi bi-whatsapp"></i></span>
+        <span>واتسـاب</span>
+      </a>
+      <a href="mailto:khatwaaplatform@gmail.com" class="contact-method">
+        <span><i class="bi bi-envelope-fill"></i></span>
+        <span>khatwaaplatform@gmail.com</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="footer-inner">
+
+    <div class="footer-brand">
+      <img src="khatwa.svg" alt="خطوة" class="footer-logo">
+      <p>منصتـك الشامـلة لإدارة مشروعـك وتنميته — نوفر لك الأدوات والمجتمـع والدعـم اللي تحتاجـه للنجــاح.</p>
+      <div class="footer-badge">متــاح الآن</div>
+      <div class="footer-social">
+        <a href="#" class="s-link" title="فيسبوك">
+          <i class="bi bi-facebook"></i>
+        </a>
+        <a href="#" class="s-link" title="انستجرام">
+          <i class="bi bi-instagram"></i>
+        </a>
+        <a href="#" class="s-link" title="لينكدإن">
+          <i class="bi bi-linkedin"></i>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="footer-links">
+      <h4>روابـط سريعـة</h4>
+      <a *ngFor="let link of navLinks" (click)="scrollToSection(link.sectionId)">{{ link.name }}</a>
+    </div>
+
+    <div class="footer-links">
+      <h4>المنصة</h4>
+      <a routerLink="/register">ابدأ مجانــاً</a>
+      <a routerLink="/login">تسجيـل الدخـول</a>
+    </div>
+
+    <div class="footer-links">
+      <h4>تواصـل معنــا</h4>
+      <a href="mailto:khatwaaplatform@gmail.com" class="footer-contact-item">
+        <span class="footer-contact-icon"><i class="bi bi-envelope-fill"></i></span>
+        <span>khatwaaplatform@gmail.com</span>
+      </a>
+      <a href="https://wa.me/201154472434" class="footer-contact-item">
+        <span class="footer-contact-icon"><i class="bi bi-whatsapp"></i></span>
+        <span>واتسـاب ٢٤/٧</span>
+      </a>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2026 خطـــوة — جميـع الحقـوق محفوظـة</p>
+    <div class="footer-bottom-links">
+      <a href="#">سيـاسـة الخصوصيـة</a>
+      <a href="#">الشـروط والأحكــام</a>
+      <a href="#">اتفــاقيـة الاستخـدام</a>
+    </div>
+  </div>
+</footer>
+
+<!-- SCROLL TO TOP -->
+<button class="fab-top" (click)="scrollToTop()" aria-label="العودة للأعلى">
+  <i class="bi bi-arrow-up"></i>
+</button>

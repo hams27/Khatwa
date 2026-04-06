@@ -1,0 +1,186 @@
+<app-side-bar></app-side-bar>
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner"></div>
+  <p>جاري تحميل المكافآت...</p>
+</div>
+
+<!-- Success/Error Messages -->
+<div *ngIf="successMessage" class="success-banner">
+  {{ successMessage }}
+</div>
+
+<div *ngIf="errorMessage" class="error-banner">
+  {{ errorMessage }}
+</div>
+
+<!-- User Level Card -->
+<div class="level-card">
+  <div class="level-header">
+    <div class="level-icon" [style.background]="getLevelBadgeColor()">
+      {{ getLevelIcon() }}
+    </div>
+    <div class="level-info">
+      <h3>{{ levelName }}</h3>
+      <p>المستوى {{ currentLevel }}</p>
+    </div>
+    <div class="level-points">
+      <h2>{{ totalPoints }}</h2>
+      <p>نقطة متاحة</p>
+    </div>
+  </div>
+  
+  <div class="level-progress-container">
+    <div class="level-progress-bar">
+      <div class="level-progress-fill" 
+           [style.width.%]="levelProgress"></div>
+    </div>
+    <p class="level-progress-text">
+      {{ getLevelProgressDisplay() }} - 
+      {{ pointsToNextLevel }} نقطة للمستوى القادم
+    </p>
+  </div>
+</div>
+
+<!-- Weekly Goals -->
+<section class="weekly-goals">
+  <h2>🎯 الأهداف الأسبوعية</h2>
+  
+  <div class="goals-grid">
+    <div *ngFor="let goal of weeklyGoals" 
+         class="goal-card"
+         [class.completed]="goal.completed">
+      
+      <div class="goal-header">
+        <span class="goal-icon">{{ goal.icon }}</span>
+        <h3>{{ goal.title }}</h3>
+      </div>
+      
+      <div class="goal-progress">
+        <div class="progress-bar">
+          <div class="progress-fill" 
+               [style.width.%]="getGoalProgress(goal)"></div>
+        </div>
+        <span class="progress-text">
+          {{ getGoalProgressDisplay(goal) }}
+        </span>
+      </div>
+      
+      <div class="goal-footer">
+        <span class="goal-points">+{{ goal.points }} نقطة</span>
+        <button *ngIf="!goal.completed && goal.progress >= goal.target"
+                (click)="completeGoal(goal)"
+                class="btn-complete">
+          إكمال
+        </button>
+        <span *ngIf="goal.completed" class="badge-completed">✓ مكتمل</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Achievements -->
+<section class="achievements-section">
+  <h2>🏅 إنجازاتك</h2>
+  
+  <div class="achievements-grid">
+    <!-- Unlocked Achievements -->
+    <div *ngFor="let achievement of achievements" 
+         class="achievement-card unlocked">
+      
+      <div class="achievement-icon" [ngClass]="achievement.iconBg">
+        {{ achievement.icon }}
+      </div>
+      
+      <div class="achievement-info">
+        <h3>{{ achievement.title }}</h3>
+        <p>{{ achievement.description }}</p>
+        <span class="achievement-points">+{{ achievement.points }} نقطة</span>
+        <span class="achievement-time">{{ achievement.timeAgo }}</span>
+      </div>
+    </div>
+    
+    <!-- Locked Achievements -->
+    <div *ngFor="let achievement of getLockedAchievements()" 
+         class="achievement-card locked">
+      
+      <div class="achievement-icon locked-icon">
+        🔒
+      </div>
+      
+      <div class="achievement-info">
+        <h3>{{ achievement.title }}</h3>
+        <p>{{ achievement.description }}</p>
+        <span class="achievement-points">{{ achievement.points }} نقطة</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Milestones -->
+<section class="milestones-section">
+  <h2>🎖️ المعالم</h2>
+  
+  <div class="milestones-list">
+    <div *ngFor="let milestone of milestones" class="milestone-card">
+      <div class="milestone-icon">{{ milestone.icon }}</div>
+      
+      <div class="milestone-content">
+        <h3>{{ milestone.title }}</h3>
+        <p>{{ milestone.description }}</p>
+        
+        <div class="milestone-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" 
+                 [style.width.%]="getMilestoneProgress(milestone)"></div>
+          </div>
+          <span class="progress-text">{{ milestone.progress }}%</span>
+        </div>
+        
+        <span class="milestone-points">{{ milestone.points }} نقطة</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Rewards Store -->
+<section class="rewards-store">
+  <h2>🎁 متجر المكافآت</h2>
+  
+  <div class="rewards-grid">
+    <div *ngFor="let reward of rewards" 
+         class="reward-card"
+         [class.available]="canRedeemReward(reward)"
+         [class.locked]="!canRedeemReward(reward)">
+      
+      <div class="reward-icon">{{ reward.icon }}</div>
+      
+      <div class="reward-info">
+        <h3>{{ reward.title }}</h3>
+        <p>{{ reward.description }}</p>
+      </div>
+      
+      <div class="reward-footer">
+        <span class="reward-cost">{{ reward.points }} نقطة</span>
+        
+        <button (click)="redeemReward(reward)"
+                [disabled]="!canRedeemReward(reward)"
+                class="btn-redeem">
+          <span *ngIf="canRedeemReward(reward)">استبدال</span>
+          <span *ngIf="!canRedeemReward(reward)">غير متاح</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Recent Activities -->
+<section class="recent-activities" *ngIf="recentActivities.length > 0">
+  <h2>📜 النشاط الأخير</h2>
+  
+  <div class="activities-list">
+    <div *ngFor="let activity of recentActivities" class="activity-item">
+      <div class="activity-info">
+        <p>{{ activity.title }}</p>
+        <span class="activity-time">{{ activity.timeAgo }}</span>
+      </div>

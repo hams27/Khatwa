@@ -1,0 +1,100 @@
+<!-- ================= AI CHAT WIDGET ================= -->
+
+<!-- زرار العوم -->
+<div class="chat-fab" (click)="toggleChat()" [class.active]="isChatOpen">
+  <div class="fab-icon">
+    <i *ngIf="!isChatOpen" class="bi bi-chat-dots-fill"></i>
+    <i *ngIf="isChatOpen"  class="bi bi-x-lg"></i>
+  </div>
+  <div class="fab-pulse"></div>
+  <div class="fab-badge" *ngIf="!isChatOpen && hasNewMessage">1</div>
+</div>
+
+<!-- نافذة الشات -->
+<div class="chat-window" [class.open]="isChatOpen">
+
+  <!-- الهيدر -->
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-avatar">
+        <i class="bi bi-robot"></i>
+        <div class="avatar-online"></div>
+      </div>
+      <div>
+        <div class="chat-name">مساعد خطوة</div>
+        <div class="chat-status">
+          <span class="status-dot"></span>
+          متاح الآن
+        </div>
+      </div>
+    </div>
+    <button class="chat-close-btn" (click)="toggleChat()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- منطقة الرسائل -->
+  <div class="chat-messages" #messagesContainer>
+
+    <!-- رسالة الترحيب -->
+    <div class="chat-welcome" *ngIf="messages.length === 0">
+      <i class="bi bi-robot welcome-icon"></i>
+      <h4>أهلاً بك في خطوة!</h4>
+      <p>أنا مساعدك الذكي، كيف يمكنني مساعدتك اليوم؟</p>
+      <div class="quick-actions">
+        <button class="quick-btn" (click)="sendQuickMessage('كيف أبدأ مشروعي؟')">
+          <i class="bi bi-rocket-takeoff"></i> كيف أبدأ مشروعي؟
+        </button>
+        <button class="quick-btn" (click)="sendQuickMessage('ما هي مميزات المنصة؟')">
+          <i class="bi bi-stars"></i> مميزات المنصة
+        </button>
+        <button class="quick-btn" (click)="sendQuickMessage('هل المنصة مجانية؟')">
+          <i class="bi bi-gift"></i> هل المنصة مجانية؟
+        </button>
+      </div>
+    </div>
+
+    <!-- الرسائل -->
+    <div class="message-wrap" *ngFor="let msg of messages" [class.user-wrap]="msg.isUser">
+      <div class="msg-avatar" *ngIf="!msg.isUser">
+        <i class="bi bi-robot"></i>
+      </div>
+      <div class="message" [class.user-msg]="msg.isUser" [class.bot-msg]="!msg.isUser">
+        <p>{{ msg.text }}</p>
+        <span class="msg-time">{{ msg.time }}</span>
+      </div>
+    </div>
+
+    <!-- مؤشر الكتابة -->
+    <div class="message-wrap" *ngIf="isTyping">
+      <div class="msg-avatar"><i class="bi bi-robot"></i></div>
+      <div class="message bot-msg typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- حقل الإدخال -->
+  <div class="chat-input-area">
+    <div class="chat-input-wrap">
+      <input
+        type="text"
+        class="chat-input"
+        [(ngModel)]="inputText"
+        (keydown.enter)="sendMessage()"
+        placeholder="اكتب رسالتك هنا..."
+        [disabled]="isTyping"
+        #chatInput
+      />
+      <button class="send-btn" (click)="sendMessage()" [disabled]="!inputText.trim() || isTyping">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </div>
+    <p class="chat-footer-note">مدعوم بالذكاء الاصطناعي · خطوة</p>
+  </div>
+
+</div>
+
+<!-- Overlay للموبايل -->
+<div class="chat-overlay" [class.show]="isChatOpen" (click)="toggleChat()"></div>
