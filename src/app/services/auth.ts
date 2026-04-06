@@ -31,7 +31,7 @@ export interface LoginData {
 })
 export class AuthService {
   // Base URL للـ Backend
-private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
+private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';  
   
   // BehaviorSubject لتتبع حالة تسجيل الدخول
   private currentUserSubject: BehaviorSubject<any>;
