@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/api';
 
 export interface CommunityPost {
   id?: number;
-  userId?: number;
+  authorId?: number;
   title: string;
   content: string;
   tags?: string[];
   likesCount?: number;
+  platform?: 'facebook' | 'instagram' | 'twitter' | 'linkedin' | 'tiktok' | 'other';
+  status?: 'draft' | 'scheduled' | 'published';
+  scheduledAt?: string;
   createdAt?: string;
+  updatedAt?: string;
   User?: {
     id: number;
     name: string;
@@ -20,7 +25,7 @@ export interface CommunityPost {
 export interface Comment {
   id?: number;
   postId: number;
-  userId?: number;
+  authorId?: number;
   content: string;
   createdAt?: string;
   User?: {
@@ -33,7 +38,7 @@ export interface Comment {
   providedIn: 'root'
 })
 export class CommunityService {
-  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1/community';
+  private apiUrl = `${API_BASE_URL}/community`;
 
   constructor(private http: HttpClient) {}
 
@@ -43,9 +48,19 @@ export class CommunityService {
     return this.http.get(url);
   }
 
+  // الحصول على منشور واحد مع التعليقات
+  getPost(postId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/posts/${postId}`);
+  }
+
   // إنشاء منشور
-  createPost(post: CommunityPost): Observable<any> {
+  createPost(post: Partial<CommunityPost>): Observable<any> {
     return this.http.post(`${this.apiUrl}/posts`, post);
+  }
+
+  // تحديث منشور
+  updatePost(postId: number, data: Partial<CommunityPost>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/posts/${postId}`, data);
   }
 
   // الإعجاب/إلغاء الإعجاب بمنشور

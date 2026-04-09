@@ -1,28 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/api';
 
 export interface Task {
- id?: number;
-  projectId: number;
+  id?: number;
+  projectId?: number;
   title: string;
   description?: string;
-  status: 'todo' | 'in-progress' | 'review' | 'done';
+  assignedTo?: number | null;
+  status: 'todo' | 'in_progress' | 'in-progress' | 'review' | 'done';
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
   dueDate?: string;
+  tags?: string[];
   createdAt?: string;
-  assignedTo?: string;
+  updatedAt?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
+  private apiUrl = API_BASE_URL;
 
   constructor(private http: HttpClient) {}
 
   // إنشاء مهمة
-  createTask(projectId: number, task: Task): Observable<any> {
+  createTask(projectId: number, task: Partial<Task>): Observable<any> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/tasks`, task);
   }
 
@@ -34,7 +38,7 @@ export class TaskService {
     return this.http.get(url);
   }
 
-  // تحديث حالة المهمة
+  // تحديث مهمة
   updateTask(taskId: number, updates: Partial<Task>): Observable<any> {
     return this.http.put(`${this.apiUrl}/tasks/${taskId}`, updates);
   }

@@ -1,9 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { catchError, finalize, firstValueFrom, of, timeout } from 'rxjs';
 import { AuthService } from '../services/auth';
+import { AiService } from '../services/ai';
+import { API_BASE_URL } from '../config/api';
 
 export interface OnboardingData {
   projectStage: string;
@@ -16,7 +19,7 @@ export interface OnboardingData {
 
 @Component({
   selector: 'app-layout',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
   standalone: true
@@ -27,7 +30,12 @@ export class Layout implements OnInit {
   errorMessage = '';
 
   step: number = 1;
-  totalSteps: number = 6;
+  totalSteps: number = 7;
+
+  projectName: string = '';
+  projectDescription: string = '';
+  projectLogoFile: File | null = null;
+  projectLogoPreviewUrl: string | null = null;
 
   // Step 1
   selectedStep: string = '';
@@ -47,27 +55,23 @@ export class Layout implements OnInit {
   // Step 6
   goals: string[] = [];
 
-  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
+  createdProjectId: number | null = null;
+
+  private apiUrl = API_BASE_URL;
 
   constructor(
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private aiService: AiService
   ) {}
 
   ngOnInit() {
     // امسح أي progress قديم مرتبط بـ guest أو sessions سابقة
     localStorage.removeItem('onboarding_progress_guest');
 
-    // لو في user محفوظ امسح progress القديم بتاعه عشان يبدأ من الأول
-    const user = this.authService.currentUserValue;
-    if (user) {
-      const uid = user?.id ?? user?.email ?? 'guest';
-      localStorage.removeItem(`onboarding_progress_${uid}`);
-    }
-
-    // ابدأ من Step 1 دايماً
-    this.step = 1;
+    this.loadProgress();
+    if (!this.step || this.step < 1) this.step = 1;
   }
 
   /** يرجع مفتاح فريد لكل مستخدم بناءً على user id أو email */
@@ -82,6 +86,21 @@ export class Layout implements OnInit {
   selectGoal(v: string) { this.selectedGoal = v; this.clearError(); }
   selectField(v: string) { this.selectedField = v; this.clearError(); }
   selectTeamSize(v: string) { this.selectedTeamSize = v; this.clearError(); }
+
+  onLogoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files.length ? input.files[0] : null;
+    this.projectLogoFile = file;
+
+    if (this.projectLogoPreviewUrl) {
+      URL.revokeObjectURL(this.projectLogoPreviewUrl);
+      this.projectLogoPreviewUrl = null;
+    }
+    if (file) {
+      this.projectLogoPreviewUrl = URL.createObjectURL(file);
+    }
+    this.clearError();
+  }
 
   toggleChallenge(v: string) {
     const i = this.challenges.indexOf(v);
@@ -138,60 +157,105 @@ export class Layout implements OnInit {
     this.isLoading = true;
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
+    const runAnalysis = (projectId: number) => {
+      const analysisData = {
+        projectId: projectId,
+        stage: this.selectedStep === 'existing' ? 'operating' : 'idea',
+        industry: this.selectedField,
+        teamSize: this.selectedTeamSize,
+        primaryGoal: this.selectedGoal,
+        challenges: this.challenges,
+        goals: this.goals
+      };
+
+      this.aiService
+        .analyzeOnboarding(analysisData)
+        .pipe(
+          timeout(90000),
+          finalize(() => {
+            this.isLoading = false;
+          })
+        )
+        .subscribe({
+        next: (res: any) => {
+          console.log('✅ تم تحليل الـ Onboarding ورسم خارطة الطريق:', res);
+          this.clearProgress();
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          console.error('❌ خطأ في تحليل الـ Onboarding:', err);
+          if (err?.name === 'TimeoutError') {
+            this.showError('التحليل أخذ وقتًا أطول من المتوقع. حاول مرة أخرى.');
+            return;
+          }
+          this.showError('تعذر حفظ بيانات الـ onboarding. تأكد من تشغيل السيرفر ثم حاول مرة أخرى.');
+        }
+      });
+    };
+
+    if (this.createdProjectId) {
+      runAnalysis(this.createdProjectId);
+      return;
+    }
+
     // ✅ الخطوة 1: إنشاء المشروع
     const projectData = {
-      name: 'مشروعي على خطوة',
-      description: 'مشروع تم إنشاؤه من خلال منصة خطوة',
+      name: (this.projectName || '').trim() || 'مشروعي على خطوة',
+      description: (this.projectDescription || '').trim() || 'مشروع تم إنشاؤه من خلال منصة خطوة',
       industry: this.selectedField,
       stage: this.selectedStep === 'existing' ? 'operating' : 'idea'
     };
 
-    this.http.post(`${this.apiUrl}/projects`, projectData, { headers }).subscribe({
+    this.http
+      .post(`${this.apiUrl}/projects`, projectData, { headers })
+      .pipe(timeout(30000))
+      .subscribe({
       next: (projectRes: any) => {
         console.log('✅ تم إنشاء المشروع:', projectRes);
-        const projectId = projectRes.data.id;
+        const projectId = projectRes?.data?.id;
+        if (!projectId) {
+          this.isLoading = false;
+          this.showError('تم إنشاء المشروع لكن لم يتم استلام رقم المشروع من السيرفر. حاول مرة أخرى.');
+          return;
+        }
 
-        // ✅ الخطوة 2: حفظ بيانات الـ onboarding
-        const onboardingData = {
-          teamSize: this.selectedTeamSize,
-          businessModel: this.selectedGoal,
-          currentChallenges: this.challenges,
-          shortTermGoals: this.goals,
-          longTermGoals: this.goals
+        this.createdProjectId = projectId;
+        this.saveProgress();
+
+        const uploadLogoIfNeeded = async () => {
+          if (!this.projectLogoFile) return;
+          const formData = new FormData();
+          formData.append('logo', this.projectLogoFile);
+
+          await firstValueFrom(
+            this.http
+              .post(`${this.apiUrl}/projects/${projectId}/logo`, formData, { headers })
+              .pipe(
+                timeout(20000),
+                catchError(() => of(null))
+              )
+          );
         };
 
-        this.http.post(
-          `${this.apiUrl}/projects/${projectId}/onboarding`,
-          onboardingData,
-          { headers }
-        ).subscribe({
-          next: (res: any) => {
-            console.log('✅ تم حفظ الـ onboarding:', res);
-            this.clearProgress();
-            this.isLoading = false;
-
-            // ✅ روح للداشبورد
-            this.router.navigate(['/dashboard']);
-          },
-          error: (err) => {
-            console.error('❌ خطأ في الـ onboarding:', err);
-            // روح للداشبورد حتى لو فشل الـ onboarding
-            this.clearProgress();
-            this.isLoading = false;
-            this.router.navigate(['/dashboard']);
-          }
-        });
+        Promise.resolve()
+          .then(uploadLogoIfNeeded)
+          .catch(() => {})
+          .finally(() => runAnalysis(projectId));
       },
       error: (err) => {
         console.error('❌ خطأ في إنشاء المشروع:', err);
         this.isLoading = false;
 
+        if (err?.name === 'TimeoutError') {
+          this.showError('إنشاء المشروع أخذ وقتًا أطول من المتوقع. حاول مرة أخرى.');
+          return;
+        }
+
         if (err.status === 401) {
           // الـ token انتهى، ارجع للـ register
           this.router.navigate(['/register']);
         } else {
-          this.showError('حدث خطأ، جاري التوجيه للداشبورد...');
-          setTimeout(() => this.router.navigate(['/dashboard']), 2000);
+          this.showError('تعذر إنشاء المشروع. تأكد من تشغيل السيرفر ثم حاول مرة أخرى.');
         }
       }
     });
@@ -201,11 +265,12 @@ export class Layout implements OnInit {
   validateCurrentStep(): boolean {
     switch (this.step) {
       case 1: return this.selectedStep !== '';
-      case 2: return this.selectedGoal !== '';
-      case 3: return this.selectedField !== '';
-      case 4: return this.selectedTeamSize !== '';
-      case 5: return this.challenges.length > 0;
-      case 6: return this.goals.length > 0;
+      case 2: return (this.projectName || '').trim().length > 0;
+      case 3: return this.selectedGoal !== '';
+      case 4: return this.selectedField !== '';
+      case 5: return this.selectedTeamSize !== '';
+      case 6: return this.challenges.length > 0;
+      case 7: return this.goals.length > 0;
       default: return true;
     }
   }
@@ -213,7 +278,7 @@ export class Layout implements OnInit {
   getProgress(): number { return Math.round((this.step / this.totalSteps) * 100); }
 
   getStepName(): string {
-    const names = ['مرحلة المشروع', 'الهدف الرئيسي', 'مجال العمل', 'حجم الفريق', 'التحديات', 'الأهداف'];
+    const names = ['مرحلة المشروع', 'بيانات المشروع', 'الهدف الرئيسي', 'مجال العمل', 'حجم الفريق', 'التحديات', 'الأهداف'];
     return names[this.step - 1] || '';
   }
 
@@ -231,12 +296,15 @@ export class Layout implements OnInit {
   saveProgress() {
     localStorage.setItem(this.progressKey, JSON.stringify({
       step: this.step,
+      projectName: this.projectName,
+      projectDescription: this.projectDescription,
       selectedStep: this.selectedStep,
       selectedGoal: this.selectedGoal,
       selectedField: this.selectedField,
       selectedTeamSize: this.selectedTeamSize,
       challenges: this.challenges,
-      goals: this.goals
+      goals: this.goals,
+      createdProjectId: this.createdProjectId
     }));
   }
 
@@ -246,12 +314,15 @@ export class Layout implements OnInit {
     try {
       const p = JSON.parse(saved);
       this.step            = p.step            || 1;
+      this.projectName     = p.projectName     || '';
+      this.projectDescription = p.projectDescription || '';
       this.selectedStep    = p.selectedStep    || '';
       this.selectedGoal    = p.selectedGoal    || '';
       this.selectedField   = p.selectedField   || '';
       this.selectedTeamSize= p.selectedTeamSize|| '';
       this.challenges      = p.challenges      || [];
       this.goals           = p.goals           || [];
+      this.createdProjectId = p.createdProjectId ?? null;
     } catch { this.clearProgress(); }
   }
 
@@ -259,5 +330,11 @@ export class Layout implements OnInit {
     localStorage.removeItem(this.progressKey);
     // امسح أي keys قديمة غير مرتبطة بـ user (من الإصدار السابق)
     localStorage.removeItem('onboarding_progress');
+    this.createdProjectId = null;
+    if (this.projectLogoPreviewUrl) {
+      URL.revokeObjectURL(this.projectLogoPreviewUrl);
+      this.projectLogoPreviewUrl = null;
+    }
+    this.projectLogoFile = null;
   }
 }

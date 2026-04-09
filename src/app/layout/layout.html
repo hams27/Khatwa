@@ -1,4 +1,12 @@
 
+<div class="onboarding-loading-overlay" *ngIf="isLoading">
+  <div class="onboarding-loading-card">
+    <div class="onboarding-spinner"></div>
+    <div class="onboarding-loading-title">جاري إعداد مشروعك...</div>
+    <div class="onboarding-loading-subtitle">نحلل بياناتك ونبني خارطة طريق مخصصة. قد يستغرق ذلك بضع ثوانٍ.</div>
+  </div>
+</div>
+
 <!-- ================= STEP 1: مرحلة المشروع ================= -->
 <div class="card" *ngIf="step === 1">
   <h2>أخبرنا عن مشروعك</h2>
@@ -44,9 +52,72 @@
   </div>
 </div>
 
-  <!-- ================= STEP 2: الهدف الأساسي ================= -->
-
+<!-- ================= STEP 2: بيانات المشروع ================= -->
 <div class="card" *ngIf="step === 2">
+  <h2>{{ selectedStep === 'existing' ? 'بيانات مشروعك' : 'بيانات الفكرة' }}</h2>
+  <p class="subtitle">
+    {{ selectedStep === 'existing'
+      ? 'اكتب اسم مشروعك الحالي ويمكنك رفع شعار (اختياري)'
+      : 'اكتب اسم مبدئي للفكرة ويمكنك رفع شعار (اختياري)' }}
+  </p>
+
+  <div class="project-details">
+    <div class="field">
+      <label class="field-label" for="projectName">
+        {{ selectedStep === 'existing' ? 'اسم المشروع الحالي' : 'اسم الفكرة/المشروع' }}
+      </label>
+      <input
+        id="projectName"
+        name="projectName"
+        type="text"
+        class="text-input"
+        [(ngModel)]="projectName"
+        (ngModelChange)="clearError()"
+        [placeholder]="selectedStep === 'existing' ? 'مثال: مطعم خطوة' : 'مثال: فكرة تطبيق خطوة'"
+        autocomplete="off"
+      />
+    </div>
+
+    <div class="field">
+      <div class="field-label">شعار المشروع (اختياري)</div>
+
+      <div class="logo-row">
+        <div class="logo-preview" *ngIf="projectLogoPreviewUrl; else logoPlaceholder">
+          <img [src]="projectLogoPreviewUrl" alt="Project Logo Preview" />
+        </div>
+        <ng-template #logoPlaceholder>
+          <div class="logo-placeholder">
+            <div class="placeholder-icon">+</div>
+            <div class="placeholder-text">شعار</div>
+          </div>
+        </ng-template>
+
+        <div class="logo-meta">
+          <label class="file-button">
+            <input
+              class="file-input"
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              (change)="onLogoSelected($event)"
+            />
+            اختر صورة
+          </label>
+          <div class="file-name">{{ projectLogoFile?.name || 'لم يتم اختيار ملف' }}</div>
+          <div class="file-hint">PNG / JPG / WEBP — حتى 2MB</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="back" (click)="goBack()">رجوع</button>
+    <button class="next" (click)="nextStep()">التالي</button>
+  </div>
+</div>
+
+  <!-- ================= STEP 3: الهدف الأساسي ================= -->
+
+<div class="card" *ngIf="step === 3">
   <h2>ما هو هدفك الأساسي؟</h2>
   <p class="subtitle">سنساعدك على تحقيق هدفك بخطة مخصصة</p>
 
@@ -116,8 +187,8 @@
   </div>
 </div>
 
-<!-- ================= STEP 3: المجال ================= -->
-<div class="card" *ngIf="step === 3">
+<!-- ================= STEP 4: المجال ================= -->
+<div class="card" *ngIf="step === 4">
   <h2>في أي مجال تعمل؟</h2>
   <p class="subtitle">لنقدم لك محتوى وأدوات مناسبة</p>
 
@@ -199,8 +270,8 @@
   </div>
 </div>
 
-<!-- ================= STEP 4: حجم الفريق ================= -->
-<div class="card" *ngIf="step === 4">
+<!-- ================= STEP 5: حجم الفريق ================= -->
+<div class="card" *ngIf="step === 5">
   <h2>ما هو حجم فريقك الحالي؟</h2>
   <p class="subtitle">سنساعدك في إدارة فريقك بشكل أفضل</p>
 
@@ -269,8 +340,8 @@
   </div>
 </div>
 
-<!-- ================= STEP 5: التحديات الحالية ================= -->
-<div class="card" *ngIf="step === 5">
+<!-- ================= STEP 6: التحديات ================= -->
+<div class="card" *ngIf="step === 6">
   <h2>ما هي التحديات التي تواجهك حالياً؟</h2>
   <p class="subtitle">اختر أهم التحديات (يمكنك اختيار أكثر من واحد)</p>
 
@@ -369,8 +440,8 @@
   </div>
 </div>
 
-<!-- ================= STEP 6: الأهداف ================= -->
-<div class="card" *ngIf="step === 6">
+<!-- ================= STEP 7: الأهداف ================= -->
+<div class="card" *ngIf="step === 7">
   <h2>ما هي أهدافك للفترة القادمة؟</h2>
   <p class="subtitle">حدد الأهداف قصيرة وطويلة المدى (يمكنك اختيار أكثر من واحد)</p>
 
@@ -466,7 +537,7 @@
 
   <div class="buttons">
     <button class="back" (click)="goBack()">رجوع</button>
-    <button class="next" routerLink="/dashboard">ابدأ الآن</button>
+    <button class="next" (click)="nextStep()" [disabled]="isLoading">ابدأ الآن</button>
   </div>
 </div>
 

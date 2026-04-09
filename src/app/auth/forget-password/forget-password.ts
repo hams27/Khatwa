@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-forget-password',
@@ -26,7 +27,7 @@ export class ForgetPassword implements OnInit, OnDestroy {
   emailTouched = false;
   emailError = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
     this.loadAOSScript().then(() => {
@@ -108,7 +109,7 @@ export class ForgetPassword implements OnInit, OnDestroy {
   }
 
   // ========== RESET PASSWORD SUBMIT ==========
-  async onSubmit() {
+  onSubmit() {
     // Validate email
     const emailValid = this.validateEmail();
 
@@ -120,21 +121,27 @@ export class ForgetPassword implements OnInit, OnDestroy {
     // Show loading
     this.isLoading = true;
     this.resetError = false;
+    this.errorMessage = '';
 
-    // Simulate API call (هنا هنربط بالـ Backend لاحقاً)
-    setTimeout(() => {
-      // Simulate success
-      this.resetSuccess = true;
-      this.isLoading = false;
-      
-      // You can add logic here to actually send reset email
-      console.log('إرسال رابط استعادة كلمة المرور إلى:', this.email);
-      
-      // Optional: Redirect to login after delay
-      // setTimeout(() => {
-      //   this.router.navigate(['/login']);
-      // }, 3000);
-    }, 1500);
+    // Call the real API
+    this.authService.forgotPassword(this.email).subscribe({
+      next: (response) => {
+        this.resetSuccess = true;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.resetError = true;
+        
+        if (error.status === 404) {
+          this.errorMessage = 'البريد الإلكتروني غير مسجل في النظام';
+        } else if (error.error?.message) {
+          this.errorMessage = error.error.message;
+        } else {
+          this.errorMessage = 'حدث خطأ أثناء إرسال الرابط. حاول مرة أخرى';
+        }
+      }
+    });
   }
 
   ngAfterViewInit() {

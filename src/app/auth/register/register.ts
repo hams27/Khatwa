@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
@@ -44,9 +44,16 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   passwordStrength = '';
   passwordStrengthText = '';
 
+  // Rate Limiting
+  failedAttempts = 0;
+  isLockedOut = false;
+  lockoutRemaining = 0;
+  private lockoutTimer: any;
+
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -59,7 +66,11 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() { (window as any).AOS?.refresh(); }
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    if (this.lockoutTimer) {
+      clearInterval(this.lockoutTimer);
+    }
+  }
 
   private loadAOSScript(): Promise<void> {
     return new Promise(resolve => {
@@ -134,6 +145,8 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
 
   // ===== SUBMIT =====
   async onSubmit() {
+    if (this.isLockedOut) return;
+
     this.formSubmitted = true;
     const valid =
       this.validateName() &&
@@ -150,12 +163,14 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
     this.authService.register({
       name: this.fullName,
       email: this.email,
+      phone: this.phone,
       password: this.password
     }).subscribe({
-      next: (response: any) => {
-        console.log('✅ تم التسجيل:', response);
+      next: () => {
+        // Reset attempts on success
+        this.failedAttempts = 0;
+        
         // الـ token والـ user بيتحفظوا تلقائياً في AuthService
-
         this.registerSuccess = true;
         this.isLoading = false;
 
@@ -163,15 +178,62 @@ export class Register implements OnInit, OnDestroy, AfterViewInit {
         setTimeout(() => this.router.navigate(['/layout']), 1500);
       },
       error: (error: any) => {
-        this.registerError = true;
-        this.isLoading = false;
-        if (error.error?.message) this.errorMessage = error.error.message;
-        else if (error.status === 400) this.errorMessage = 'البريد الإلكتروني مستخدم بالفعل';
-        else if (error.status === 0) this.errorMessage = 'فشل الاتصال بالسيرفر';
-        else this.errorMessage = 'حدث خطأ. حاول مرة أخرى';
-        this.shakeForm();
+        this.handleRegisterError(error);
       }
     });
+  }
+
+  private handleRegisterError(error: any) {
+    this.registerError = true;
+    this.isLoading = false;
+    this.failedAttempts++;
+
+    // Safe logging
+    console.error(`❌ خطأ في التسجيل [Status: ${error.status || 'Unknown'}]`);
+
+    if (this.failedAttempts >= 3) {
+      this.handleLockout();
+      return;
+    }
+
+    if (error.status === 400) {
+      this.errorMessage = error.error?.message || 'البيانات غير صالحة أو البريد الإلكتروني مستخدم بالفعل';
+    } else if (error.status === 500) {
+      this.errorMessage = 'خطأ داخلي في السيرفر. يرجى المحاولة لاحقاً';
+    } else if (error.status === 429) {
+      this.errorMessage = 'تم تجاوز الحد المسموح للمحاولات، يرجى المحاولة لاحقاً';
+    } else if (error.status === 0) {
+      this.errorMessage = 'فشل الاتصال بالسيرفر. تأكد من اتصالك بالإنترنت';
+    } else {
+      this.errorMessage = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى';
+    }
+
+    this.cdr.detectChanges();
+    this.shakeForm();
+  }
+
+  private handleLockout() {
+    this.isLockedOut = true;
+    const baseLockout = 30; // 30 seconds
+    this.lockoutRemaining = baseLockout * Math.pow(2, this.failedAttempts - 3);
+    
+    this.errorMessage = `تم حظر المحاولات مؤقتاً. يرجى الانتظار ${this.lockoutRemaining} ثانية`;
+    this.cdr.detectChanges();
+    this.shakeForm();
+    
+    this.lockoutTimer = setInterval(() => {
+      this.lockoutRemaining--;
+      this.errorMessage = `تم حظر المحاولات مؤقتاً. يرجى الانتظار ${this.lockoutRemaining} ثانية`;
+      this.cdr.detectChanges();
+      
+      if (this.lockoutRemaining <= 0) {
+        clearInterval(this.lockoutTimer);
+        this.isLockedOut = false;
+        this.errorMessage = '';
+        this.registerError = false;
+        this.cdr.detectChanges();
+      }
+    }, 1000);
   }
 
   shakeForm() {

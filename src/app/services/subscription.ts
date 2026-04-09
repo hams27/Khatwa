@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/api';
 
 export interface Subscription {
   id?: number;
   userId?: number;
-  planType: 'free' | 'pro' | 'business';
-  status: 'active' | 'cancelled' | 'expired';
+  planType: 'Free' | 'Pro' | 'Business';
+  status: 'active' | 'canceled' | 'expired';
   startDate?: string;
   endDate?: string;
+  paymentDetails?: any;
   createdAt?: string;
 }
 
@@ -16,7 +18,7 @@ export interface Subscription {
   providedIn: 'root'
 })
 export class SubscriptionService {
-  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1/subscriptions';
+  private apiUrl = `${API_BASE_URL}/subscriptions`;
 
   constructor(private http: HttpClient) {}
 

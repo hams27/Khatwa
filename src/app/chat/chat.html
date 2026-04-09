@@ -133,7 +133,8 @@
           </div>
           <div class="msg-bubble-wrap">
             <div class="msg-bubble" [class.user-bubble]="msg.isUser" [class.bot-bubble]="!msg.isUser">
-              <p>{{ msg.text }}</p>
+              <div *ngIf="msg.html" [innerHTML]="msg.html"></div>
+              <p *ngIf="!msg.html">{{ msg.text }}</p>
             </div>
             <div class="msg-meta">
               <span class="msg-time">{{ msg.time }}</span>

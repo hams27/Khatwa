@@ -1,7 +1,9 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SideBar } from '../side-bar/side-bar';
+import { AiService } from '../services/ai';
+import { ProjectService } from '../services/project';
 
 // ─────────────────────────────────────────────
 // INTERFACES
@@ -13,6 +15,7 @@ export interface ChatMessage {
   isUser: boolean;
   time: string;
   rating?: 'up' | 'down' | null;
+  html?: string; // For rendered markdown
 }
 
 export interface Conversation {
@@ -66,10 +69,10 @@ export class Chat implements OnInit, AfterViewChecked, OnDestroy {
   inputText    = '';
   messages: ChatMessage[] = [];
   activeConvId: number | null = null;
+  activeProjectId: number = 0; // Context project
   private msgIdCounter = 1;
 
   // ── سجل المحادثات
-  //    تُحمَّل عبر loadHistory() ← API: GET /api/v1/chat/history
   conversationHistory: Conversation[] = [];
 
   // ── بطاقات الترحيب — ثابتة في الواجهة
@@ -89,6 +92,12 @@ export class Chat implements OnInit, AfterViewChecked, OnDestroy {
     { icon: 'wallet2',          text: 'طرق تمويل المشاريع' },
   ];
 
+  constructor(
+    private aiService: AiService,
+    private projectService: ProjectService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
   // ─────────────────────────────────────────────
   // LIFECYCLE
   // ─────────────────────────────────────────────
@@ -96,6 +105,18 @@ export class Chat implements OnInit, AfterViewChecked, OnDestroy {
   ngOnInit(): void {
     this.loadCurrentUser();
     this.loadHistory();
+    this.loadProjects();
+  }
+  
+  loadProjects() {
+    this.projectService.getProjects().subscribe({
+      next: (res: any) => {
+        if (res.success && res.data && res.data.length > 0) {
+          // Default to the first project for context
+          this.activeProjectId = res.data[0].id;
+        }
+      }
+    });
   }
 
   ngAfterViewChecked(): void {
@@ -132,70 +153,158 @@ export class Chat implements OnInit, AfterViewChecked, OnDestroy {
   // HISTORY
   // ─────────────────────────────────────────────
 
-  /**
-   * ENDPOINT: GET /api/v1/chat/history
-   * يُحمّل قائمة المحادثات السابقة في الشريط الجانبي
-   */
   loadHistory(): void {
-    // TODO: this.http.get('/api/v1/chat/history').subscribe(res => { this.conversationHistory = res.conversations })
-    this.conversationHistory = [];
+    const raw = localStorage.getItem('chat_history');
+    if (raw) {
+      try {
+        this.conversationHistory = JSON.parse(raw);
+      } catch {
+        this.conversationHistory = [];
+      }
+    }
   }
 
-  /**
-   * ENDPOINT: GET /api/v1/chat/history/:id
-   * يُحمّل رسائل المحادثة المختارة ويضعها في messages[]
-   */
+  saveHistory(): void {
+    localStorage.setItem('chat_history', JSON.stringify(this.conversationHistory));
+  }
+
   loadConversation(conv: Conversation): void {
     this.activeConvId = conv.id;
     this.messages = conv.messages ? [...conv.messages] : [];
     this.shouldScroll = true;
-    // TODO: this.http.get(`/api/v1/chat/history/${conv.id}`).subscribe(res => { this.messages = res.messages })
   }
 
-  /**
-   * ENDPOINT: DELETE /api/v1/chat/history/:id
-   * يحذف المحادثة من conversationHistory
-   */
   deleteConversation(id: number, event: Event): void {
     event.stopPropagation();
     if (!confirm('هل تريد حذف هذه المحادثة؟')) return;
     this.conversationHistory = this.conversationHistory.filter(c => c.id !== id);
+    this.saveHistory();
     if (this.activeConvId === id) {
       this.clearConversation();
     }
-    // TODO: this.http.delete(`/api/v1/chat/history/${id}`).subscribe(...)
   }
 
   // ─────────────────────────────────────────────
   // MESSAGING
   // ─────────────────────────────────────────────
 
-  /**
-   * ENDPOINT: POST /api/v1/chat/send
-   * Body: { message: string, conversationId?: number }
-   * Response: { reply: string, conversationId: number, title?: string }
-   * يُضيف رسالة المستخدم لـ messages[] ثم يُضيف رد الـ AI
-   * بعد النجاح يُحدّث conversationHistory بعنوان المحادثة
-   */
   sendMessage(): void {
     const text = this.inputText.trim();
     if (!text || this.isTyping) return;
 
-    // أضف رسالة المستخدم
-    this.messages.push({
+    // 1. Add User Message
+    const userMsg: ChatMessage = {
       id:     this.msgIdCounter++,
       text,
       isUser: true,
       time:   this.getTime(),
       rating: null
-    });
-    this.inputText   = '';
-    this.isTyping    = true;
+    };
+    this.messages.push(userMsg);
+    
+    this.inputText    = '';
+    this.isTyping     = true;
     this.shouldScroll = true;
     this.resetInputHeight();
 
-    // TODO: استبدل بـ http.post('/api/v1/chat/send', { message: text, conversationId: this.activeConvId }).subscribe(...)
-    // مثال: على استجابة الـ API: { reply: '...', conversationId: 5, title: 'محادثة جديدة' }
+    // 2. Call AI Service
+    this.aiService.chat(this.activeProjectId, text, this.messages).subscribe({
+      next: (res: any) => {
+        if (res.success && res.reply) {
+          this.streamResponse(res.reply);
+        } else {
+          this.isTyping = false;
+        }
+      },
+      error: (err) => {
+        console.error('Chat error:', err);
+        this.showToast('حدث خطأ أثناء الاتصال بالمساعد');
+        this.isTyping = false;
+      }
+    });
+  }
+
+  /**
+   * Simulates a typing effect for the AI response
+   */
+  private streamResponse(fullText: string): void {
+    const aiMsg: ChatMessage = {
+      id:     this.msgIdCounter++,
+      text:   '',
+      isUser: false,
+      time:   this.getTime(),
+      rating: null,
+      html:   ''
+    };
+    this.messages.push(aiMsg);
+    
+    // Force initial render of the empty bubble
+    this.cdr.detectChanges();
+    this.shouldScroll = true;
+
+    let i = 0;
+    const speed = 20; // ms per chunk
+
+    const interval = setInterval(() => {
+      // Add a chunk of characters (1-3 chars) to make it feel more natural
+      const chunkSize = Math.floor(Math.random() * 3) + 1;
+      const chunk = fullText.slice(i, i + chunkSize);
+      
+      // Update text property
+      aiMsg.text += chunk;
+      i += chunk.length;
+      
+      // Trigger change detection for every chunk
+      this.cdr.detectChanges();
+      this.shouldScroll = true;
+
+      if (i >= fullText.length) {
+        clearInterval(interval);
+        aiMsg.text = fullText; // Ensure full text is set
+        aiMsg.html = this.parseMarkdown(fullText); // Parse markdown at the end
+        this.isTyping = false;
+        this.saveConversationState();
+        this.cdr.detectChanges(); // Final update
+      }
+    }, speed);
+  }
+
+  private saveConversationState() {
+    // If no active conversation, create one
+    if (!this.activeConvId) {
+      const newId = Date.now();
+      const title = this.messages[0].text.substring(0, 30) + (this.messages[0].text.length > 30 ? '...' : '');
+      const newConv: Conversation = {
+        id: newId,
+        title: title,
+        date: new Date().toLocaleDateString('ar-EG'),
+        messages: this.messages
+      };
+      this.conversationHistory.unshift(newConv);
+      this.activeConvId = newId;
+    } else {
+      // Update existing
+      const conv = this.conversationHistory.find(c => c.id === this.activeConvId);
+      if (conv) {
+        conv.messages = [...this.messages];
+        // Move to top
+        this.conversationHistory = this.conversationHistory.filter(c => c.id !== this.activeConvId);
+        this.conversationHistory.unshift(conv);
+      }
+    }
+    this.saveHistory();
+  }
+
+  private parseMarkdown(text: string): string {
+    if (!text) return '';
+    let html = text
+      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // Bold
+      .replace(/\*(.*?)\*/g, '<i>$1</i>')     // Italic
+      .replace(/\n/g, '<br>')                 // Newlines
+      .replace(/### (.*?)<br>/g, '<h3>$1</h3>') // Headings
+      .replace(/- (.*?)<br>/g, '<li>$1</li>');  // Lists
+    
+    return html;
   }
 
   sendQuickMessage(text: string): void {

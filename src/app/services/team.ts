@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/api';
 
 export interface TeamMember {
   id?: number;
-  projectId: number;
-  userId: number;
-  role: 'owner' | 'admin' | 'member';
-  createdAt?: string;
+  projectId?: number;
+  userId?: number;
+  role: 'owner' | 'admin' | 'editor' | 'viewer';
+  jobTitle?: string;
+  status?: 'invited' | 'active';
+  joinedAt?: string;
   User?: {
     id: number;
     name: string;
@@ -19,13 +22,18 @@ export interface TeamMember {
   providedIn: 'root'
 })
 export class TeamService {
-  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1';
+  private apiUrl = API_BASE_URL;
 
   constructor(private http: HttpClient) {}
 
   // إضافة عضو للفريق
-  addMember(projectId: number, data: { userId: number; role: string }): Observable<any> {
+  addMember(projectId: number, data: { userId: number; role: string; jobTitle?: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/projects/${projectId}/team`, data);
+  }
+
+  // دعوة عضو بالبريد الإلكتروني
+  inviteMember(projectId: number, data: { email: string; role: string; jobTitle?: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/projects/${projectId}/team/invite`, data);
   }
 
   // الحصول على أعضاء الفريق

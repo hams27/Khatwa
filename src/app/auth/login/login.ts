@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -30,9 +30,16 @@ export class Login implements OnInit {
   emailError = '';
   passwordError = '';
 
+  // Rate Limiting
+  failedAttempts = 0;
+  isLockedOut = false;
+  lockoutRemaining = 0;
+  private lockoutTimer: any;
+
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -44,6 +51,12 @@ export class Login implements OnInit {
 
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.lockoutTimer) {
+      clearInterval(this.lockoutTimer);
     }
   }
 
@@ -90,6 +103,8 @@ export class Login implements OnInit {
   // بعد الحل: نشيل سطر localStorage.getItem('token') من الـ token check هنا
 
   async onSubmit() {
+    if (this.isLockedOut) return;
+
     const emailValid = this.validateEmail();
     const passwordValid = this.validatePassword();
 
@@ -104,48 +119,80 @@ export class Login implements OnInit {
     this.authService.login({ email: this.email, password: this.password })
       .subscribe({
         next: (response: any) => {
-          console.log('✅ response:', response);
+          // Reset attempts on success
+          this.failedAttempts = 0;
 
-          // تحقق من الـ token في الـ response أو في localStorage (لو اتحفظ في catchError)
-          const token =
-            response?.token ??
-            response?.data?.token ??
-            response?.accessToken ??
-            localStorage.getItem('token') ??
-            null;
-
-          if (token) {
+          // Note: Token is now safely extracted and saved by AuthService.
+          // The response returned here has the token removed for security.
+          // We just check if AuthService successfully saved it.
+          if (this.authService.isLoggedIn()) {
             this.loginSuccess = true;
             this.isLoading = false;
             this.router.navigate(['/dashboard']);
           } else {
             // الباك رد بس مفيش token خالص
-            this.loginError = true;
-            this.isLoading = false;
-            this.errorMessage = 'حدث خطأ في الاستجابة. حاول مرة أخرى';
-            this.shakeForm();
+            this.handleLoginError({ status: 500, message: 'استجابة غير صالحة من السيرفر' });
           }
         },
         error: (error: any) => {
-          this.loginError = true;
-          this.isLoading = false;
-
-          if (error.status === 401 || error.status === 400) {
-            this.errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
-          } else if (error.status === 500) {
-            this.errorMessage = 'خطأ في السيرفر. تواصل مع الدعم الفني';
-          } else if (error.status === 0) {
-            this.errorMessage = 'فشل الاتصال بالسيرفر';
-          } else if (error.error?.message) {
-            this.errorMessage = error.error.message;
-          } else {
-            this.errorMessage = 'حدث خطأ. حاول مرة أخرى';
-          }
-
-          console.error('❌ خطأ في تسجيل الدخول:', error);
-          this.shakeForm();
+          this.handleLoginError(error);
         }
       });
+  }
+
+  private handleLoginError(error: any) {
+    this.loginError = true;
+    this.isLoading = false;
+    this.failedAttempts++;
+
+    // Safe error logging
+    console.error(`❌ خطأ في تسجيل الدخول [Status: ${error.status || 'Unknown'}]`);
+
+    if (this.failedAttempts >= 3) {
+      this.handleLockout();
+      return;
+    }
+
+    if (error.status === 401 || error.status === 400) {
+      this.errorMessage = 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+    } else if (error.status === 500) {
+      this.errorMessage = 'خطأ داخلي في السيرفر. يرجى المحاولة لاحقاً';
+    } else if (error.status === 429) {
+      this.errorMessage = 'تم تجاوز الحد المسموح للمحاولات، يرجى المحاولة لاحقاً';
+    } else if (error.status === 0) {
+      this.errorMessage = 'فشل الاتصال بالسيرفر. تأكد من اتصالك بالإنترنت';
+    } else if (error.error?.message) {
+      this.errorMessage = error.error.message;
+    } else {
+      this.errorMessage = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى';
+    }
+
+    this.cdr.detectChanges();
+    this.shakeForm();
+  }
+
+  private handleLockout() {
+    this.isLockedOut = true;
+    const baseLockout = 30; // 30 seconds
+    this.lockoutRemaining = baseLockout * Math.pow(2, this.failedAttempts - 3);
+    
+    this.errorMessage = `تم حظر المحاولات مؤقتاً. يرجى الانتظار ${this.lockoutRemaining} ثانية`;
+    this.cdr.detectChanges();
+    this.shakeForm();
+    
+    this.lockoutTimer = setInterval(() => {
+      this.lockoutRemaining--;
+      this.errorMessage = `تم حظر المحاولات مؤقتاً. يرجى الانتظار ${this.lockoutRemaining} ثانية`;
+      this.cdr.detectChanges();
+      
+      if (this.lockoutRemaining <= 0) {
+        clearInterval(this.lockoutTimer);
+        this.isLockedOut = false;
+        this.errorMessage = '';
+        this.loginError = false;
+        this.cdr.detectChanges();
+      }
+    }, 1000);
   }
 
   shakeForm() {

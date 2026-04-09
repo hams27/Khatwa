@@ -1,124 +1,226 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SideBar } from '../side-bar/side-bar';
 import { ProjectService, Project } from '../services/project';
 import { FinanceService } from '../services/finance';
 import { TaskService } from '../services/task';
-import { MarketingService } from '../services/marketing';
 import { interval, Subscription } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Chart, registerables } from 'chart.js';
 import { AiChatComponent } from '../ai-chat/ai-chat';
 
 Chart.register(...registerables);
 
+// ─────────────────────────────────────────────────────────────────────────────
+// INTERFACES
+// ─────────────────────────────────────────────────────────────────────────────
+
 interface StatCard {
-  title: string; value: string; change: string;
-  icon: string; color: string; loading?: boolean;
-}
-interface Insight {
-  title: string; description: string;
-  confidence: number; type: 'success' | 'info' | 'warning' | 'danger';
+  title: string;
+  value: string;
+  change: string;
+  icon: string;   // Bootstrap icon class (e.g. 'bi bi-cash-stack')
+  color: string;  // اسم اللون للـ CSS class (blue / green / purple / orange)
+  loading?: boolean;
 }
 
+interface Insight {
+  title:       string;
+  description: string;
+  confidence:  number;
+  type: 'success' | 'info' | 'warning' | 'danger';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPONENT
+// ─────────────────────────────────────────────────────────────────────────────
+
 @Component({
-  selector: 'app-analytics',
-  imports: [CommonModule, FormsModule, SideBar ,AiChatComponent],
+  selector:    'app-analytics',
+  imports:     [CommonModule, FormsModule, SideBar, AiChatComponent],
   templateUrl: './analytics.html',
-  styleUrls: ['./analytics.css'],
-  standalone: true
+  styleUrls:   ['./analytics.css'],
+  standalone:  true
 })
 export class Analytics implements OnInit, OnDestroy, AfterViewInit {
 
-  // ── Sidebar Reference ──
+  // ─── مراجع العناصر (ViewChild) ────────────────────────────────────────────
+
+  /** مرجع السايدبار لاستدعاء openMobile() عند الموبايل */
   @ViewChild('sidebarRef') sidebarComponent?: SideBar;
 
-  // Chart References
+  /** كانفاس مخطط الأداء العام — خط متعدد المحاور (إيرادات + مهام + رضا) */
   @ViewChild('performanceChart')       performanceChart?:       ElementRef<HTMLCanvasElement>;
+
+  /** كانفاس مخطط توقعات الإيرادات — فعلي vs متوقع */
   @ViewChild('revenueProjectionChart') revenueProjectionChart?: ElementRef<HTMLCanvasElement>;
+
+  /** كانفاس مخطط إنجاز المهام — أعمدة مخطط vs مكتمل أسبوعياً */
   @ViewChild('taskCompletionChart')    taskCompletionChart?:    ElementRef<HTMLCanvasElement>;
+
+  /** كانفاس مخطط اتجاهات النمو — خط ربعي (إيرادات + عملاء + حصة سوق) */
   @ViewChild('growthTrendChart')       growthTrendChart?:       ElementRef<HTMLCanvasElement>;
 
-  // Chart Instances
+  // ─── كائنات Chart.js الداخلية ─────────────────────────────────────────────
   private performanceChartInstance?:       Chart;
   private revenueProjectionChartInstance?: Chart;
   private taskCompletionChartInstance?:    Chart;
   private growthTrendChartInstance?:       Chart;
 
-  // States
-  isLoading          = false;
-  errorMessage       = '';
-  showGuide          = false;
-  chartsLoading      = true;
+  // ─────────────────────────────────────────────────────────────────────────────
+  // STATE — TOP NAV
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /** حالة تحميل الصفحة — يُشغّل .loading-overlay */
+  isLoading = true;
+
+  /** رسالة الخطأ — تظهر في .error-banner */
+  errorMessage = '';
+
+  /** التحكم في ظهور مودال الدليل */
+  showGuide = false;
+
+  /** حالة السايدبار (مفتوح/مطوي) */
   isSidebarCollapsed = false;
+
+  /** تفعيل التحديث التلقائي كل 5 دقائق */
   autoRefreshEnabled = false;
 
+  /** حالة توليد الرؤى الذكية */
+  isGeneratingInsights = false;
+
+  // ─── بيانات المشروع الحالي ────────────────────────────────────────────────
   currentProject:   Project | null = null;
   currentProjectId: number = 0;
   private refreshSubscription?: Subscription;
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // STATE — METRICS (metrics-grid)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * كروت المقاييس الأربعة:
+   * [0] إجمالي الإيرادات | [1] معدل إنجاز المهام | [2] المصروفات | [3] معدل النمو
+   *
+   * ⬇️ [0] يأخذ من: loadFinancialSummary() → GET /projects/:id/finance/summary
+   * ⬇️ [1] يأخذ من: loadTaskStats()        → GET /projects/:id/tasks
+   * ⬇️ [2] يأخذ من: loadFinancialSummary() → GET /projects/:id/finance/summary
+   * ⬇️ [3] يُحسب محلياً: (revenue - expenses) / revenue * 100
+   */
   statsCards: StatCard[] = [
-    { title: 'إجمالي الإيرادات',  value: '0 ر.س', change: '+0%', icon: '💰', color: 'blue',   loading: true },
-    { title: 'معدل إنجاز المهام', value: '0%',     change: '+0%', icon: '🎯', color: 'green',  loading: true },
-    { title: 'المصروفات الشهرية', value: '0 ر.س', change: '+0%', icon: '📊', color: 'purple', loading: true },
-    { title: 'معدل النمو',         value: '0%',     change: '+0%', icon: '📈', color: 'orange', loading: true }
+    { title: 'إجمالي الإيرادات',  value: '0 ر.س', change: '+0%', icon: 'bi bi-cash-stack',       color: 'blue',   loading: true },
+    { title: 'معدل إنجاز المهام', value: '0%',     change: '+0%', icon: 'bi bi-check-circle-fill', color: 'green',  loading: true },
+    { title: 'المصروفات الشهرية', value: '0 ر.س', change: '+0%', icon: 'bi bi-bar-chart-fill',    color: 'purple', loading: true },
+    { title: 'معدل النمو',         value: '0%',     change: '+0%', icon: 'bi bi-graph-up-arrow',    color: 'orange', loading: true }
   ];
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // STATE — INSIGHTS (الرؤى الذكية)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * قائمة الرؤى الذكية المعروضة في .insights-list
+   * ⬇️ تُولَّد من: generateInsights() بعد وصول بيانات statsCards
+   *
+   * إذا أردت رؤى من الـ Backend:
+   * endpoint: GET /api/v1/projects/:projectId/analytics/insights
+   * response: { data: Insight[] }
+   */
   insights: Insight[] = [];
 
+  // ─────────────────────────────────────────────────────────────────────────────
+  // بيانات الرسوم البيانية — تبدأ فارغة وتُملأ من الـ API
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * بيانات مخطط الأداء العام (#performanceChart — خط متعدد)
+   * ⬇️ تُحدَّث من: loadPerformanceData() → GET /projects/:id/analytics/performance
+   * response: { months, revenue[], taskCompletion[], satisfaction[] }
+   */
   performanceData = {
-    months: ['يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو'],
-    revenue: [15000, 22000, 18000, 28000, 25000, 32000],
-    tasks: [65, 72, 68, 78, 75, 82],
-    satisfaction: [70, 75, 73, 80, 78, 85]
+    months:       [] as string[],
+    revenue:      [] as number[],
+    tasks:        [] as number[],
+    satisfaction: [] as number[]
   };
+
+  /**
+   * بيانات مخطط توقعات الإيرادات (#revenueProjectionChart — خط)
+   * ⬇️ تُحدَّث من: loadProjectionData() → GET /projects/:id/analytics/projection
+   * response: { historical: number[], projected: number[] }
+   */
   revenueProjectionData = {
-    historical: [15000, 22000, 18000, 28000, 25000, 32000],
-    projected:  [35000, 38000, 42000, 45000, 48000, 52000]
+    historical: [] as number[],
+    projected:  [] as number[]
   };
+
+  /**
+   * بيانات مخطط إنجاز المهام (#taskCompletionChart — أعمدة)
+   * ⬇️ تُحدَّث من: loadTaskStats() → GET /projects/:id/tasks
+   * يُجمَّع أسبوعياً: planned (إجمالي) مقابل completed (status === 'done')
+   */
   taskCompletionData = {
-    weeks: ['الأسبوع 1', 'الأسبوع 2', 'الأسبوع 3', 'الأسبوع 4'],
-    planned: [20, 25, 22, 28], completed: [18, 23, 20, 25]
+    weeks:     [] as string[],
+    planned:   [] as number[],
+    completed: [] as number[]
   };
+
+  /**
+   * بيانات مخطط اتجاهات النمو (#growthTrendChart — خط ربعي)
+   * ⬇️ تُحدَّث من: loadGrowthData() → GET /projects/:id/analytics/growth
+   * response: { quarters, revenue[], customers[], marketShare[] }
+   */
   growthMetrics = {
-    quarters: ['Q1', 'Q2', 'Q3', 'Q4'],
-    revenue: [45000, 68000, 82000, 105000],
-    customers: [120, 185, 245, 320],
-    marketShare: [12, 15, 18, 22]
+    quarters:    [] as string[],
+    revenue:     [] as number[],
+    customers:   [] as number[],
+    marketShare: [] as number[]
   };
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // STATE — ملخص المؤشرات (SIDE COL)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * مؤشرات الأداء الرئيسية للعرض في .kpi-list
+   * ⬇️ تُحدَّث من: loadKpiSummary() → GET /projects/:id/analytics/kpis
+   * response: { topMonthlyRevenue, bestWeekCompletion, avgMonthlyGrowth, newCustomers, churnRate, satisfaction }
+   */
+  kpiSummary = {
+    topMonthlyRevenue:   '—',
+    bestWeekCompletion:  '—',
+    avgMonthlyGrowth:    '—',
+    newCustomers:        '—',
+    churnRate:           '—',
+    satisfaction:        '—'
+  };
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // CONSTRUCTOR & LIFECYCLE HOOKS
+  // ─────────────────────────────────────────────────────────────────────────────
 
   constructor(
-    private projectService:   ProjectService,
-    private financeService:   FinanceService,
-    private taskService:      TaskService,
-    private marketingService: MarketingService
+    private projectService: ProjectService,
+    private financeService: FinanceService,
+    private taskService:    TaskService,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit()       { this.loadMockData(); }
-  ngAfterViewInit() {}
-  ngOnDestroy()    { this.refreshSubscription?.unsubscribe(); this.destroyCharts(); }
+  ngOnInit(): void      { this.loadCurrentProject(); }
+  ngAfterViewInit(): void {}
+  ngOnDestroy(): void   { this.refreshSubscription?.unsubscribe(); this.destroyCharts(); }
 
-  // ── Sidebar ──
-  onSidebarToggle(collapsed: boolean) { this.isSidebarCollapsed = collapsed; }
-  openSidebar() { this.sidebarComponent?.openMobile(); }
+  // ─────────────────────────────────────────────────────────────────────────────
+  // API CALLS
+  // ─────────────────────────────────────────────────────────────────────────────
 
-  // ── Mock Data ──
-  loadMockData() {
-    this.isLoading = false; this.chartsLoading = false;
-    this.statsCards = [
-      { title: 'إجمالي الإيرادات',  value: '128,500 ر.س', change: '+15%', icon: '💰', color: 'blue',   loading: false },
-      { title: 'معدل إنجاز المهام', value: '78%',           change: '+5%',  icon: '🎯', color: 'green',  loading: false },
-      { title: 'المصروفات الشهرية', value: '74,300 ر.س',   change: '+8%',  icon: '📊', color: 'purple', loading: false },
-      { title: 'معدل النمو',         value: '32%',           change: '+12%', icon: '📈', color: 'orange', loading: false },
-    ];
-    this.generateInsights();
-    setTimeout(() => this.createAllCharts(), 150);
-  }
+  // ─────────────────────────────────────────────────────────────────────────────
+  // endpoint: GET /api/v1/projects
+  // response: { data: Project[] }
+  // يجلب المشروع الأول ويحفظ currentProjectId ثم يُشغّل loadAnalyticsData()
+  // ─────────────────────────────────────────────────────────────────────────────
 
-  // ── Real API ──
   loadCurrentProject() {
-    this.isLoading = true;
     this.projectService.getProjects().subscribe({
       next: (response: any) => {
         if (response?.data?.length > 0) {
@@ -127,44 +229,339 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
           this.loadAnalyticsData();
         } else {
           this.errorMessage = 'لا توجد مشاريع. قم بإنشاء مشروعك الأول!';
-          this.isLoading = false; this.chartsLoading = false;
+          this.isLoading    = false;
+          this.cdr.detectChanges();
         }
       },
-      error: () => { this.errorMessage = 'حدث خطأ في تحميل المشاريع'; this.isLoading = false; this.chartsLoading = false; }
+      error: () => {
+        this.errorMessage = 'حدث خطأ في تحميل المشاريع';
+        this.isLoading    = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 
+  /** يُشغّل جميع طلبات البيانات معاً */
   loadAnalyticsData() {
-    this.financeService.getSummary(this.currentProjectId).subscribe({ next: (r: any) => { if (r?.data) this.updateFinancialStats(r.data); }, error: () => {} });
-    this.taskService.getTasks(this.currentProjectId).subscribe({ next: (r: any) => { if (r?.data) this.updateTaskStats(r.data); }, error: () => {} });
-    this.generateInsights();
-    this.isLoading = false; this.chartsLoading = false;
-    setTimeout(() => this.createAllCharts(), 100);
+    // Using simple counter approach for simplicity without importing forkJoin everywhere
+    let completed = 0;
+    const checkDone = () => {
+      completed++;
+      if (completed >= 2) {
+        // Fix NG0100: Ensure updates happen in the next change detection cycle
+        setTimeout(() => {
+          this.isLoading = false;
+          this.generateInsights();
+          this.createAllCharts();
+          this.cdr.detectChanges();
+        }, 0);
+      }
+    };
+
+    // 1. Finance
+    this.financeService.getSummary(this.currentProjectId).subscribe({
+      next: (response: any) => {
+        if (response?.data) {
+          const d        = response.data;
+          const revenue  = d.revenue || d.totalRevenue  || 0;
+          const expenses = d.expenses || d.totalExpenses || 0;
+          const growth   = revenue > 0 ? ((revenue - expenses) / revenue * 100) : 0;
+
+          this.statsCards[0] = { ...this.statsCards[0], value: this.formatCurrency(revenue),  loading: false };
+          this.statsCards[2] = { ...this.statsCards[2], value: this.formatCurrency(expenses), loading: false };
+          this.statsCards[3] = { ...this.statsCards[3], value: `${growth.toFixed(1)}%`,       loading: false };
+          this.revenueProjectionData.historical = [revenue];
+        }
+        checkDone();
+      },
+      error: () => {
+        this.errorMessage = 'حدث خطأ في تحميل البيانات المالية';
+        this.statsCards.forEach(c => c.loading = false);
+        checkDone();
+      }
+    });
+
+    // 2. Tasks
+    this.taskService.getTasks(this.currentProjectId).subscribe({
+      next: (response: any) => {
+        if (response?.data) {
+          const tasks     = response.data as any[];
+          const total     = tasks.length;
+          const completedTasks = tasks.filter(t => t.status === 'done').length;
+          const rate      = total > 0 ? (completedTasks / total * 100) : 0;
+
+          this.statsCards[1] = { ...this.statsCards[1], value: `${rate.toFixed(1)}%`, loading: false };
+          this.taskCompletionData = this.buildWeeklyTaskData(tasks);
+        }
+        checkDone();
+      },
+      error: () => {
+        this.statsCards[1].loading = false;
+        checkDone();
+      }
+    });
   }
 
-  updateFinancialStats(data: any) {
-    const revenue = data.totalRevenue || 0; const expenses = data.totalExpenses || 0;
-    this.statsCards[0] = { ...this.statsCards[0], value: `${revenue.toLocaleString('ar-SA')} ر.س`, change: '+15%', loading: false };
-    this.statsCards[2] = { ...this.statsCards[2], value: `${expenses.toLocaleString('ar-SA')} ر.س`, change: '+8%',  loading: false };
-    const growth = revenue > 0 ? ((revenue - expenses) / revenue * 100) : 0;
-    this.statsCards[3] = { ...this.statsCards[3], value: `${growth.toFixed(1)}%`, change: '+12%', loading: false };
-  }
-  updateTaskStats(tasks: any[]) {
-    const total = tasks.length; const completed = tasks.filter(t => t.status === 'done').length;
-    const rate  = total > 0 ? (completed / total * 100) : 0;
-    this.statsCards[1] = { ...this.statsCards[1], value: `${rate.toFixed(1)}%`, change: '+5%', loading: false };
+  // ─────────────────────────────────────────────────────────────────────────────
+  // endpoint: GET /api/v1/projects/:projectId/analytics/performance
+  // query params: startDate?, endDate?, period=month
+  // response: {
+  //   data: {
+  //     months:         string[],
+  //     revenue:        number[],
+  //     taskCompletion: number[],
+  //     satisfaction:   number[]
+  //   }
+  // }
+  // يُغذّي: performanceData → performanceChart (مخطط الأداء العام)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  loadPerformanceData() {
+    // TODO: اربط بـ this.financeService أو service مخصص للتحليلات
+    // this.analyticsService.getPerformance(this.currentProjectId).subscribe({
+    //   next: (response: any) => {
+    //     if (response?.data) {
+    //       this.performanceData = {
+    //         months:       response.data.months,
+    //         revenue:      response.data.revenue,
+    //         tasks:        response.data.taskCompletion,
+    //         satisfaction: response.data.satisfaction
+    //       };
+    //       this.createPerformanceChart();
+    //     }
+    //   }
+    // });
   }
 
-  // ── Insights ──
+  // ─────────────────────────────────────────────────────────────────────────────
+  // endpoint: GET /api/v1/projects/:projectId/analytics/growth
+  // query params: period=quarter
+  // response: {
+  //   data: {
+  //     quarters:    string[],   // ['Q1', 'Q2', 'Q3', 'Q4']
+  //     revenue:     number[],
+  //     customers:   number[],
+  //     marketShare: number[]    // نسبة مئوية
+  //   }
+  // }
+  // يُغذّي: growthMetrics → growthTrendChart (مخطط اتجاهات النمو)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  loadGrowthData() {
+    // TODO: اربط بـ service مخصص للتحليلات
+    // this.analyticsService.getGrowth(this.currentProjectId).subscribe({
+    //   next: (response: any) => {
+    //     if (response?.data) {
+    //       this.growthMetrics = response.data;
+    //       this.createGrowthTrendChart();
+    //     }
+    //   }
+    // });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // endpoint: GET /api/v1/projects/:projectId/analytics/projection
+  // response: {
+  //   data: {
+  //     historical: number[],   // آخر 6 أشهر فعلية
+  //     projected:  number[]    // 6 أشهر قادمة متوقعة
+  //   }
+  // }
+  // يُغذّي: revenueProjectionData → revenueProjectionChart (مخطط التوقعات)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  loadProjectionData() {
+    // TODO: اربط بـ service مخصص للتحليلات
+    // this.analyticsService.getProjection(this.currentProjectId).subscribe({
+    //   next: (response: any) => {
+    //     if (response?.data) {
+    //       this.revenueProjectionData = response.data;
+    //       this.createRevenueProjectionChart();
+    //     }
+    //   }
+    // });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // endpoint: GET /api/v1/projects/:projectId/analytics/kpis
+  // response: {
+  //   data: {
+  //     topMonthlyRevenue:   number,
+  //     bestWeekCompletion:  number,   // نسبة مئوية
+  //     avgMonthlyGrowth:    number,   // نسبة مئوية
+  //     newCustomers:        number,
+  //     churnRate:           number,   // نسبة مئوية
+  //     satisfaction:        number    // نسبة مئوية
+  //   }
+  // }
+  // يُغذّي: kpiSummary → .kpi-list في الـ HTML
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  loadKpiSummary() {
+    // TODO: اربط بـ service مخصص للتحليلات
+    // this.analyticsService.getKpis(this.currentProjectId).subscribe({
+    //   next: (response: any) => {
+    //     if (response?.data) {
+    //       const d = response.data;
+    //       this.kpiSummary = {
+    //         topMonthlyRevenue:  this.formatCurrency(d.topMonthlyRevenue),
+    //         bestWeekCompletion: `${d.bestWeekCompletion}%`,
+    //         avgMonthlyGrowth:   `+${d.avgMonthlyGrowth}%`,
+    //         newCustomers:       String(d.newCustomers),
+    //         churnRate:          `${d.churnRate}%`,
+    //         satisfaction:       `${d.satisfaction}%`
+    //       };
+    //     }
+    //   }
+    // });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // endpoint: GET /api/v1/projects/:projectId/analytics/insights
+  // response: {
+  //   data: Array<{
+  //     title:       string,
+  //     description: string,
+  //     confidence:  number,   // 0-100
+  //     type:        'success' | 'info' | 'warning' | 'danger'
+  //   }>
+  // }
+  // يُغذّي: insights[] → .insights-list في الـ HTML
+  // حالياً: تُولَّد محلياً من generateInsights()
+  // ─────────────────────────────────────────────────────────────────────────────
+
   generateInsights() {
-    this.insights = [
-      { title: 'اتجاه إيجابي للإيرادات',    description: 'الإيرادات في نمو مستمر مع زيادة 15% مقارنة بالشهر الماضي', confidence: 85, type: 'success' },
-      { title: 'معدل إنجاز المهام جيد',      description: 'الفريق يحافظ على أداء ثابت مع معدل إنجاز 78%',             confidence: 75, type: 'info'    },
-      { title: 'فرصة لتحسين الكفاءة',        description: 'يمكن تحسين وقت تسليم المهام بنسبة 20% بإعادة توزيع الأولويات', confidence: 70, type: 'warning' }
-    ];
+    this.isGeneratingInsights = true;
+    const revenue     = parseFloat(this.statsCards[0].value.replace(/[^0-9.-]+/g, '')) || 0;
+    const taskRate    = parseFloat(this.statsCards[1].value.replace(/[^0-9.-]+/g, '')) || 0;
+    const growthRate  = parseFloat(this.statsCards[3].value.replace(/[^0-9.-]+/g, '')) || 0;
+
+    this.insights = [];
+
+    // 1. Fetch from Onboarding AI Analysis Result (if available)
+    if (this.currentProject?.onboardingData?.aiAnalysisResult) {
+      let aiData = this.currentProject.onboardingData.aiAnalysisResult;
+      
+      // Handle stringified JSON if necessary
+      if (typeof aiData === 'string') {
+        try {
+          aiData = JSON.parse(aiData);
+        } catch (e) {
+          console.error('Failed to parse AI Analysis Result:', e);
+        }
+      }
+
+      // Add Strategy
+      if (aiData && aiData.strategy) {
+         this.insights.push({
+            title: 'استراتيجية مقترحة',
+            description: aiData.strategy,
+            confidence: 90,
+            type: 'info'
+         });
+      }
+
+      // Add one of the solutions as an insight
+      if (aiData && aiData.solutions && Array.isArray(aiData.solutions) && aiData.solutions.length > 0) {
+        const sol = aiData.solutions[0];
+        this.insights.push({
+           title: `تحدي: ${sol.challenge}`,
+           description: `نصيحة: ${sol.advice}`,
+           confidence: 85,
+           type: 'warning'
+        });
+      }
+    }
+
+    // 2. Add Local Heuristics (if data exists)
+    if (growthRate >= 15) {
+      this.insights.push({ title: 'اتجاه إيجابي للإيرادات', description: `الإيرادات في نمو مستمر بمعدل ${growthRate.toFixed(1)}% مقارنة بالفترة السابقة`, confidence: 85, type: 'success' });
+    } else if (growthRate > 0) {
+      this.insights.push({ title: 'نمو معتدل للإيرادات', description: `معدل النمو ${growthRate.toFixed(1)}% — يمكن تحسينه بزيادة مصادر الإيراد`, confidence: 70, type: 'info' });
+    } else if (revenue > 0) { // Only show danger if there IS revenue but it's declining
+      this.insights.push({ title: 'تراجع في الإيرادات', description: 'الإيرادات في تراجع — راجع مصادر الدخل والمصروفات', confidence: 80, type: 'danger' });
+    }
+
+    if (taskRate >= 75) {
+      this.insights.push({ title: 'معدل إنجاز المهام جيد', description: `الفريق يحافظ على أداء ثابت بمعدل إنجاز ${taskRate.toFixed(1)}%`, confidence: 75, type: 'info' });
+    } else if (taskRate > 0) {
+      this.insights.push({ title: 'فرصة لتحسين الكفاءة', description: `معدل الإنجاز ${taskRate.toFixed(1)}% — يمكن تحسينه بإعادة توزيع الأولويات`, confidence: 70, type: 'warning' });
+    }
+    
+    // Only stop loading if we found something OR if completely empty
+    this.isGeneratingInsights = false;
   }
 
-  // ── Charts ──
+  // ─────────────────────────────────────────────────────────────────────────────
+  // EXPORT
+  // endpoint: GET /api/v1/projects/:projectId/analytics/export
+  // query: format=pdf|excel & period=month|quarter|year
+  // response: Blob (PDF أو Excel)
+  // حالياً: يعرض تنبيه مؤقت
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  exportData(format: 'pdf' | 'excel') {
+    // TODO: استبدل بطلب HTTP حقيقي:
+    // this.analyticsService.export(this.currentProjectId, format).subscribe({
+    //   next: (blob: Blob) => {
+    //     const url = URL.createObjectURL(blob);
+    //     const a   = document.createElement('a');
+    //     a.href    = url;
+    //     a.download = `analytics-report.${format === 'pdf' ? 'pdf' : 'xlsx'}`;
+    //     a.click();
+    //     URL.revokeObjectURL(url);
+    //   }
+    // });
+    alert(`سيتم إضافة ميزة التصدير لـ ${format} قريباً`);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // DATA HELPERS
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * يُجمّع المهام أسبوعياً من مصفوفة Tasks
+   * ⬅️ يأخذ من: loadTaskStats() → response.data
+   * ⬆️ يُغذّي: taskCompletionData → taskCompletionChart
+   */
+  buildWeeklyTaskData(tasks: any[]): typeof this.taskCompletionData {
+    const weeks: Record<string, { planned: number; completed: number }> = {};
+
+    tasks.forEach(t => {
+      const d   = t.dueDate ? new Date(t.dueDate) : new Date();
+      const yr  = d.getFullYear();
+      const wk  = this.getWeekNumber(d);
+      const key = `${yr}-W${wk}`;
+      if (!weeks[key]) weeks[key] = { planned: 0, completed: 0 };
+      weeks[key].planned++;
+      if (t.status === 'done') weeks[key].completed++;
+    });
+
+    const sorted = Object.keys(weeks).sort().slice(-4);
+    return {
+      weeks:     sorted.map((_, i) => `الأسبوع ${i + 1}`),
+      planned:   sorted.map(k => weeks[k].planned),
+      completed: sorted.map(k => weeks[k].completed)
+    };
+  }
+
+  /** يُحسب رقم الأسبوع من التاريخ */
+  getWeekNumber(date: Date): number {
+    const d   = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dow = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dow);
+    const year = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil(((d.getTime() - year.getTime()) / 86400000 + 1) / 7);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // CHART.JS — إنشاء وتدمير
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  /**
+   * يُنشئ جميع المخططات الأربعة
+   * يُستدعى من: loadFinancialSummary() بعد setTimeout(100ms)
+   */
   createAllCharts() {
     this.createPerformanceChart();
     this.createRevenueProjectionChart();
@@ -172,18 +569,24 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
     this.createGrowthTrendChart();
   }
 
+  /**
+   * مخطط الأداء العام (#performanceChart)
+   * محاور: y (إيرادات ر.س) + y1 (نسب %)
+   * ⬅️ يأخذ من: performanceData (يُملأ من loadPerformanceData)
+   */
   createPerformanceChart() {
     if (!this.performanceChart) return;
     const ctx = this.performanceChart.nativeElement.getContext('2d');
     if (!ctx) return;
+    this.performanceChartInstance?.destroy();
     this.performanceChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.performanceData.months,
+        labels: this.performanceData.months.length ? this.performanceData.months : ['—'],
         datasets: [
-          { label: 'الإيرادات (ر.س)', data: this.performanceData.revenue,      borderColor: 'rgb(37,99,235)',   backgroundColor: 'rgba(37,99,235,.1)',   tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y' },
-          { label: 'إنجاز المهام (%)', data: this.performanceData.tasks,        borderColor: 'rgb(16,185,129)',  backgroundColor: 'rgba(16,185,129,.1)',  tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y1' },
-          { label: 'رضا العملاء (%)',  data: this.performanceData.satisfaction, borderColor: 'rgb(245,158,11)',  backgroundColor: 'rgba(245,158,11,.1)',  tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y1' }
+          { label: 'الإيرادات (ر.س)', data: this.performanceData.revenue,      borderColor: 'rgb(37,99,235)',  backgroundColor: 'rgba(37,99,235,.1)',  tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y'  },
+          { label: 'إنجاز المهام (%)', data: this.performanceData.tasks,        borderColor: 'rgb(16,185,129)', backgroundColor: 'rgba(16,185,129,.1)', tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y1' },
+          { label: 'رضا العملاء (%)',  data: this.performanceData.satisfaction, borderColor: 'rgb(245,158,11)', backgroundColor: 'rgba(245,158,11,.1)', tension: 0.4, fill: true, borderWidth: 2, yAxisID: 'y1' }
         ]
       },
       options: {
@@ -199,18 +602,25 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * مخطط توقعات الإيرادات (#revenueProjectionChart)
+   * ⬅️ يأخذ من: revenueProjectionData (يُملأ من loadProjectionData)
+   */
   createRevenueProjectionChart() {
     if (!this.revenueProjectionChart) return;
     const ctx = this.revenueProjectionChart.nativeElement.getContext('2d');
     if (!ctx) return;
     const allMonths = ['يناير','فبراير','مارس','إبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    const hist      = this.revenueProjectionData.historical;
+    const proj      = this.revenueProjectionData.projected;
+    this.revenueProjectionChartInstance?.destroy();
     this.revenueProjectionChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels: allMonths,
         datasets: [
-          { label: 'الفعلي',  data: [...this.revenueProjectionData.historical, ...Array(6).fill(null)], borderColor: 'rgb(37,99,235)',  backgroundColor: 'rgba(37,99,235,.1)',  tension: 0.4, fill: true, borderWidth: 2 },
-          { label: 'المتوقع', data: [...Array(6).fill(null), ...this.revenueProjectionData.projected],  borderColor: 'rgb(16,185,129)', backgroundColor: 'rgba(16,185,129,.1)', tension: 0.4, fill: true, borderDash: [5,5], borderWidth: 2 }
+          { label: 'الفعلي',  data: hist.length ? [...hist, ...Array(12 - hist.length).fill(null)] : Array(12).fill(null), borderColor: 'rgb(37,99,235)',  backgroundColor: 'rgba(37,99,235,.1)',  tension: 0.4, fill: true, borderWidth: 2 },
+          { label: 'المتوقع', data: proj.length ? [...Array(12 - proj.length).fill(null), ...proj]  : Array(12).fill(null), borderColor: 'rgb(16,185,129)', backgroundColor: 'rgba(16,185,129,.1)', tension: 0.4, fill: true, borderDash: [5,5], borderWidth: 2 }
         ]
       },
       options: {
@@ -218,21 +628,27 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
         interaction: { mode: 'index', intersect: false },
         plugins: { legend: { position: 'top', labels: { font: { family: 'Cairo', size: 12 }, usePointStyle: true, padding: 15 } } },
         scales: {
-          y: { beginAtZero: true, ticks: { font: { family: 'Cairo' }, callback: (value) => `${value.toLocaleString()} ر.س` } },
+          y: { beginAtZero: true, ticks: { font: { family: 'Cairo' }, callback: (v) => `${Number(v).toLocaleString()} ر.س` } },
           x: { ticks: { font: { family: 'Cairo', size: 11 } } }
         }
       }
     });
   }
 
+  /**
+   * مخطط إنجاز المهام (#taskCompletionChart — أعمدة)
+   * ⬅️ يأخذ من: taskCompletionData (يُملأ من buildWeeklyTaskData ← loadTaskStats)
+   */
   createTaskCompletionChart() {
     if (!this.taskCompletionChart) return;
     const ctx = this.taskCompletionChart.nativeElement.getContext('2d');
     if (!ctx) return;
+    this.taskCompletionChartInstance?.destroy();
+    const labels = this.taskCompletionData.weeks.length ? this.taskCompletionData.weeks : ['الأسبوع 1','الأسبوع 2','الأسبوع 3','الأسبوع 4'];
     this.taskCompletionChartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: this.taskCompletionData.weeks,
+        labels,
         datasets: [
           { label: 'المخطط',  data: this.taskCompletionData.planned,   backgroundColor: 'rgba(156,163,175,.5)', borderColor: 'rgb(156,163,175)', borderWidth: 2, borderRadius: 6 },
           { label: 'المكتمل', data: this.taskCompletionData.completed, backgroundColor: 'rgba(16,185,129,.7)',  borderColor: 'rgb(16,185,129)',  borderWidth: 2, borderRadius: 6 }
@@ -249,16 +665,22 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * مخطط اتجاهات النمو (#growthTrendChart — خط ربعي)
+   * ⬅️ يأخذ من: growthMetrics (يُملأ من loadGrowthData)
+   */
   createGrowthTrendChart() {
     if (!this.growthTrendChart) return;
     const ctx = this.growthTrendChart.nativeElement.getContext('2d');
     if (!ctx) return;
+    this.growthTrendChartInstance?.destroy();
+    const labels = this.growthMetrics.quarters.length ? this.growthMetrics.quarters : ['Q1','Q2','Q3','Q4'];
     this.growthTrendChartInstance = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.growthMetrics.quarters,
+        labels,
         datasets: [
-          { label: 'الإيرادات (ر.س)', data: this.growthMetrics.revenue,     borderColor: 'rgb(59,130,246)',  backgroundColor: 'rgba(59,130,246,.1)',  tension: 0.4, fill: true, yAxisID: 'y' },
+          { label: 'الإيرادات (ر.س)', data: this.growthMetrics.revenue,     borderColor: 'rgb(59,130,246)',  backgroundColor: 'rgba(59,130,246,.1)',  tension: 0.4, fill: true, yAxisID: 'y'  },
           { label: 'العملاء',          data: this.growthMetrics.customers,   borderColor: 'rgb(16,185,129)', backgroundColor: 'rgba(16,185,129,.1)', tension: 0.4, fill: true, yAxisID: 'y1' },
           { label: 'حصة السوق (%)',    data: this.growthMetrics.marketShare, borderColor: 'rgb(245,158,11)', backgroundColor: 'rgba(245,158,11,.1)', tension: 0.4, fill: true, yAxisID: 'y2' }
         ]
@@ -268,8 +690,8 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
         interaction: { mode: 'index', intersect: false },
         plugins: { legend: { position: 'top', labels: { font: { family: 'Cairo', size: 12 }, usePointStyle: true, padding: 15 } } },
         scales: {
-          y:  { type: 'linear', position: 'left',  title: { display: true, text: 'الإيرادات', font: { family: 'Cairo' } }, ticks: { font: { family: 'Cairo' } } },
-          y1: { type: 'linear', position: 'right', title: { display: true, text: 'العملاء',   font: { family: 'Cairo' } }, ticks: { font: { family: 'Cairo' } }, grid: { drawOnChartArea: false } },
+          y:  { type: 'linear', position: 'left',   title: { display: true, text: 'الإيرادات',  font: { family: 'Cairo' } }, ticks: { font: { family: 'Cairo' } } },
+          y1: { type: 'linear', position: 'right',  title: { display: true, text: 'العملاء',    font: { family: 'Cairo' } }, ticks: { font: { family: 'Cairo' } }, grid: { drawOnChartArea: false } },
           y2: { type: 'linear', display: false, max: 100 },
           x:  { ticks: { font: { family: 'Cairo' } } }
         }
@@ -277,6 +699,7 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /** يُدمّر جميع مثيلات Chart.js لتفادي تسرب الذاكرة */
   destroyCharts() {
     this.performanceChartInstance?.destroy();
     this.revenueProjectionChartInstance?.destroy();
@@ -284,26 +707,38 @@ export class Analytics implements OnInit, OnDestroy, AfterViewInit {
     this.growthTrendChartInstance?.destroy();
   }
 
-  // ── UI Actions ──
-  openGuide()   { this.showGuide = true;  }
-  closeGuide()  { this.showGuide = false; }
-  toggleGuide() { this.showGuide = !this.showGuide; }
-  refreshData()      { this.loadAnalyticsData(); }
-  refreshAnalytics() { this.loadMockData(); }
+  // ─────────────────────────────────────────────────────────────────────────────
+  // AUTO REFRESH — تحديث تلقائي كل 5 دقائق
+  // ─────────────────────────────────────────────────────────────────────────────
 
   toggleAutoRefresh() {
     this.autoRefreshEnabled = !this.autoRefreshEnabled;
     if (this.autoRefreshEnabled) {
-      this.refreshSubscription = interval(300000).subscribe(() => this.refreshData());
+      this.refreshSubscription = interval(300_000).subscribe(() => this.loadAnalyticsData());
     } else {
       this.refreshSubscription?.unsubscribe();
     }
   }
 
-  exportData(format: 'pdf' | 'excel') { alert(`سيتم إضافة ميزة التصدير لـ ${format} قريباً`); }
+  /** يُستدعى من زر التحديث في TOP NAV */
+  refreshAnalytics() { this.loadAnalyticsData(); }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // UTILITY HELPERS
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  formatCurrency(amount: number): string {
+    return `${amount.toLocaleString('ar-SA', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} ر.س`;
+  }
 
   formatPercentage(value: number): string { return `${value.toFixed(1)}%`; }
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR', minimumFractionDigits: 0 }).format(amount);
-  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // SIDEBAR & NAV
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  onSidebarToggle(collapsed: boolean) { this.isSidebarCollapsed = collapsed; }
+  openSidebar() { this.sidebarComponent?.openMobile(); }
+  openGuide()   { this.showGuide = true;  }
+  closeGuide()  { this.showGuide = false; }
 }

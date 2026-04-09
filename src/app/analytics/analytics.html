@@ -11,34 +11,29 @@
       </div>
     </div>
     <div class="nav-right">
-      <!-- Toggle — مخفي على موبايل -->
+      <!-- Toggle التحديث التلقائي — مخفي على موبايل -->
       <label class="toggle-wrap desktop-only-flex">
         <div class="toggle-switch" [class.active]="autoRefreshEnabled" (click)="toggleAutoRefresh()">
           <div class="toggle-knob"></div>
         </div>
         <span class="toggle-lbl">تحديث تلقائي</span>
       </label>
+
+      <!-- زر تحديث البيانات -->
       <button class="btn-refresh" (click)="refreshAnalytics()" [disabled]="isLoading">
-        <svg viewBox="0 0 16 16" fill="currentColor">
-          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
-          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
-        </svg>
+        <i class="bi bi-arrow-repeat"></i>
         <span class="btn-text">تحديث</span>
       </button>
+
+      <!-- زر دليل الاستخدام -->
       <button class="guide-btn" (click)="openGuide()">
-        <svg viewBox="0 0 16 16" fill="white">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-          <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-        </svg>
+        <i class="bi bi-info-circle-fill"></i>
         <span class="btn-text">دليل الاستخدام</span>
       </button>
+
       <!-- زر الهامبرجر — يظهر فقط على موبايل/تابلت -->
       <button class="topnav-hamburger" (click)="openSidebar()" aria-label="فتح القائمة">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+        <i class="bi bi-list"></i>
       </button>
     </div>
   </div>
@@ -48,18 +43,30 @@
 <div class="modal-overlay" *ngIf="showGuide" (click)="closeGuide()">
   <div class="modal-container" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3>📊 دليل استخدام التحليلات</h3>
+      <h3><i class="bi bi-bar-chart-line-fill"></i> دليل استخدام التحليلات</h3>
       <button class="close-btn" (click)="closeGuide()">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
     <div class="modal-body">
       <p class="guide-intro">لوحة التحليلات تعطيك رؤية شاملة ودقيقة عن أداء مشروعك.</p>
       <div class="guide-features">
-        <div class="guide-item"><span class="guide-icon">📈</span><div><h4>أداء الإيرادات</h4><p>تتبع نمو إيراداتك الفعلية والمتوقعة</p></div></div>
-        <div class="guide-item"><span class="guide-icon">🎯</span><div><h4>إنجاز المهام</h4><p>قارن المخطط بالمنجز أسبوعياً</p></div></div>
-        <div class="guide-item"><span class="guide-icon">📊</span><div><h4>اتجاهات النمو</h4><p>رصد نمو الإيرادات والعملاء وحصة السوق</p></div></div>
-        <div class="guide-item"><span class="guide-icon">💡</span><div><h4>رؤى ذكية</h4><p>توصيات مبنية على تحليل بياناتك الفعلية</p></div></div>
+        <div class="guide-item">
+          <span class="guide-icon"><i class="bi bi-graph-up-arrow"></i></span>
+          <div><h4>أداء الإيرادات</h4><p>تتبع نمو إيراداتك الفعلية والمتوقعة</p></div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-icon"><i class="bi bi-check2-all"></i></span>
+          <div><h4>إنجاز المهام</h4><p>قارن المخطط بالمنجز أسبوعياً</p></div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-icon"><i class="bi bi-bar-chart-fill"></i></span>
+          <div><h4>اتجاهات النمو</h4><p>رصد نمو الإيرادات والعملاء وحصة السوق</p></div>
+        </div>
+        <div class="guide-item">
+          <span class="guide-icon"><i class="bi bi-lightbulb-fill"></i></span>
+          <div><h4>رؤى ذكية</h4><p>توصيات مبنية على تحليل بياناتك الفعلية</p></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -71,7 +78,7 @@
 <!-- ===== MAIN ===== -->
 <main class="analytics-main" [class.sidebar-collapsed]="isSidebarCollapsed">
 
-  <!-- Loading -->
+  <!-- Loading Overlay -->
   <div class="loading-overlay" *ngIf="isLoading">
     <div class="loading-spinner">
       <div class="spinner"></div>
@@ -79,29 +86,31 @@
     </div>
   </div>
 
-  <!-- Error -->
+  <!-- Error Banner -->
   <div class="error-banner" *ngIf="errorMessage">
-    <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+    <i class="bi bi-exclamation-triangle-fill"></i>
     {{ errorMessage }}
   </div>
 
-  <!-- ===== WELCOME BANNER ===== -->
+  <!-- ===== WELCOME SECTION ===== -->
   <section class="welcome-section">
     <div class="welcome-content">
       <div class="welcome-text">
-        <h1 class="welcome-title">التحليلات والرؤى <span>📊</span></h1>
+        <h1 class="welcome-title">التحليلات والرؤى <span><i class="bi bi-bar-chart-line-fill"></i></span></h1>
         <p class="welcome-sub">بيانات دقيقة وتوقعات ذكية لمساعدتك على اتخاذ قرارات أفضل</p>
       </div>
       <div class="welcome-badges">
+        <!-- badge: معدل النمو ← يأخذ من statsCards[3].value -->
         <div class="w-badge">
-          <span class="w-badge-icon">📈</span>
+          <span class="w-badge-icon"><i class="bi bi-graph-up-arrow"></i></span>
           <div>
             <span class="w-badge-lbl">معدل النمو</span>
             <span class="w-badge-val">+{{ statsCards[3]?.value || '0%' }}</span>
           </div>
         </div>
+        <!-- badge: إنجاز المهام ← يأخذ من statsCards[1].value -->
         <div class="w-badge">
-          <span class="w-badge-icon">🎯</span>
+          <span class="w-badge-icon"><i class="bi bi-check2-all"></i></span>
           <div>
             <span class="w-badge-lbl">إنجاز المهام</span>
             <span class="w-badge-val">{{ statsCards[1]?.value || '0%' }}</span>
@@ -111,12 +120,18 @@
     </div>
   </section>
 
-  <!-- ===== STATS CARDS ===== -->
+  <!-- ===== METRICS GRID (4 كروت) ===== -->
+  <!--
+    [0] إجمالي الإيرادات   ← GET /finance/summary → totalRevenue
+    [1] معدل إنجاز المهام  ← GET /tasks → (done/total * 100)
+    [2] المصروفات الشهرية  ← GET /finance/summary → totalExpenses
+    [3] معدل النمو          ← محسوب: (revenue-expenses)/revenue*100
+  -->
   <section class="metrics-grid">
     <div class="mc" *ngFor="let card of statsCards; let i = index" [class]="'mc-' + card.color">
-      <div class="mc-icon">{{ card.icon }}</div>
+      <div class="mc-icon"><i [class]="card.icon"></i></div>
       <div class="mc-lbl">{{ card.title }}</div>
-      <div class="mc-val" *ngIf="!card.loading">{{ card.value }}</div>
+      <div class="mc-val"      *ngIf="!card.loading">{{ card.value }}</div>
       <div class="mc-skeleton" *ngIf="card.loading"></div>
       <div class="mc-trend up"   *ngIf="!card.loading &&  card.change.includes('+')">{{ card.change }}</div>
       <div class="mc-trend down" *ngIf="!card.loading && !card.change.includes('+')">{{ card.change }}</div>
@@ -128,112 +143,171 @@
 
   <!-- ===== CHARTS ROW 1 ===== -->
   <div class="charts-row">
+
+    <!-- مخطط الأداء العام (خط متعدد) -->
+    <!-- endpoint: GET /api/v1/projects/:id/analytics/performance -->
+    <!-- datasets: revenue (y محور ر.س) | tasks & satisfaction (y1 محور %) -->
     <div class="chart-card wide">
       <div class="chart-head">
         <div>
-          <div class="chart-title">📈 الأداء العام</div>
+          <div class="chart-title"><i class="bi bi-graph-up-arrow"></i> الأداء العام</div>
           <div class="chart-sub">الإيرادات وإنجاز المهام ورضا العملاء — آخر 6 أشهر</div>
         </div>
-        <span class="chip chip-g">↑ 15%</span>
+        <span class="chip chip-g"><i class="bi bi-arrow-up"></i> 15%</span>
       </div>
       <div class="chart-wrap"><canvas #performanceChart></canvas></div>
     </div>
+
+    <!-- مخطط إنجاز المهام (أعمدة) -->
+    <!-- endpoint: GET /api/v1/projects/:id/tasks → يُجمَّع أسبوعياً بـ buildWeeklyTaskData() -->
+    <!-- datasets: planned (مخطط) | completed (مكتمل) -->
     <div class="chart-card">
       <div class="chart-head">
         <div>
-          <div class="chart-title">✅ إنجاز المهام</div>
+          <div class="chart-title"><i class="bi bi-check2-all"></i> إنجاز المهام</div>
           <div class="chart-sub">المخطط مقابل المكتمل أسبوعياً</div>
         </div>
       </div>
       <div class="chart-wrap"><canvas #taskCompletionChart></canvas></div>
     </div>
-  </div>
+
+  </div><!-- end charts-row 1 -->
 
   <!-- ===== CHARTS ROW 2 ===== -->
   <div class="charts-row">
+
+    <!-- مخطط توقعات الإيرادات (خط سنوي) -->
+    <!-- endpoint: GET /api/v1/projects/:id/analytics/projection -->
+    <!-- datasets: historical (6 أشهر فعلية) | projected (6 أشهر متوقعة — منقطة) -->
     <div class="chart-card wide">
       <div class="chart-head">
         <div>
-          <div class="chart-title">💰 توقعات الإيرادات</div>
+          <div class="chart-title"><i class="bi bi-cash-stack"></i> توقعات الإيرادات</div>
           <div class="chart-sub">الفعلي مقابل المتوقع لكامل السنة</div>
         </div>
         <span class="chip chip-b">توقعات 2025</span>
       </div>
       <div class="chart-wrap"><canvas #revenueProjectionChart></canvas></div>
     </div>
+
+    <!-- مخطط اتجاهات النمو (خط ربعي) -->
+    <!-- endpoint: GET /api/v1/projects/:id/analytics/growth -->
+    <!-- datasets: revenue (y) | customers (y1) | marketShare (y2 مخفي) -->
     <div class="chart-card">
       <div class="chart-head">
         <div>
-          <div class="chart-title">🚀 اتجاهات النمو</div>
+          <div class="chart-title"><i class="bi bi-rocket-takeoff-fill"></i> اتجاهات النمو</div>
           <div class="chart-sub">الإيرادات والعملاء وحصة السوق</div>
         </div>
       </div>
       <div class="chart-wrap"><canvas #growthTrendChart></canvas></div>
     </div>
-  </div>
 
-  <!-- ===== INSIGHTS ===== -->
+  </div><!-- end charts-row 2 -->
+
+  <!-- ===== BOTTOM GRID ===== -->
   <div class="bottom-grid">
 
-    <!-- AI Insights -->
+    <!-- كارد: الرؤى الذكية -->
+    <!-- endpoint: GET /api/v1/projects/:id/analytics/insights (حالياً: generateInsights() محلياً) -->
     <div class="card insights-card">
       <div class="card-head">
-        <div class="card-title">💡 رؤى ذكية وتوقعات</div>
+        <div class="card-title"><i class="bi bi-lightbulb-fill"></i> رؤى ذكية وتوقعات</div>
         <span class="ai-badge">AI</span>
       </div>
-      <div class="insights-list" *ngIf="insights.length > 0; else noInsights">
-        <div class="insight-item" *ngFor="let insight of insights" [class]="'ins-' + insight.type">
-          <div class="ins-icon">
-            <svg *ngIf="insight.type === 'success'" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
-            <svg *ngIf="insight.type === 'warning'" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
-            <svg *ngIf="insight.type === 'info'"    viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
-            <svg *ngIf="insight.type === 'danger'"  viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
-          </div>
-          <div class="ins-body">
-            <div class="ins-title">{{ insight.title }}</div>
-            <div class="ins-desc">{{ insight.description }}</div>
-          </div>
-          <div class="ins-confidence">
-            <div class="conf-num">{{ insight.confidence }}%</div>
-            <div class="conf-lbl">موثوقية</div>
-          </div>
-        </div>
+
+      <!-- 1. Loading State -->
+      <div class="empty-state" *ngIf="isGeneratingInsights">
+        <div class="spinner-border text-primary mb-2" role="status"></div>
+        <p>جاري تحليل البيانات...</p>
       </div>
-      <ng-template #noInsights>
-        <div class="empty-state">
-          <div class="empty-icon">💡</div>
-          <p>جاري تحليل البيانات...</p>
+
+      <!-- 2. Data State -->
+      <ng-container *ngIf="!isGeneratingInsights">
+        
+        <!-- Has Insights -->
+        <div class="insights-list" *ngIf="insights.length > 0; else noInsights">
+          <div class="insight-item" *ngFor="let insight of insights" [class]="'ins-' + insight.type">
+            <!-- Icon based on type -->
+            <div class="ins-icon">
+              <svg *ngIf="insight.type === 'success'" viewBox="0 0 16 16" fill="currentColor"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M6.97 11.03a.75.75 0 0 0 1.08.022l3.992-4.99a.75.75 0 0 0-1.071-1.05L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06z"/></svg>
+              <svg *ngIf="insight.type === 'warning'" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>
+              <svg *ngIf="insight.type === 'info'" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg>
+              <svg *ngIf="insight.type === 'danger'" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>
+            </div>
+            <div class="ins-body">
+              <div class="ins-title">{{ insight.title }}</div>
+              <div class="ins-desc">{{ insight.description }}</div>
+            </div>
+            <div class="ins-confidence">
+              <div class="conf-num">{{ insight.confidence }}%</div>
+              <div class="conf-lbl">موثوقية</div>
+            </div>
+          </div>
         </div>
-      </ng-template>
+
+        <!-- No Insights (Empty) -->
+        <ng-template #noInsights>
+          <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-bar-chart"></i></div>
+            <p>لا توجد بيانات كافية لتوليد رؤى حالياً.</p>
+            <small class="text-muted">أضف بيانات مالية ومهام للحصول على تحليلات.</small>
+          </div>
+        </ng-template>
+      </ng-container>
     </div>
 
-    <!-- Quick Stats & Export -->
+    <!-- عمود جانبي: ملخص المؤشرات + تصدير -->
     <div class="side-col">
+
+      <!-- كارد: ملخص المؤشرات -->
+      <!-- endpoint: GET /api/v1/projects/:id/analytics/kpis → kpiSummary -->
       <div class="card">
         <div class="card-head">
-          <div class="card-title">📊 ملخص المؤشرات</div>
+          <div class="card-title"><i class="bi bi-pie-chart-fill"></i> ملخص المؤشرات</div>
           <span class="chip chip-g">هذا الشهر</span>
         </div>
         <div class="kpi-list">
-          <div class="kpi-row"><span class="kpi-lbl">🏆 أعلى إيراد شهري</span><span class="kpi-val g">32,000 ر.س</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">🎯 أفضل أسبوع إنجاز</span><span class="kpi-val g">92%</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">📈 متوسط نمو شهري</span><span class="kpi-val g">+18%</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">🛒 عدد العملاء الجدد</span><span class="kpi-val b">32</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">📉 معدل الفاقد</span><span class="kpi-val r">4.2%</span></div>
-          <div class="kpi-row"><span class="kpi-lbl">⭐ رضا العملاء</span><span class="kpi-val g">85%</span></div>
+          <div class="kpi-row">
+            <span class="kpi-lbl"><i class="bi bi-trophy-fill"></i> أعلى إيراد شهري</span>
+            <span class="kpi-val g">{{ kpiSummary.topMonthlyRevenue }}</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl"><i class="bi bi-check2-all"></i> أفضل أسبوع إنجاز</span>
+            <span class="kpi-val g">{{ kpiSummary.bestWeekCompletion }}</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl"><i class="bi bi-graph-up-arrow"></i> متوسط نمو شهري</span>
+            <span class="kpi-val g">{{ kpiSummary.avgMonthlyGrowth }}</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl"><i class="bi bi-people-fill"></i> عدد العملاء الجدد</span>
+            <span class="kpi-val b">{{ kpiSummary.newCustomers }}</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl"><i class="bi bi-graph-down-arrow"></i> معدل الفاقد</span>
+            <span class="kpi-val r">{{ kpiSummary.churnRate }}</span>
+          </div>
+          <div class="kpi-row">
+            <span class="kpi-lbl"><i class="bi bi-star-fill"></i> رضا العملاء</span>
+            <span class="kpi-val g">{{ kpiSummary.satisfaction }}</span>
+          </div>
         </div>
       </div>
+
+      <!-- كارد: تصدير التقارير -->
+      <!-- endpoint: GET /api/v1/projects/:id/analytics/export?format=pdf|excel -->
       <div class="card">
         <div class="card-head">
-          <div class="card-title">📤 تصدير التقارير</div>
+          <div class="card-title"><i class="bi bi-file-earmark-arrow-down"></i> تصدير التقارير</div>
         </div>
         <div class="export-grid">
           <button class="exp-btn" (click)="exportData('pdf')">
-            <div class="exp-icon">📄</div>
+            <div class="exp-icon"><i class="bi bi-file-earmark-pdf-fill"></i></div>
             <span>تصدير PDF</span>
           </button>
           <button class="exp-btn" (click)="exportData('excel')">
-            <div class="exp-icon">📊</div>
+            <div class="exp-icon"><i class="bi bi-file-earmark-spreadsheet-fill"></i></div>
             <span>تصدير Excel</span>
           </button>
         </div>
@@ -244,7 +318,8 @@
           </div>
         </div>
       </div>
-    </div>
+
+    </div><!-- end side-col -->
 
   </div><!-- end bottom-grid -->
 

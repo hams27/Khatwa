@@ -111,14 +111,18 @@
           class="submit-btn"
           data-aos="zoom-in" 
           data-aos-delay="300"
-          [disabled]="isLoading">
-          <span class="btn-content" *ngIf="!isLoading">
+          [disabled]="isLoading || isLockedOut">
+          <span class="btn-content" *ngIf="!isLoading && !isLockedOut">
             <span class="btn-text">تسجيل الدخول</span>
             <i class="fas fa-arrow-left btn-icon"></i>
           </span>
           <span class="btn-loader" *ngIf="isLoading">
             <div class="spinner"></div>
             <span>جاري التحميل...</span>
+          </span>
+          <span class="btn-loader" *ngIf="isLockedOut">
+            <i class="fas fa-lock"></i>
+            <span>محظور ({{ lockoutRemaining }}ث)</span>
           </span>
           <div class="btn-shine"></div>
         </button>

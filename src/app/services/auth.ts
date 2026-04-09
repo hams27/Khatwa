@@ -1,24 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { API_BASE_URL } from '../config/api';
 
-export interface LoginResponse {
+export interface AuthUser {
+  id: number;
+  name: string;
+  email: string;
+  role?: string;
+}
+
+export interface AuthResponse {
   success: boolean;
   token: string;
-  data: {
-    user: {
-      id: number;
-      name: string;
-      email: string;
-    }
-  }
+  data: AuthUser;
 }
 
 export interface RegisterData {
   name: string;
   email: string;
-  password: string;
+  phone?: string;
+  password?: string;
+  provider?: string;
 }
 
 export interface LoginData {
@@ -31,7 +35,7 @@ export interface LoginData {
 })
 export class AuthService {
   // Base URL للـ Backend
-private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';  
+private apiUrl = API_BASE_URL;
   
   // BehaviorSubject لتتبع حالة تسجيل الدخول
   private currentUserSubject: BehaviorSubject<any>;
@@ -75,7 +79,14 @@ private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';
             // تم إيقاف getProfile مؤقتاً بسبب خطأ job_title في الـ Backend
           }
 
-          return response;
+          // Securely remove token from response before returning to component
+          const secureResponse = { ...response };
+          if (secureResponse.token) delete secureResponse.token;
+          if (secureResponse.data?.token) delete secureResponse.data.token;
+          if (secureResponse.accessToken) delete secureResponse.accessToken;
+          if (secureResponse.access_token) delete secureResponse.access_token;
+          
+          return secureResponse;
         })
       );
   }
@@ -88,7 +99,7 @@ private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';
   // بعد الحل: نرجع نفعّل getProfile() اللي اتعلقت في السطور دي
 
   // تسجيل الدخول
-  login(data: LoginData): Observable<LoginResponse> {
+  login(data: LoginData): Observable<AuthResponse> {
     return this.http.post<any>(`${this.apiUrl}/auth/login`, data)
       .pipe(
         map(response => {
@@ -116,7 +127,14 @@ private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';
             // تم إيقاف getProfile مؤقتاً بسبب خطأ job_title في الـ Backend
           }
 
-          return response;
+          // Securely remove token from response before returning to component
+          const secureResponse = { ...response };
+          if (secureResponse.token) delete secureResponse.token;
+          if (secureResponse.data?.token) delete secureResponse.data.token;
+          if (secureResponse.accessToken) delete secureResponse.accessToken;
+          if (secureResponse.access_token) delete secureResponse.access_token;
+
+          return secureResponse;
         }),
         catchError(error => {
           // لو الباك رجع 500 بس في token في الـ error body — نستخدمه
@@ -134,7 +152,14 @@ private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';
               localStorage.setItem('currentUser', JSON.stringify(user));
               this.currentUserSubject.next(user);
             }
-            return [body]; // نرجعه كـ next مش error
+            
+            // Securely remove token from error body
+            const secureBody = { ...body };
+            if (secureBody.token) delete secureBody.token;
+            if (secureBody.data?.token) delete secureBody.data.token;
+            if (secureBody.accessToken) delete secureBody.accessToken;
+            
+            return of(secureBody);
           }
 
           return throwError(() => error);
@@ -171,6 +196,16 @@ private apiUrl = 'https://khatwa-backend-sepia.vercel.app/api/v1';
   // الحصول على Token
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  // طلب استعادة كلمة المرور
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/forgotpassword`, { email });
+  }
+
+  // إعادة تعيين كلمة المرور باستخدام التوكن
+  resetPassword(token: string, password: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/auth/resetpassword/${token}`, { password });
   }
 
   // الحصول على base API URL (للـ social login redirects)

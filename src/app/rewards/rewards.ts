@@ -4,6 +4,7 @@ import { SideBar } from '../side-bar/side-bar';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../services/auth';
 import { interval, Subscription } from 'rxjs';
+import { API_BASE_URL } from '../config/api';
 
 // Interfaces
 interface Goal {
@@ -233,7 +234,7 @@ export class Rewards implements OnInit, OnDestroy {
   private refreshSubscription?: Subscription;
   
   // API URL
-  private apiUrl = 'http://localhost:5000/api/v1';
+  private apiUrl = API_BASE_URL;
 
   constructor(
     private http: HttpClient,

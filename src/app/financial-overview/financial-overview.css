@@ -1,4 +1,30 @@
-/* ===== LAYOUT ===== */
+/* =============================================================================
+   financial-overview.css
+   الترتيب يطابق ترتيب العناصر في financial-overview.html
+   =============================================================================
+
+   1. TOP NAV
+   2. GUIDE MODAL
+   3. ADD TRANSACTION MODAL
+   4. MAIN
+      4a. LOADING OVERLAY
+      4b. ERROR / SUCCESS BANNERS
+      4c. WELCOME SECTION
+      4d. METRICS GRID
+      4e. CHARTS
+      4f. BOTTOM GRID — TRANSACTIONS
+      4g. BOTTOM GRID — SIDE COL (ملخص + إجراءات سريعة)
+   5. EXPORT REPORT MODAL
+   6. ANALYTICS MODAL
+   7. ANIMATIONS
+   8. RESPONSIVE
+
+   ============================================================================= */
+
+/* =============================================================================
+   1. TOP NAV
+   ============================================================================= */
+
 .top-nav {
   position: sticky; top: 0; z-index: 1001;
   background: rgba(255,255,255,.97);
@@ -16,26 +42,13 @@
 .top-nav.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
 
 .nav-content { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-.nav-left { display: flex; align-items: center; gap: 12px; }
+.nav-left    { display: flex; align-items: center; gap: 12px; }
+.nav-right   { display: flex; align-items: center; gap: 10px; }
+
 .nav-page-title { font-size: 17px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.nav-page-sub { font-size: 13px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.nav-page-sub   { font-size: 13px; color: #2563EB; margin-top: 1px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
-.nav-right { display: flex; align-items: center; gap: 10px; }
-
-/* ===== HAMBURGER — مخفي على ديسكتوب ===== */
-.topnav-hamburger {
-  display: none; align-items: center; justify-content: center;
-  width: 40px; height: 40px; background: #1a2e5e;
-  border: none; border-radius: 10px; cursor: pointer;
-  transition: background .2s; flex-shrink: 0;
-}
-.topnav-hamburger:hover { background: #2563EB; }
-.topnav-hamburger svg { width: 20px; height: 20px; color: #fff; }
-
-/* ===== DESKTOP-ONLY HELPER ===== */
-.desktop-only-flex { display: flex; }
-
-/* Period Selector */
+/* Period Selector — أزرار الفترة الزمنية */
 .period-selector {
   display: flex; gap: 4px;
   background: #eff6ff; padding: 4px;
@@ -48,9 +61,10 @@
   font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600;
   color: #2563EB; cursor: pointer; transition: all .2s;
 }
-.period-btn.active { background: #fff; color: #1a2e5e; box-shadow: 0 1px 6px rgba(37,99,235,.12); }
+.period-btn.active           { background: #fff; color: #1a2e5e; box-shadow: 0 1px 6px rgba(37,99,235,.12); }
 .period-btn:hover:not(.active) { color: #1a2e5e; }
 
+/* زر تحديث */
 .btn-add {
   display: flex; align-items: center; gap: 7px;
   padding: 9px 18px; background: #2563EB; color: #fff;
@@ -60,8 +74,9 @@
   box-shadow: 0 4px 14px rgba(37,99,235,.30);
 }
 .btn-add:hover { background: #1d4ed8; transform: translateY(-1px); }
-.btn-add svg { width: 14px; height: 14px; }
+.btn-add svg   { width: 14px; height: 14px; }
 
+/* زر دليل الاستخدام */
 .guide-btn {
   display: flex; align-items: center; gap: 7px;
   padding: 9px 18px; background: #1a2e5e; color: #fff;
@@ -70,52 +85,52 @@
   cursor: pointer; transition: all .2s;
 }
 .guide-btn:hover { background: #1e3a8a; transform: translateY(-1px); }
-.guide-btn svg { width: 14px; height: 14px; }
+.guide-btn svg   { width: 14px; height: 14px; }
 
-/* ===== MAIN ===== */
-.finance-main {
-  margin-right: 260px;
-  padding: 28px 32px;
-  background: #f5f7ff;
-  min-height: 100vh;
-  width: calc(100% - 260px);
-  box-sizing: border-box;
-  overflow-x: hidden;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  transition: margin-right .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
+/* هامبرجر الموبايل — مخفي على ديسكتوب */
+.topnav-hamburger {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; background: #1a2e5e;
+  border: none; border-radius: 10px; cursor: pointer;
+  transition: background .2s; flex-shrink: 0;
 }
-.finance-main.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
+.topnav-hamburger:hover  { background: #2563EB; }
+.topnav-hamburger svg    { width: 20px; height: 20px; color: #fff; }
 
-/* ===== LOADING ===== */
-.loading-overlay {
-  position: fixed; inset: 0;
-  background: rgba(245,247,255,.95);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 200;
-}
-.loading-spinner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.spinner {
-  width: 44px; height: 44px;
-  border: 3px solid #bfcfef;
-  border-top-color: #2563EB;
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-}
-.loading-spinner p { color: #1a2e5e; font-size: 15px; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; }
-@keyframes spin { to { transform: rotate(360deg); } }
+/* هيلبر لإخفاء عناصر الديسكتوب على الموبايل */
+.desktop-only-flex { display: flex; }
 
-/* ===== ERROR BANNER ===== */
-.error-banner {
-  display: flex; align-items: center; gap: 10px;
-  background: #fff1f0; color: #c0392b;
-  border: 1px solid #ffc9c9;
-  border-radius: 12px; padding: 12px 18px;
-  margin-bottom: 20px; font-size: 14px; font-weight: 500;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.error-banner svg { width: 16px; height: 16px; fill: #c0392b; flex-shrink: 0; }
+/* =============================================================================
+   2. GUIDE MODAL — مودال دليل الاستخدام
+   ============================================================================= */
 
-/* ===== MODAL ===== */
+/* ← يستخدم classes مشتركة مع باقي المودالات: .modal-overlay, .modal-container, .modal-header...
+      انظر قسم 3 أدناه */
+
+.guide-intro { font-size: 14px; color: #2563EB; margin-bottom: 16px; line-height: 1.65; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.guide-features { display: flex; flex-direction: column; gap: 12px; }
+.guide-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px; background: #eff6ff;
+  border-radius: 10px; border: 1px solid #bfcfef;
+}
+.guide-icon   { font-size: 22px; flex-shrink: 0; color: #2563EB; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; }
+.guide-item h4 { font-size: 14px; font-weight: 700; color: #1a2e5e; margin: 0 0 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.guide-item p  { font-size: 13px; color: #2563EB; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+.btn-primary {
+  padding: 11px 26px; background: #2563EB; color: #fff;
+  border: none; border-radius: 10px;
+  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+}
+.btn-primary:hover { background: #1d4ed8; }
+
+/* =============================================================================
+   3. ADD TRANSACTION MODAL — مودال إضافة معاملة
+   ============================================================================= */
+
+/* Base Modal (مشترك بين جميع المودالات) */
 .modal-overlay {
   position: fixed; inset: 0;
   background: rgba(26,46,94,.45);
@@ -149,35 +164,167 @@
   border-top: 1px solid #bfcfef;
 }
 
-.modal-header h3 { font-size: 17px; font-weight: 700; color: #1a2e5e; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.modal-header h3 { font-size: 17px; font-weight: 700; color: #1a2e5e; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; display: flex; align-items: center; gap: 8px; }
+.modal-header h3 i { font-size: 18px; color: #2563EB; }
+
 .close-btn {
   width: 32px; height: 32px; border-radius: 8px;
   border: 1px solid #bfcfef; background: #f5f7ff;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: all .2s;
 }
-.close-btn:hover { background: #dbeafe; }
-.close-btn svg { width: 14px; height: 14px; fill: #2563EB; }
+.close-btn:hover  { background: #dbeafe; }
+.close-btn svg    { width: 14px; height: 14px; fill: #2563EB; }
 
-.guide-intro { font-size: 14px; color: #2563EB; margin-bottom: 16px; line-height: 1.65; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.guide-features { display: flex; flex-direction: column; gap: 12px; }
-.guide-item {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 12px; background: #eff6ff;
-  border-radius: 10px; border: 1px solid #bfcfef;
+/* Add Modal Size */
+.add-modal { width: 500px; }
+
+/* تلوين هيدر المودال حسب النوع */
+.modal-header.header-revenue   { border-bottom-color: #2563EB; }
+.modal-header.header-revenue h3 { color: #1a2e5e; }
+.modal-header.header-expense   { border-bottom-color: #e53935; }
+.modal-header.header-expense h3 { color: #e53935; }
+
+/* Form Groups */
+.form-group             { margin-bottom: 16px; }
+.form-group.has-error .form-input { border-color: #e53935; background: #fff5f5; }
+
+.form-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 700;
+  color: #1a2e5e; margin-bottom: 6px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
 }
-.guide-icon { font-size: 22px; flex-shrink: 0; }
-.guide-item h4 { font-size: 14px; font-weight: 700; color: #1a2e5e; margin: 0 0 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.guide-item p { font-size: 13px; color: #2563EB; margin: 0; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.btn-primary {
-  padding: 11px 26px; background: #2563EB; color: #fff;
-  border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 14px; font-weight: 700;
+.required { color: #e53935; margin-right: 2px; }
+
+.field-error {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: #e53935; font-weight: 600;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.field-error::before { content: '!'; font-size: 11px; font-weight: 900; }
+
+.form-input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid #bfcfef; border-radius: 10px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 14px; color: #1a2e5e;
+  background: #f5f7ff;
+  outline: none; transition: border-color .2s, background .2s;
+  box-sizing: border-box;
+}
+.form-input:focus { border-color: #2563EB; background: #fff; }
+.form-select      { cursor: pointer; }
+.form-textarea    { resize: vertical; min-height: 60px; }
+
+.input-with-icon { position: relative; }
+.input-with-icon .form-input { padding-left: 50px; }
+.input-suffix {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  font-size: 13px; font-weight: 700; color: #2563EB;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+
+/* Profit Preview — معاينة الأثر على الأرباح */
+.profit-preview {
+  background: #f0f7ff; border: 1.5px solid #bfcfef;
+  border-radius: 12px; padding: 14px 16px; margin-top: 4px;
+}
+.pp-title { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 10px; font-family: "Ht Moshreq Pro", sans-serif !important; display: flex; align-items: center; gap: 6px; }
+.pp-title i { color: #2563EB; }
+.pp-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; color: #2563EB; margin-bottom: 6px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.pp-divider { border-top: 1.5px dashed #bfcfef; margin: 8px 0; }
+.pp-result  { font-weight: 700; }
+.pp-val     { font-weight: 700; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.pp-val.pos { color: #1f9950; }
+.pp-val.neg { color: #e53935; }
+
+/* Modal Footer Buttons */
+.modal-footer-btns { display: flex; gap: 10px; justify-content: flex-end; }
+
+.btn-cancel {
+  padding: 10px 22px; background: #f5f7ff;
+  border: 1.5px solid #bfcfef; border-radius: 10px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 14px; font-weight: 600; color: #1a2e5e;
   cursor: pointer; transition: all .2s;
 }
-.btn-primary:hover { background: #1d4ed8; }
+.btn-cancel:hover    { background: #e0eaff; }
+.btn-cancel:disabled { opacity: .5; cursor: not-allowed; }
 
-/* ===== WELCOME ===== */
+.btn-save {
+  padding: 10px 24px; border: none; border-radius: 10px;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  font-size: 14px; font-weight: 700; color: #fff;
+  cursor: pointer; transition: all .2s;
+}
+.btn-save-revenue       { background: #2563EB; }
+.btn-save-revenue:hover { background: #1d4ed8; }
+.btn-save-expense       { background: #e53935; }
+.btn-save-expense:hover { background: #c62828; }
+.btn-save:disabled      { opacity: .6; cursor: not-allowed; }
+
+/* =============================================================================
+   4. MAIN — الجسم الرئيسي
+   ============================================================================= */
+
+.finance-main {
+  margin-right: 260px;
+  padding: 28px 32px;
+  background: #f5f7ff;
+  min-height: 100vh;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  transition: margin-right .3s cubic-bezier(.4,0,.2,1), width .3s cubic-bezier(.4,0,.2,1);
+}
+.finance-main.sidebar-collapsed { margin-right: 72px; width: calc(100% - 72px); }
+
+/* --- 4a. LOADING OVERLAY --- */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: rgba(245,247,255,.95);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+}
+.loading-spinner { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.spinner {
+  width: 44px; height: 44px;
+  border: 3px solid #bfcfef;
+  border-top-color: #2563EB;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+.loading-spinner p { color: #1a2e5e; font-size: 15px; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* --- 4b. ERROR / SUCCESS BANNERS --- */
+.error-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff1f0; color: #c0392b;
+  border: 1px solid #ffc9c9;
+  border-radius: 12px; padding: 12px 18px;
+  margin-bottom: 20px; font-size: 14px; font-weight: 500;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+}
+.error-banner svg { width: 16px; height: 16px; fill: #c0392b; flex-shrink: 0; }
+
+.success-banner {
+  display: flex; align-items: center; gap: 10px;
+  background: #f0fdf4; color: #166534;
+  border: 1px solid #bbf7d0; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 20px;
+  font-size: 14px; font-weight: 600;
+  font-family: "Ht Moshreq Pro", sans-serif !important;
+  animation: fadeUp .3s ease;
+}
+
+/* --- 4c. WELCOME SECTION --- */
 .welcome-section { margin-bottom: 24px; }
 .welcome-content {
   background: linear-gradient(135deg, #1a2e5e 0%, #2563EB 100%);
@@ -195,20 +342,20 @@
   left: 60px; bottom: -80px; width: 180px; height: 180px;
   background: rgba(255,255,255,.06); border-radius: 50%;
 }
-.welcome-text { position: relative; z-index: 1; }
-.welcome-title { font-size: 23px; font-weight: 800; color: #fff; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.welcome-sub { font-size: 14px; color: #bfcfef; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.welcome-text   { position: relative; z-index: 1; }
+.welcome-title  { font-size: 23px; font-weight: 800; color: #fff; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.welcome-sub    { font-size: 14px; color: #bfcfef; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .welcome-badges { display: flex; gap: 12px; position: relative; z-index: 1; }
 .w-badge {
   background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
   border-radius: 12px; padding: 10px 16px;
   display: flex; align-items: center; gap: 10px;
 }
-.w-badge-icon { font-size: 22px; }
-.w-badge-lbl { font-size: 12px; color: #bfcfef; display: block; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.w-badge-val { font-size: 21px; font-weight: 800; color: #fff; display: block; line-height: 1.1; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.w-badge-icon { font-size: 24px; color: rgba(255,255,255,.85); display: flex; align-items: center; }
+.w-badge-lbl  { font-size: 12px; color: #bfcfef; display: block; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.w-badge-val  { font-size: 21px; font-weight: 800; color: #fff; display: block; line-height: 1.1; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
-/* ===== METRICS ===== */
+/* --- 4d. METRICS GRID --- */
 .metrics-grid {
   display: grid; grid-template-columns: repeat(4,1fr);
   gap: 16px; margin-bottom: 24px;
@@ -224,11 +371,13 @@
 .mc:nth-child(3){animation-delay:.15s}
 .mc:nth-child(4){animation-delay:.2s}
 .mc:hover { transform: translateY(-3px); box-shadow: 0 6px 28px rgba(37,99,235,.13); border-color: #2563EB; }
-.mc-icon { font-size: 22px; margin-bottom: 12px; }
-.mc-lbl { font-size: 13px; color: #2563EB; font-weight: 600; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.mc-val { font-size: 24px; font-weight: 800; color: #1a2e5e; line-height: 1.2; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+.mc-icon { font-size: 24px; margin-bottom: 12px; color: #2563EB; }
+.mc-lbl  { font-size: 13px; color: #2563EB; font-weight: 600; margin-bottom: 4px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.mc-val  { font-size: 24px; font-weight: 800; color: #1a2e5e; line-height: 1.2; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .mc-val.negative-val { color: #e74c3c; }
-.mc-sub { font-size: 12px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.mc-sub  { font-size: 12px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
 .mc-trend {
   display: inline-flex; align-items: center; gap: 3px;
   font-size: 12px; font-weight: 700;
@@ -238,13 +387,13 @@
 .mc-trend.up   { background: rgba(37,99,235,.10); color: #2563EB; }
 .mc-trend.down { background: rgba(231,76,60,.10); color: #e74c3c; }
 
-.mini-prog { height: 4px; background: #bfcfef; border-radius: 4px; margin-top: 12px; overflow: hidden; }
-.mini-prog-fill { height: 100%; border-radius: 4px; }
-.mini-prog-fill.g { background: linear-gradient(90deg,#1d4ed8,#2563EB); }
-.mini-prog-fill.r { background: linear-gradient(90deg,#e53935,#ef9a9a); }
-.mini-prog-fill.p { background: linear-gradient(90deg,#1a2e5e,#2563EB); }
+.mini-prog         { height: 4px; background: #bfcfef; border-radius: 4px; margin-top: 12px; overflow: hidden; }
+.mini-prog-fill    { height: 100%; border-radius: 4px; }
+.mini-prog-fill.g  { background: linear-gradient(90deg,#1d4ed8,#2563EB); }
+.mini-prog-fill.r  { background: linear-gradient(90deg,#e53935,#ef9a9a); }
+.mini-prog-fill.p  { background: linear-gradient(90deg,#1a2e5e,#2563EB); }
 
-/* ===== CHARTS ===== */
+/* --- 4e. CHARTS --- */
 .charts-row {
   display: grid; grid-template-columns: 1.8fr 1fr;
   gap: 16px; margin-bottom: 16px;
@@ -257,26 +406,29 @@
   max-width: 95%;
 }
 .chart-card.full-width { width: 100%; }
-.chart-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
-.chart-title { font-size: 15px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.chart-sub { font-size: 12px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.chip { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.chart-head  { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+.chart-title { font-size: 15px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; display: flex; align-items: center; gap: 7px; }
+.chart-title i { color: #2563EB; }
+.chart-sub   { font-size: 12px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+.chip   { font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .chip-g { background: #dbeafe; color: #1d4ed8; }
 .chip-b { background: rgba(37,99,235,.10); color: #2563EB; }
 .chip-r { background: rgba(231,76,60,.10); color: #e74c3c; }
+
 .chart-foot { display: flex; gap: 24px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e0eaff; }
 .cs-lbl { font-size: 12px; color: #2563EB; display: block; margin-bottom: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .cs-val { font-size: 15px; font-weight: 700; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .cs-val.s { color: #2563EB; }
 .cs-val.d { color: #e74c3c; }
 
-/* ===== BOTTOM GRID ===== */
+/* --- 4f. BOTTOM GRID — TRANSACTIONS (آخر المعاملات) --- */
 .bottom-grid {
   display: grid; grid-template-columns: 1.6fr 1fr;
   gap: 16px;
 }
 
-/* ===== CARD BASE ===== */
+/* Card Base (مشترك بين transactions و side-col) */
 .card {
   background: #fff; border-radius: 16px;
   padding: 20px; box-shadow: 0 2px 16px rgba(37,99,235,.07);
@@ -287,9 +439,9 @@
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 16px;
 }
-.card-title { font-size: 15px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.card-title { font-size: 15px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; display: flex; align-items: center; gap: 7px; }
+.card-title i { color: #2563EB; font-size: 16px; }
 
-/* ===== TRANSACTIONS ===== */
 .transactions-card { height: fit-content; }
 .tx-count { font-size: 12px; color: #1d4ed8; background: #dbeafe; padding: 3px 10px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
@@ -302,35 +454,45 @@
   border-right: 4px solid #bfcfef;
   transition: all .2s;
 }
-.tx-item:hover { background: #eff6ff; transform: translateX(-2px); }
+.tx-item:hover         { background: #eff6ff; transform: translateX(-2px); }
 .tx-item.tx-revenue { border-right-color: #2563EB; }
+.tx-item.tx-revenue .tx-icon { color: #2563EB; }
 .tx-item.tx-expense { border-right-color: #e53935; }
+.tx-item.tx-expense .tx-icon { color: #e53935; }
 .tx-item.tx-pending { border-right-color: #f59e0b; }
+.tx-item.tx-pending .tx-icon { color: #f59e0b; }
 
 .tx-icon {
-  font-size: 20px; width: 40px; height: 40px;
+  font-size: 18px; width: 40px; height: 40px;
   display: flex; align-items: center; justify-content: center;
   background: #fff; border-radius: 10px;
   border: 1px solid #bfcfef; flex-shrink: 0;
+  color: #2563EB;
 }
-.tx-info { flex: 1; min-width: 0; }
+.tx-info  { flex: 1; min-width: 0; }
 .tx-title { font-size: 14px; font-weight: 700; color: #1a2e5e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.tx-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
-.tx-date { font-size: 12px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.tx-cat { font-size: 11px; background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 20px; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.tx-meta  { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
+.tx-date  { font-size: 12px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.tx-cat   { font-size: 11px; background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 20px; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
 .tx-amount { font-size: 15px; font-weight: 700; white-space: nowrap; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .amount-pos { color: #2563EB; }
 .amount-neg { color: #e53935; }
 
-/* ===== SIDE COL ===== */
+/* Empty State */
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 32px 16px; text-align: center; }
+.empty-icon  { font-size: 40px; color: #bfcfef; }
+.empty-state p { font-size: 14px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
+
+/* --- 4g. BOTTOM GRID — SIDE COL (ملخص مالي + إجراءات سريعة) --- */
 .side-col { display: flex; flex-direction: column; gap: 16px; }
 
-/* Circular Progress */
+/* ملخص مالي — الدائرة الدوارة */
 .prog-pct { font-size: 13px; font-weight: 700; color: #1d4ed8; background: #dbeafe; padding: 3px 10px; border-radius: 20px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.circ-wrap { display: flex; justify-content: center; margin: 16px 0; }
+.circ-wrap      { display: flex; justify-content: center; margin: 16px 0; }
 .circ-container { position: relative; width: 140px; height: 140px; }
-.circ-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.c-bg { fill: none; stroke: #dbeafe; stroke-width: 10; }
+.circ-svg       { width: 100%; height: 100%; transform: rotate(-90deg); }
+.c-bg   { fill: none; stroke: #dbeafe; stroke-width: 10; }
 .c-fill {
   fill: none; stroke: url(#finGrad); stroke-width: 10;
   stroke-linecap: round;
@@ -344,7 +506,7 @@
 .circ-pct { font-size: 25px; font-weight: 800; color: #1a2e5e; line-height: 1; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .circ-lbl { font-size: 12px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
-/* Summary Rows */
+/* Summary Rows (إيرادات / مصروفات / صافي الربح) */
 .summary-rows { display: flex; flex-direction: column; gap: 8px; }
 .sum-row {
   display: flex; align-items: center; justify-content: space-between;
@@ -352,12 +514,13 @@
   background: #f5f7ff; border: 1px solid #e0eaff;
 }
 .sum-row.border-top { border-top: 2px solid #bfcfef; margin-top: 4px; }
-.sum-lbl { font-size: 13px; color: #2563EB; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.sum-lbl { font-size: 13px; color: #2563EB; font-weight: 600; font-family: "Ht Moshreq Pro", sans-serif !important; display: flex; align-items: center; gap: 5px; }
+.sum-lbl i { font-size: 14px; }
 .sum-val { font-size: 15px; font-weight: 700; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .sum-val.g { color: #2563EB; }
 .sum-val.r { color: #e53935; }
 
-/* Quick Actions */
+/* إجراءات سريعة */
 .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .act-btn {
   display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -366,199 +529,19 @@
   cursor: pointer; transition: all .25s;
   font-family: "Ht Moshreq Pro", sans-serif !important; font-size: 13px; font-weight: 600; color: #1a2e5e;
 }
-.act-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,.12); }
-.act-icon { font-size: 24px; }
+.act-btn:hover            { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,.12); }
+.act-icon { font-size: 26px; color: #2563EB; }
 .act-btn.act-revenue:hover { border-color: #2563EB; background: #dbeafe; }
+.act-btn.act-revenue:hover .act-icon { color: #1d4ed8; }
 .act-btn.act-expense:hover { border-color: #ef9a9a; background: #fff1f0; }
+.act-btn.act-expense:hover .act-icon { color: #e53935; }
 .act-btn.act-report:hover  { border-color: #1d4ed8; background: #eff6ff; }
 .act-btn.act-chart:hover   { border-color: #1a2e5e; background: #eef2ff; }
 
-/* ===== EMPTY STATE ===== */
-.empty-state { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 32px 16px; text-align: center; }
-.empty-icon { font-size: 36px; }
-.empty-state p { font-size: 14px; color: #2563EB; font-family: "Ht Moshreq Pro", sans-serif !important; }
+/* =============================================================================
+   5. EXPORT REPORT MODAL
+   ============================================================================= */
 
-/* ===== ANIMATION ===== */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ================================================================
-   RESPONSIVE — تابلت (< 1024px)
-   ================================================================ */
-@media (max-width: 1023px) {
- .chart-card{max-width: 95%;} 
-
-  /* إلغاء الـ margin — السايد بار بيبقى overlay */
-  .top-nav,
-  .top-nav.sidebar-collapsed {
-    margin-right: 0 !important;
-    width: 100% !important;
-    transition: none;
-  }
-  .finance-main,
-  .finance-main.sidebar-collapsed {
-    margin-right: 0 !important;
-    width: 100% !important;
-    transition: none;
-  }
-
-  /* إظهار الهامبرجر */
-  .topnav-hamburger { display: flex !important; }
-
-  /* إخفاء period selector من التوب بار */
-  .desktop-only-flex { display: none !important; }
-
-  /* تصغير عناصر التوب بار */
-  .nav-page-title { font-size: 15px; }
-  .nav-page-sub   { font-size: 11px; }
-
-  /* الجريدات */
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .charts-row   { grid-template-columns: 1fr; }
-  .bottom-grid  { grid-template-columns: 1fr; }
-}
-
-/* ================================================================
-   RESPONSIVE — موبايل (< 768px)
-   ================================================================ */
-@media (max-width: 768px) {
- .chart-card{max-width: 90%;} 
-
-  .top-nav        { padding: 0 16px; }
-  .finance-main   { padding: 16px; }
-
-  /* إخفاء نص الأزرار */
-  .btn-text    { display: none; }
-  .btn-add     { padding: 9px 12px; }
-  .guide-btn   { padding: 9px 12px; }
-
-  /* الويلكام */
-  .welcome-content  { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
-  .welcome-badges   { width: 100%; }
-  .w-badge          { flex: 1; }
-  .welcome-title    { font-size: 18px; }
-
-  /* الجريد */
-  .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-}
-
-/* ================================================================
-   RESPONSIVE — موبايل صغير (< 480px)
-   ================================================================ */
-@media (max-width: 480px) {
-   .chart-card{max-width: 90%;} 
-
-  .metrics-grid { grid-template-columns: 1fr; }
-  .welcome-title { font-size: 16px; }
-  .actions-grid  { grid-template-columns: 1fr 1fr; }
-}
-/* ===== ADD TRANSACTION MODAL ===== */
-.add-modal { width: 500px; }
-
-.modal-header.header-revenue { border-bottom-color: #2563EB; }
-.modal-header.header-revenue h3 { color: #1a2e5e; }
-.modal-header.header-expense { border-bottom-color: #e53935; }
-.modal-header.header-expense h3 { color: #e53935; }
-
-/* Form */
-.form-group { margin-bottom: 16px; }
-.form-group.has-error .form-input { border-color: #e53935; background: #fff5f5; }
-
-.form-label {
-  display: flex; align-items: center; justify-content: space-between;
-  font-size: 13px; font-weight: 700;
-  color: #1a2e5e; margin-bottom: 6px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.required { color: #e53935; margin-right: 2px; }
-
-.field-error {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 12px; color: #e53935; font-weight: 600;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.field-error::before { content: '⚠'; font-size: 11px; }
-
-/* Profit Preview */
-.profit-preview {
-  background: #f0f7ff; border: 1.5px solid #bfcfef;
-  border-radius: 12px; padding: 14px 16px; margin-top: 4px;
-}
-.pp-title {
-  font-size: 13px; font-weight: 700; color: #1a2e5e;
-  margin-bottom: 10px; font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.pp-row {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 13px; color: #2563EB; margin-bottom: 6px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-.pp-divider { border-top: 1.5px dashed #bfcfef; margin: 8px 0; }
-.pp-result { font-weight: 700; }
-.pp-val { font-weight: 700; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.pp-val.pos { color: #1f9950; }
-.pp-val.neg { color: #e53935; }
-
-/* Modal Footer Buttons */
-.modal-footer-btns { display: flex; gap: 10px; justify-content: flex-end; }
-
-.btn-cancel {
-  padding: 10px 22px; background: #f5f7ff;
-  border: 1.5px solid #bfcfef; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 14px; font-weight: 600; color: #1a2e5e;
-  cursor: pointer; transition: all .2s;
-}
-.btn-cancel:hover { background: #e0eaff; }
-.btn-cancel:disabled { opacity: .5; cursor: not-allowed; }
-
-.btn-save {
-  padding: 10px 24px; border: none; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 14px; font-weight: 700; color: #fff;
-  cursor: pointer; transition: all .2s;
-}
-.btn-save-revenue { background: #2563EB; }
-.btn-save-revenue:hover { background: #1d4ed8; }
-.btn-save-expense { background: #e53935; }
-.btn-save-expense:hover { background: #c62828; }
-.btn-save:disabled { opacity: .6; cursor: not-allowed; }
-
-/* Success Banner */
-.success-banner {
-  display: flex; align-items: center; gap: 10px;
-  background: #f0fdf4; color: #166534;
-  border: 1px solid #bbf7d0; border-radius: 12px;
-  padding: 12px 18px; margin-bottom: 20px;
-  font-size: 14px; font-weight: 600;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  animation: fadeUp .3s ease;
-}
-/* ===== FORM INPUT (مكرر للتأكد من وجوده بعد التعديل) ===== */
-.form-input {
-  width: 100%; padding: 10px 14px;
-  border: 1.5px solid #bfcfef; border-radius: 10px;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-  font-size: 14px; color: #1a2e5e;
-  background: #f5f7ff;
-  outline: none; transition: border-color .2s, background .2s;
-  box-sizing: border-box;
-}
-.form-input:focus { border-color: #2563EB; background: #fff; }
-.form-select { cursor: pointer; }
-.form-textarea { resize: vertical; min-height: 60px; }
-
-.input-with-icon { position: relative; }
-.input-with-icon .form-input { padding-left: 50px; }
-.input-suffix {
-  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-  font-size: 13px; font-weight: 700; color: #2563EB;
-  font-family: "Ht Moshreq Pro", sans-serif !important;
-}
-
-/* ===== EXPORT REPORT MODAL ===== */
 .report-modal { width: 520px; max-width: 95vw; }
 
 .report-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
@@ -568,19 +551,19 @@
   border: 1.5px solid #bfcfef; background: #f5f7ff;
   cursor: pointer; transition: all .2s;
 }
-.report-opt:hover { border-color: #2563EB; background: #eff6ff; }
+.report-opt:hover    { border-color: #2563EB; background: #eff6ff; }
 .report-opt.selected { border-color: #2563EB; background: #dbeafe; }
-.report-opt-icon { font-size: 24px; flex-shrink: 0; }
-.report-opt-info { flex: 1; }
+.report-opt-icon  { font-size: 22px; flex-shrink: 0; color: #2563EB; width: 36px; display: flex; align-items: center; justify-content: center; }
+.report-opt-info  { flex: 1; }
 .report-opt-title { font-size: 14px; font-weight: 700; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .report-opt-desc  { font-size: 12px; color: #2563EB; margin-top: 2px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .report-check { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #bfcfef; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-.report-opt.selected .report-check { background: #2563EB; border-color: #2563EB; }
-.report-opt.selected .report-check::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+.report-opt.selected .report-check         { background: #2563EB; border-color: #2563EB; }
+.report-opt.selected .report-check::after  { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
 
 .report-period-section { margin-bottom: 16px; }
-.report-period-title { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 8px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.report-period-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.report-period-title   { font-size: 13px; font-weight: 700; color: #1a2e5e; margin-bottom: 8px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.report-period-btns    { display: flex; gap: 6px; flex-wrap: wrap; }
 .rp-btn {
   padding: 6px 14px; border-radius: 20px;
   border: 1.5px solid #bfcfef; background: #f5f7ff;
@@ -590,14 +573,14 @@
 }
 .rp-btn.active, .rp-btn:hover { background: #dbeafe; border-color: #2563EB; color: #1d4ed8; }
 
-.report-summary {
-  background: #f0fdf4; border: 1.5px solid #bbf7d0;
-  border-radius: 12px; padding: 14px 16px;
-}
-.report-summary-title { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 10px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.report-summary-row { display: flex; justify-content: space-between; font-size: 13px; color: #1a2e5e; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+/* Report Summary Preview */
+.report-summary       { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 14px 16px; }
+.report-summary-title { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 10px; font-family: "Ht Moshreq Pro", sans-serif !important; display: flex; align-items: center; gap: 6px; }
+.report-summary-title i { color: #166534; }
+.report-summary-row   { display: flex; justify-content: space-between; font-size: 13px; color: #1a2e5e; margin-bottom: 6px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .report-summary-row span:last-child { font-weight: 700; }
 
+/* Export Button */
 .btn-export {
   padding: 11px 28px; border: none; border-radius: 10px;
   background: #2563EB; color: #fff;
@@ -606,55 +589,127 @@
   cursor: pointer; transition: all .2s;
   display: flex; align-items: center; gap: 8px;
 }
-.btn-export:hover { background: #1d4ed8; transform: translateY(-1px); }
+.btn-export:hover    { background: #1d4ed8; transform: translateY(-1px); }
 .btn-export.spin svg { animation: spinAnim .8s linear infinite; }
-@keyframes spinAnim { to { transform: rotate(360deg); } }
-.btn-export svg { width: 15px; height: 15px; }
+@keyframes spinAnim  { to { transform: rotate(360deg); } }
+.btn-export svg      { width: 15px; height: 15px; }
 
-/* ===== ANALYTICS MODAL ===== */
+/* =============================================================================
+   6. ANALYTICS MODAL — التحليل التفصيلي
+   ============================================================================= */
+
 .analytics-modal { width: 640px; max-width: 95vw; }
 
+/* KPIs */
 .analytics-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
 .akpi {
   background: #f5f7ff; border: 1.5px solid #bfcfef;
   border-radius: 12px; padding: 14px; text-align: center;
 }
-.akpi-icon  { font-size: 22px; margin-bottom: 6px; }
-.akpi-val   { font-size: 18px; font-weight: 800; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.akpi-lbl   { font-size: 11px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
-.akpi.green { background: #f0fdf4; border-color: #bbf7d0; }
-.akpi.green .akpi-val { color: #166534; }
-.akpi.red   { background: #fff5f5; border-color: #fecaca; }
-.akpi.red   .akpi-val { color: #e53935; }
+.akpi-icon { font-size: 24px; margin-bottom: 6px; color: #2563EB; }
+.akpi-val  { font-size: 18px; font-weight: 800; color: #1a2e5e; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.akpi-lbl  { font-size: 11px; color: #2563EB; margin-top: 3px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.akpi.green                { background: #f0fdf4; border-color: #bbf7d0; }
+.akpi.green .akpi-val      { color: #166534; }
+.akpi.green .akpi-icon     { color: #166534; }
+.akpi.red                  { background: #fff5f5; border-color: #fecaca; }
+.akpi.red   .akpi-val      { color: #e53935; }
+.akpi.red   .akpi-icon     { color: #e53935; }
 
+/* Sections */
 .analytics-section { margin-bottom: 20px; }
 .analytics-section-title {
   font-size: 14px; font-weight: 700; color: #1a2e5e;
   margin-bottom: 12px; padding-bottom: 8px;
   border-bottom: 2px solid #bfcfef;
   font-family: "Ht Moshreq Pro", sans-serif !important;
+  display: flex; align-items: center; gap: 7px;
 }
+.analytics-section-title i { color: #2563EB; font-size: 15px; }
 
+/* Bars — توزيع المصروفات والإيرادات */
 .analytics-bars { display: flex; flex-direction: column; gap: 10px; }
-.abar-row { display: flex; align-items: center; gap: 10px; }
+.abar-row   { display: flex; align-items: center; gap: 10px; }
 .abar-label { font-size: 12px; font-weight: 600; color: #1a2e5e; min-width: 80px; text-align: right; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .abar-track { flex: 1; height: 10px; background: #e0eaff; border-radius: 10px; overflow: hidden; }
 .abar-fill  { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(.4,0,.2,1); }
-.abar-fill.green { background: linear-gradient(90deg, #1f9950, #00e676); }
-.abar-fill.red   { background: linear-gradient(90deg, #e53935, #ff7043); }
-.abar-fill.blue  { background: linear-gradient(90deg, #1e88e5, #64b5f6); }
-.abar-fill.purple{ background: linear-gradient(90deg, #7c4dff, #b388ff); }
-.abar-fill.orange{ background: linear-gradient(90deg, #ffa726, #ffcc02); }
-.abar-val  { font-size: 12px; font-weight: 700; color: #1a2e5e; min-width: 80px; font-family: "Ht Moshreq Pro", sans-serif !important; }
+.abar-fill.green  { background: linear-gradient(90deg, #1f9950, #00e676); }
+.abar-fill.red    { background: linear-gradient(90deg, #e53935, #ff7043); }
+.abar-fill.blue   { background: linear-gradient(90deg, #1e88e5, #64b5f6); }
+.abar-fill.purple { background: linear-gradient(90deg, #7c4dff, #b388ff); }
+.abar-fill.orange { background: linear-gradient(90deg, #ffa726, #ffcc02); }
+.abar-val   { font-size: 12px; font-weight: 700; color: #1a2e5e; min-width: 80px; font-family: "Ht Moshreq Pro", sans-serif !important; }
 
+/* Insights — الرؤى والتوصيات */
 .analytics-insights { display: flex; flex-direction: column; gap: 8px; }
-.insight-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 12px 14px; border-radius: 10px;
-}
-.insight-item.good   { background: #f0fdf4; border: 1px solid #bbf7d0; }
-.insight-item.warn   { background: #fffbeb; border: 1px solid #fde68a; }
-.insight-item.info   { background: #eff6ff; border: 1px solid #bfcfef; }
-.insight-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.insight-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 10px; }
+.insight-item.good { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.insight-item.good .insight-icon { color: #166534; }
+.insight-item.warn { background: #fffbeb; border: 1px solid #fde68a; }
+.insight-item.warn .insight-icon { color: #92400e; }
+.insight-item.info { background: #eff6ff; border: 1px solid #bfcfef; }
+.insight-item.info .insight-icon { color: #2563EB; }
+.insight-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
 .insight-text { font-size: 13px; color: #1a2e5e; line-height: 1.5; font-family: "Ht Moshreq Pro", sans-serif !important; }
 .insight-text strong { font-weight: 700; }
+
+/* =============================================================================
+   7. ANIMATIONS
+   ============================================================================= */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================================
+   8. RESPONSIVE
+   ============================================================================= */
+
+/* تابلت (< 1024px) */
+@media (max-width: 1023px) {
+  .chart-card { max-width: 95%; }
+
+  /* إلغاء margin — السايدبار overlay */
+  .top-nav, .top-nav.sidebar-collapsed,
+  .finance-main, .finance-main.sidebar-collapsed {
+    margin-right: 0 !important;
+    width: 100% !important;
+    transition: none;
+  }
+
+  .topnav-hamburger   { display: flex !important; }
+  .desktop-only-flex  { display: none !important; }
+  .nav-page-title     { font-size: 15px; }
+  .nav-page-sub       { font-size: 11px; }
+
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-row   { grid-template-columns: 1fr; }
+  .bottom-grid  { grid-template-columns: 1fr; }
+}
+
+/* موبايل (< 768px) */
+@media (max-width: 768px) {
+  .chart-card   { max-width: 90%; }
+  .top-nav      { padding: 0 16px; }
+  .finance-main { padding: 16px; }
+
+  .btn-text  { display: none; }
+  .btn-add   { padding: 9px 12px; }
+  .guide-btn { padding: 9px 12px; }
+
+  .welcome-content { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
+  .welcome-badges  { width: 100%; }
+  .w-badge         { flex: 1; }
+  .welcome-title   { font-size: 18px; }
+
+  .metrics-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+
+/* موبايل صغير (< 480px) */
+@media (max-width: 480px) {
+  .chart-card   { max-width: 90%; }
+  .metrics-grid { grid-template-columns: 1fr; }
+  .welcome-title { font-size: 16px; }
+  .actions-grid  { grid-template-columns: 1fr 1fr; }
+}

@@ -14,6 +14,7 @@ import { Chat } from './chat/chat';
 import { Login } from './auth/login/login';
 import { Register } from './auth/register/register';
 import { ForgetPassword } from './auth/forget-password/forget-password';
+import { ResetPassword } from './auth/reset-password/reset-password';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'forget-password', component: ForgetPassword },
+  { path: 'reset-password/:token', component: ResetPassword },
   { path: 'layout',           component: Layout,           canActivate: [authGuard] },
   { path: 'dashboard',        component: Dashboard,        canActivate: [authGuard] },
   { path: 'marketing',        component: Marketing,        canActivate: [authGuard] },

@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL } from '../config/api';
 
-export interface Project {
+export interface OnboardingProject {
   id?: number;
   name: string;
   description: string;
-  stage: 'idea' | 'planning' | 'execution' | 'operation';
+  stage: 'idea' | 'operating';
+  industry?: string;
+  logoUrl?: string;
   userId?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -15,13 +18,13 @@ export interface Project {
 @Injectable({
   providedIn: 'root'
 })
-export class ProjectService {
-  private apiUrl = 'https://khatwabackend-production.up.railway.app/api/v1/projects';
+export class OnboardingService {
+  private apiUrl = `${API_BASE_URL}/projects`;
 
   constructor(private http: HttpClient) {}
 
-  // إنشاء مشروع جديد
-  createProject(project: Project): Observable<any> {
+  // إنشاء مشروع جديد (أثناء الـ Onboarding)
+  createProject(project: Partial<OnboardingProject>): Observable<any> {
     return this.http.post(this.apiUrl, project);
   }
 
@@ -36,7 +39,7 @@ export class ProjectService {
   }
 
   // تحديث مشروع
-  updateProject(id: number, project: Partial<Project>): Observable<any> {
+  updateProject(id: number, project: Partial<OnboardingProject>): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, project);
   }
 
